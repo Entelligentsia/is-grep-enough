@@ -599,9 +599,9 @@
     "lsp/redis": {
       "ready": true,
       "setup_s": 2749,
-      "index_log": "bear-make compile_commands.json(10755L)+clangd .cache(9.5M); verified definition(dictAdd)->src/dict.c:493 line-exact via mcp bridge+seed server.c; setup_s=start->index-complete wall est",
+      "index_log": "clangd 14.0.6; bear -- make -> compile_commands.json (10755 lines) at repo root + clangd .cache (9.5M), baked via COPY --from lsp:redis. setup_s=46min real build (dominates). Re-verified on the official clangd-lsp path (run-side, lsp:latest): dictAdd->src/dict.c:493 / robj->src/object.h line-exact. clangd auto-discovers the DB from the workspace root.",
       "image_digest": "sha256:b99153953bd444cf8bfed721ced8c42868c951dbeb7a6cf8d49d15c6ea9dc180",
-      "ts": "2026-06-27T06:54:55.266Z"
+      "ts": "2026-06-28T10:04:37.600Z"
     },
     "lsp/bitcoin": {
       "ready": true,
@@ -619,10 +619,10 @@
     },
     "lsp/spring-boot": {
       "ready": true,
-      "setup_s": 9,
-      "index_log": "native Claude Code LSP plugin, jdtls 1.60.0 under bundled JDK 21 (base image ships only Java 17; jdtls>=1.31 needs 21). spring-boot is a 451-module composite Gradle build with heavy buildSrc -> full jdtls Gradle import is impractical/fragile, and the L5 binding spine is intra-module. Approach: transparent LSP proxy (jdtls-noimport.py, lsp-seed.py lineage) deep-merges java.import.{gradle,maven}.enabled=false into the client initialize (-> jdtls default project, no gradle download) and, for every file the agent opens, injects workspace/executeCommand java.project.addToSourcePath for its .../src/main/java root so sibling/intra-module types resolve via jdtls's own type model. Verified END-TO-END through the proxy with a vanilla initialize (no java settings): textDocument/definition Binder.java:73(BindHandler) -> BindHandler.java:31 line-exact in ~5s, no gradle. Limitation: cross-module refs into dependency jars do not resolve (no gradle); the L5 spine does not need them. setup_s ~= cold addToSourcePath+first-resolve (vs redis 2749s bear-make / bitcoin 148s cmake).",
+      "setup_s": 0,
+      "index_log": "jdtls 1.60.0 under bundled JDK 21.0.11 (base ships Java 17; jdtls>=1.31 needs 21). spring-boot=451-module composite Gradle build; full import impractical, spine is intra-module. Invisible-project proxy (jdtls-noimport.py) MUST live INSIDE the jdtls shim (official jdtls-lsp invokes bare 'jdtls'): disables gradle/maven import + injects addToSourcePath per opened file. NO per-repo bake; resolves intra-module COLD ~26s: BindHandler(Binder.java:73)->BindHandler.java:31:18 line-exact via official jdtls-lsp. Limitation: cross-module refs into dependency jars don't resolve (no gradle classpath). One-time image cost: JDK21+jdtls download.",
       "image_digest": "sha256:d6031c1041cf8b7864ae8dc6f7f34ee832eba6466cb309487020564831e70b5a",
-      "ts": "2026-06-28T03:21:14.537Z"
+      "ts": "2026-06-28T10:04:36.898Z"
     },
     "lsp/laravel": {
       "ready": true,

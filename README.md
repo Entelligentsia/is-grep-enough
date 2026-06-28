@@ -53,12 +53,14 @@ bitcoin, typescript, spring-boot); judgements in
 [`reports/nav3-judgement.md`](reports/nav3-judgement.md); raw + readable
 transcripts in [`evidence/nav3/`](evidence/nav3).
 
-The sharpest finding so far is on the lsp arm's **operational cost**: warming a
-language server to answer correctly spans **three orders of magnitude** per repo —
-≈0.6 s for typescript (the repo self-configures) vs ≈46 min for redis (a real
-`bear -- make` build to get a complete clang compile DB). Semantic precision is
-real, but it is bought with a large, uneven, per-language setup cost the other two
-arms don't pay. Full characterization lands as the cells complete.
+The sharpest finding so far is on the lsp arm's **operational cost**, and it
+**tracks compilation**: dynamically-typed languages (Python, PHP, JS/TS) — and
+Java via an invisible-project trick — resolve **cold**, while compiled languages
+(C/C++, Go, Rust) need a build/index warm spanning **0 → 46 min** plus a +7 GB
+image. Semantic precision is real, but bought with a large, uneven, per-language
+setup cost the other two arms don't pay. The full per-language record — exact
+steps, costs, and failure modes — is the publishing data in
+[`docs/LSP_COMPLEXITY.md`](docs/LSP_COMPLEXITY.md).
 
 > The lsp arm is being standardized onto the **official Claude Code LSP plugins**
 > (`clangd-lsp`, `jdtls-lsp`, …); see [`docs/LSP_SETUP.md`](docs/LSP_SETUP.md).
