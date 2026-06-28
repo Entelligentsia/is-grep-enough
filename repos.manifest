@@ -8,6 +8,9 @@
 #   git checkout FETCH_HEAD
 # (GitHub serves arbitrary reachable commits, so depth-1 fetch-by-sha works.)
 # Pins resolved 2026-06-22 from each repo's default-branch HEAD.
+# 2026-06-28: rails re-pinned from main-branch 8.2.0.alpha (abbcb8d7) to stable
+#   v7.2.2 (3f32215e) — the alpha's Gemfile required Ruby >=3.3.1 and would not
+#   bundle-resolve, blocking the ruby-lsp (semantic) arm. See docs/LSP_COMPLEXITY.md.
 
 tokio        rust        https://github.com/tokio-rs/tokio.git              66e29121b333d1ba5bde803f570e421524d4431e
 hugo         go          https://github.com/gohugoio/hugo.git               d15baf53a91372843c45eef7eb5b87c25a4b6bf1

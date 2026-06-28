@@ -48,7 +48,7 @@ cost concentrates: from `0` to **46 minutes**, plus a **+7 GB** image.
 | hugo | Go | gopls 0.22.0 (go 1.26) | `gopls-lsp` | **Go 1.26** | ❌ | **~300** | ~21 s | **high** — toolchain pin + root GOPATH |
 | tokio | Rust | rust-analyzer 1.96.0 | `rust-analyzer-lsp` | Rust 1.96 | ❌ | **~300** | ~45 s³ | **very high** — chown caches + cargo warm; per-run index wait |
 | webpack | JS | typescript-language-server 5.3.0 | `typescript-lsp` | node | ✅ | 0 | ~14 s | **low** — ships root `tsconfig.json` (same as typescript) |
-| rails | Ruby | ruby-lsp 0.26.9 | `ruby-lsp` | **Ruby ≥ 3.3.1** | ❌ | *unresolved* | — | **highest** — Ruby-version pin + pre-release bundle won't resolve |
+| rails | Ruby | ruby-lsp 0.26.9 | `ruby-lsp` | Ruby 3.1.2 | ❌ | **~90** | ~96 s | **high** — re-pin + Gemfile add + bundle + shim |
 
 ¹ jdtls resolves *intra-module* cold via the proxy; cross-module (dependency-jar)
 refs do not — by design, the spine is intra-module.
@@ -142,21 +142,28 @@ GOPATH +3.7 GB, tokio's cargo+toolchain+target +1.3 GB.
   resolve on retry. **Verified:** `Header → tokio/src/runtime/task/core.rs:168`
   line-exact, ~45 s. The bench's **worst per-run** LSP latency.
 
-### rails — ruby-lsp 0.26.9 · **status: UNRESOLVED — the hardest case** · **complexity highest**
-- **Two compounding blockers:**
-  1. **Ruby-version pin.** rails' Gemfile requires **Ruby ≥ 3.3.1** (via `releaser`);
-     base ships 3.1.2, so `bundle install` fails version-solving outright. Building
-     Ruby 3.3.6 (ruby-build, ~98 s) clears this — but:
-  2. **Pre-release bundle.** The repo is pinned to **`8.2.0.alpha`** (a `main`-branch
-     commit), so even under Ruby 3.3 `bundle install` **fails to resolve** (~492 s →
-     `activesupport 8.2.0.alpha` dep chain). ruby-lsp couples to the bundle and
-     **crashes** without it (*"connection got disposed"* on Ruby 3.1; still
-     index-stalls under 3.3).
-- **Status:** not wired. ruby-lsp source-only resolution under Ruby 3.3 was attempted
-  but inconclusive (index stall / bundle coupling). This is the **most operationally
-  expensive and fragile** lsp setup of the bench — and a **decision point**: pinning
-  rails to a *stable* tag (not `8.2.0.alpha`) would let the bundle resolve. *No
-  `ready` recorded — honestly unresolved.*
+### rails — ruby-lsp 0.26.9 · `setup_s ≈ 90` (baked) · **complexity high**
+- **What it took (4 obstacles in a row):**
+  1. **Pre-release pin.** The repo was originally pinned to **`8.2.0.alpha`** (a
+     `main`-branch commit) whose Gemfile needs **Ruby ≥ 3.3.1** *and* won't resolve
+     even under Ruby 3.3 (`activesupport 8.2.0.alpha` dep chain, ~492 s → fail).
+     **Re-pinned to stable `v7.2.2`** (`repos.manifest`), which bundles with base
+     **Ruby 3.1** (88 s) — no Ruby 3.3 needed.
+  2. **Root-owned gem dir.** `bundle install` to the system gem dir is denied (same
+     root-owned-cache pattern as GOPATH/CARGO) → install to a bench-owned
+     `vendor/bundle`.
+  3. **ruby-lsp ∉ Gemfile.** ruby-lsp runs inside the project bundle, but rails
+     doesn't depend on it → `bundle exec ruby-lsp` fails. Add `gem "ruby-lsp"` to
+     the Gemfile (dev tooling) + re-bundle.
+  4. **Slow composed-bundle.** The official plugin invokes bare `ruby-lsp`, which
+     otherwise sets up a slow on-the-fly "composed bundle". A **PATH shim**
+     (`ruby-lsp-launch.sh`) runs the *bundled* server (`bundle exec`) instead →
+     fast.
+- **Verified:** `ActiveModel::Attribute → activemodel/lib/active_model/attribute.rb:6`
+  line-exact via LSP (~96 s; first `workspaceSymbol` reports indexing, then resolves).
+- **Note:** re-pinning the corpus is recorded in `repos.manifest`; the lsp image's
+  rails carries one added Gemfile line + `vendor/bundle` (baseline/grove run vanilla
+  rails — the navigated source is identical).
 
 ### webpack — typescript-language-server 5.3.0 · `setup_s = 0` (cold)
 - **Same server + plugin as typescript, and same cold behavior.** The pinned
@@ -171,12 +178,14 @@ GOPATH +3.7 GB, tokio's cargo+toolchain+target +1.3 GB.
 The per-language pain clusters into recurring, generalizable obstacles:
 
 1. **Toolchain version pin.** The server needs a *specific* language runtime the
-   base doesn't have — and it bit **three** of the hard repos: jdtls→**JDK 21**,
-   gopls→**go 1.26** (repo-pinned), ruby-lsp/rails→**Ruby ≥ 3.3.1**. Each is a
-   bespoke image layer / auto-download / source compile that must be warmed.
-2. **Root-owned shared caches.** `GOPATH`/`CARGO_HOME`/`RUSTUP_HOME` are created
-   root-owned by the image build; the non-root agent user can't write them → silent
-   "no workspace" / "not finished indexing" failures until chowned (gopls, tokio).
+   base doesn't have: jdtls→**JDK 21**, gopls→**go 1.26** (repo-pinned). And the
+   repo's *pin choice* is itself a cost lever — rails @ `8.2.0.alpha` demanded Ruby
+   ≥ 3.3.1 with an unresolvable bundle, while rails @ stable `v7.2.2` needs only the
+   base Ruby 3.1. Each mismatch is a bespoke image layer / auto-download / re-pin.
+2. **Root-owned shared caches.** `GOPATH`/`CARGO_HOME`/`RUSTUP_HOME`/the system gem
+   dir are created root-owned by the image build; the non-root agent user can't
+   write them → silent "no workspace" / "not finished indexing" / bundle-permission
+   failures until chowned or redirected (gopls, tokio, rails).
 3. **The server needs a real build artifact.** clangd needs a true
    `compile_commands.json` (a guess gives a useless index); the build *is* the cost.
 4. **Whole-program index vs file-local.** documentSymbol (one file) is cheap
@@ -188,21 +197,26 @@ The per-language pain clusters into recurring, generalizable obstacles:
 6. **Index persistence varies.** clangd `.cache` and gopls' module graph bake
    cleanly; pyright/tsserver keep nothing (re-scan); rust-analyzer has no good
    persistent index — which decides whether a warm can even be *committed*.
+7. **Server↔project-bundle coupling.** ruby-lsp runs *inside the project's bundle*,
+   so it needs the gems installed **and itself in the Gemfile** — a server that
+   can't load until the project's own dependency manager is satisfied. The dynamic
+   servers (tsserver/pyright/intelephense) have no such coupling.
 
 ## Status
 
-**9 of 10 wired** (`setup[lsp/<repo>].ready`): typescript, webpack, django, laravel,
-spring-boot, bitcoin, redis, hugo, **tokio**. Open: **rails** — blocked by a Ruby
-≥ 3.3.1 pin **and** a pre-release (`8.2.0.alpha`) bundle that won't resolve; a
-stable rails pin would unblock it. Figures are n=1.
+**10 of 10 wired** (`setup[lsp/<repo>].ready`): typescript, webpack, django,
+laravel, spring-boot, bitcoin, redis, hugo, tokio, **rails**. (rails required
+re-pinning the corpus from `8.2.0.alpha` → stable `v7.2.2` — see its entry.)
+Figures are n=1.
 
-**Canonical artifact.** All 9 are baked, reproducibly, into one image
-(`grove-testbench/lsp:latest`, **13.9 GB**) built by `containers/build/build-lsp.sh`
+**Canonical artifact.** All 10 are baked, reproducibly, into one image
+(`grove-testbench/lsp:latest`, **14.5 GB**) built by `containers/build/build-lsp.sh`
 — every server + the 8 official plugins + the baked warm (clang `.cache` for
 redis/bitcoin, the go1.26 GOPATH for hugo, the cargo+toolchain+target for tokio,
-the jdtls proxy-shim for spring-boot). Verified end-to-end on a clean build: all 9
-run error-free and LSP-resolve through the real `run-side.sh` harness (e.g. hugo
-gopls → `media/mediaType.go:36`, tokio rust-analyzer → `…/task/core.rs:168`, both
-line-exact via LSP, not file-read fallbacks). Warm artifacts are transplanted via
-`COPY --from` the per-repo warm-source images (`lsp:{redis,bitcoin,hugo,tokio}`),
-retire-able once `lsp:latest` is the source of truth.
+the rails `vendor/bundle`, the jdtls proxy-shim for spring-boot). Verified
+end-to-end on a clean build: each resolves line-exact through the real
+`run-side.sh` harness via LSP, not file-read fallbacks (e.g. hugo gopls →
+`media/mediaType.go:36`, tokio rust-analyzer → `…/task/core.rs:168`, rails ruby-lsp
+→ `…/active_model/attribute.rb:6`). Compiled-language warm artifacts are
+transplanted via `COPY --from` the per-repo warm-source images
+(`lsp:{redis,bitcoin,hugo,tokio}`); rails' bundle is a reproducible build layer.
