@@ -39,13 +39,28 @@
       "ts": "2026-06-27T10:08:14.256Z"
     },
     "L2-baseline-redis": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 68,
+      "context": 221612,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/redis-L2.claude.baseline.jsonl",
+      "ts": "2026-06-28T16:37:48.871Z"
     },
     "L2-grove-redis": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 108,
+      "context": 296887,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/redis-L2.claude.grove.jsonl",
+      "ts": "2026-06-28T16:05:55.617Z"
     },
     "L2-lsp-redis": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 117,
+      "context": 328062,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/redis-L2.claude.lsp.jsonl",
+      "ts": "2026-06-28T15:28:58.324Z"
     },
     "L3-baseline-redis": {
       "status": "pending"
@@ -129,13 +144,28 @@
       "ts": "2026-06-27T09:55:26.787Z"
     },
     "L2-baseline-django": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 60,
+      "context": 154778,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/django-L2.claude.baseline.jsonl",
+      "ts": "2026-06-28T16:27:01.588Z"
     },
     "L2-grove-django": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 62,
+      "context": 195528,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/django-L2.claude.grove.jsonl",
+      "ts": "2026-06-28T15:53:35.304Z"
     },
     "L2-lsp-django": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 87,
+      "context": 254550,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/django-L2.claude.lsp.jsonl",
+      "ts": "2026-06-28T15:18:08.362Z"
     },
     "L3-baseline-django": {
       "status": "pending"
@@ -189,13 +219,28 @@
       "status": "pending"
     },
     "L2-baseline-bitcoin": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 72,
+      "context": 305878,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/bitcoin-L2.claude.baseline.jsonl",
+      "ts": "2026-06-28T16:25:36.955Z"
     },
     "L2-grove-bitcoin": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 192,
+      "context": 280271,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/bitcoin-L2.claude.grove.jsonl",
+      "ts": "2026-06-28T15:52:12.182Z"
     },
     "L2-lsp-bitcoin": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 132,
+      "context": 549819,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/bitcoin-L2.claude.lsp.jsonl",
+      "ts": "2026-06-28T15:16:15.589Z"
     },
     "L3-baseline-bitcoin": {
       "status": "pending"
@@ -249,13 +294,28 @@
       "status": "pending"
     },
     "L2-baseline-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 152,
+      "context": 252541,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/laravel-L2.claude.baseline.jsonl",
+      "ts": "2026-06-28T16:32:24.885Z"
     },
     "L2-grove-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 108,
+      "context": 227600,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/laravel-L2.claude.grove.jsonl",
+      "ts": "2026-06-28T15:57:29.091Z"
     },
     "L2-lsp-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 117,
+      "context": 534269,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/laravel-L2.claude.lsp.jsonl",
+      "ts": "2026-06-28T15:22:47.781Z"
     },
     "L3-baseline-laravel": {
       "status": "pending"
@@ -294,13 +354,24 @@
       "status": "pending"
     },
     "L2-baseline-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 211,
+      "context": 1839631,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/rails-L2.claude.baseline.jsonl",
+      "ts": "2026-06-28T16:36:17.562Z"
     },
     "L2-grove-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 348,
+      "context": 1047014,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/rails-L2.claude.grove.jsonl",
+      "ts": "2026-06-28T16:03:44.267Z"
     },
     "L2-lsp-rails": {
-      "status": "pending"
+      "status": "running",
+      "ts": "2026-06-28T17:00:02.972Z"
     },
     "L3-baseline-rails": {
       "status": "pending"
@@ -339,13 +410,28 @@
       "status": "pending"
     },
     "L2-baseline-typescript": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 217,
+      "context": 1485532,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/typescript-L2.claude.baseline.jsonl",
+      "ts": "2026-06-28T16:49:02.086Z"
     },
     "L2-grove-typescript": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 387,
+      "context": 325107,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/typescript-L2.claude.grove.jsonl",
+      "ts": "2026-06-28T16:17:28.794Z"
     },
     "L2-lsp-typescript": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 528,
+      "context": 2163414,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/typescript-L2.claude.lsp.jsonl",
+      "ts": "2026-06-28T15:43:33.625Z"
     },
     "L3-baseline-typescript": {
       "status": "pending"
@@ -399,13 +485,28 @@
       "status": "pending"
     },
     "L2-baseline-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 162,
+      "context": 780839,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/webpack-L2.claude.baseline.jsonl",
+      "ts": "2026-06-28T16:56:20.105Z"
     },
     "L2-grove-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 142,
+      "context": 296989,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/webpack-L2.claude.grove.jsonl",
+      "ts": "2026-06-28T16:20:15.673Z"
     },
     "L2-lsp-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 171,
+      "context": 594521,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/webpack-L2.claude.lsp.jsonl",
+      "ts": "2026-06-28T15:46:49.537Z"
     },
     "L3-baseline-webpack": {
       "status": "pending"
@@ -444,13 +545,28 @@
       "status": "pending"
     },
     "L2-baseline-spring-boot": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 220,
+      "context": 832557,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/spring-boot-L2.claude.baseline.jsonl",
+      "ts": "2026-06-28T16:41:51.325Z"
     },
     "L2-grove-spring-boot": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 106,
+      "context": 406816,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/spring-boot-L2.claude.grove.jsonl",
+      "ts": "2026-06-28T16:08:05.840Z"
     },
     "L2-lsp-spring-boot": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 92,
+      "context": 271272,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/spring-boot-L2.claude.lsp.jsonl",
+      "ts": "2026-06-28T15:30:58.155Z"
     },
     "L3-baseline-spring-boot": {
       "status": "pending"
@@ -514,13 +630,28 @@
       "status": "pending"
     },
     "L2-baseline-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 167,
+      "context": 609252,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/tokio-L2.claude.baseline.jsonl",
+      "ts": "2026-06-28T16:45:05.342Z"
     },
     "L2-grove-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 134,
+      "context": 392967,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/tokio-L2.claude.grove.jsonl",
+      "ts": "2026-06-28T16:10:40.445Z"
     },
     "L2-lsp-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 173,
+      "context": 854333,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/tokio-L2.claude.lsp.jsonl",
+      "ts": "2026-06-28T15:34:17.516Z"
     },
     "L3-baseline-tokio": {
       "status": "pending"
@@ -559,13 +690,28 @@
       "status": "pending"
     },
     "L2-baseline-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 125,
+      "context": 974891,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/hugo-L2.claude.baseline.jsonl",
+      "ts": "2026-06-28T16:29:31.053Z"
     },
     "L2-grove-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 77,
+      "context": 232433,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/hugo-L2.claude.grove.jsonl",
+      "ts": "2026-06-28T15:55:14.369Z"
     },
     "L2-lsp-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 117,
+      "context": 507493,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/hugo-L2.claude.lsp.jsonl",
+      "ts": "2026-06-28T15:20:28.957Z"
     },
     "L3-baseline-hugo": {
       "status": "pending"
