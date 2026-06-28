@@ -658,6 +658,13 @@
       "index_log": "rust-analyzer 1.96 (official rust-analyzer-lsp); WARM bake — chown CARGO_HOME/RUSTUP_HOME(root->bench) + cargo fetch + cargo check (build proc-macros/deps; default-features OK, --all-features has 2 errors); baked cargo(195M)+rustup(629M)+tokio/target(110M) via COPY --from lsp:tokio. Cold failed ('not finished indexing'). Verified Header -> tokio/src/runtime/task/core.rs:168 via LSP workspaceSymbol after ~brief index wait (run ~45s). setup_s≈ cargo fetch+check wall. RA needs an index-wait per run (no persistent index).",
       "image_digest": "sha256:f5cd21f1eb9b11af1e78bafc876d9a7c01e82ed24ca0a772d2a78a405c692f85",
       "ts": "2026-06-28T11:03:51.795Z"
+    },
+    "lsp/rails": {
+      "ready": true,
+      "setup_s": 90,
+      "index_log": "ruby-lsp 0.26.9 (official ruby-lsp) on Ruby 3.1.2; WARM bake — re-pinned rails alpha->v7.2.2 (bundles with base Ruby, no Ruby 3.3); added gem ruby-lsp to Gemfile + bundle install --path vendor/bundle (root gem dir unwritable); ruby-lsp shim runs the bundled server (bundle exec). Verified ActiveModel::Attribute -> activemodel/lib/active_model/attribute.rb:6 via LSP (run ~96s; first workspaceSymbol 'indexing', documentSymbol resolves). setup_s≈ bundle install wall; per-run ruby-lsp index adds latency.",
+      "image_digest": "sha256:a4291731935a5caaeafedf1936aa220531cd00811cf9d80b67492fff627c797e",
+      "ts": "2026-06-28T12:43:45.360Z"
     }
   },
   "judge": {

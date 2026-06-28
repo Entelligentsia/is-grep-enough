@@ -114,4 +114,22 @@ RUN claude plugin marketplace add anthropics/claude-plugins-official \
  && cp -a /home/bench/.claude/plugins /opt/lsp-claude/plugins \
  && cp -a /home/bench/.claude/settings.json /opt/lsp-claude/settings.json
 
+# =========================================================================
+# 4. rails (ruby-lsp) warm — appended so it doesn't invalidate earlier layers
+# =========================================================================
+# Native-gem runtime/build libs for the rails bundle (sqlite3/nokogiri/pg/mysql2).
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libsqlite3-dev libyaml-dev libpq-dev default-libmysqlclient-dev \
+    && rm -rf /var/lib/apt/lists/*
+# rails warm: add ruby-lsp to the Gemfile (dev tooling) + install the bundle into a
+# bench-owned vendor/bundle (the system gem dir is root-owned). The ruby-lsp shim
+# then runs this bundled server (~14s index) — cold ruby-lsp can't load the bundle.
+# rails is pinned to v7.2.2 (stable), which bundles with base Ruby 3.1 (no Ruby 3.3).
+USER bench
+RUN cd /home/bench/repos/rails \
+ && printf '\ngem "ruby-lsp", require: false\n' >> Gemfile \
+ && bundle config set --local path vendor/bundle \
+ && bundle install --jobs 4
+
 CMD ["bash"]
