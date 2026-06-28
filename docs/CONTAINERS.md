@@ -124,8 +124,40 @@ statectl setup-set lsp/<repo> ready=true setup_s=<n> \
 
 Only then does `statectl next` consider that repo's lsp cells runnable
 (`sideReady` checks `setup[lsp/<repo>].ready`). **`setup_s` is the
-cold-server→line-exact time** and is itself experiment data — it must be clocked
-during the build, even though the warm artifacts are baked into the one image.
+cold-server→line-exact time** and is itself experiment data.
+
+## Validated implementation notes (what the build actually does)
+
+These are the mechanics proven end-to-end (clangd, tsserver, jdtls all resolve
+line-exact through the real run flow):
+
+- **Runtime stash-restore.** `run-side.sh` mounts a fresh tmpfs over `~/.claude`
+  per run, which would shadow a baked `~/.claude/plugins`. So the build copies the
+  installed plugins + `settings.json` to a stash **outside** `~/.claude`
+  (`/opt/lsp-claude`), and the lsp arm's startup restores it into the tmpfs
+  (`LSP_RESTORE` in run-side.sh), beside the creds copy. This is exactly a real
+  user's `~/.claude` — ecologically valid.
+- **Build gotchas.** In a `docker build` `RUN` after `USER bench`, `$HOME` is *not*
+  set from `/etc/passwd` — set `ENV HOME=/home/bench` or `claude` writes to the
+  wrong home and the plugin install fails. The stash dir must be created as root
+  (`mkdir /opt/lsp-claude && chown bench`) before `USER bench`.
+- **jdtls: the proxy must live INSIDE the `jdtls` shim.** The official `jdtls-lsp`
+  plugin invokes the bare `jdtls` command, so the shim (`/usr/local/bin/jdtls`)
+  itself wraps `jdtls-noimport.py` (gradle/maven import off + `addToSourcePath` per
+  opened file) under JDK 21. Wired this way, jdtls resolves intra-module **cold in
+  ~26 s, no baked `-data`** (`BindHandler` → `BindHandler.java:31` line-exact). The
+  old hand-rolled setup put the proxy in a `.lsp.json` command; under official
+  plugins it has to be the shim, or the agent gets raw jdtls attempting the doomed
+  451-module Gradle import.
+- **Warm policy — cold-first, bake only where cold fails.** Most servers resolve
+  cold acceptably (tsserver ~0.6 s, jdtls ~26 s via the proxy). **Only C/C++
+  (clangd) needs a baked warm** — the real `compile_commands.json` build + index.
+  So we do *not* uniformly "warm + commit" every repo; `/lsp-setup` tests each
+  server cold and bakes a snapshot only when cold is unacceptably slow or wrong,
+  recording `setup_s` either way. *That LSP warm cost is concentrated in C/C++ is
+  itself a finding* — baking everything would have hidden it. Baked warm
+  (clangd `.cache` + compile DB) is transplanted into the image via `COPY --from`
+  the per-repo warm-source images; `setup_s` is still recorded as the cost paid.
 
 ## Building & maintaining the images
 

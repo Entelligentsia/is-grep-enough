@@ -62,6 +62,17 @@ built image that the server actually starts under `--dangerously-skip-permission
 trusts it). `Executable not found in $PATH` in the `/plugin` Errors tab ⇒ the
 server binary isn't installed.
 
+## Warm policy — cold-first, bake only where cold fails
+
+Do **not** uniformly warm-and-commit every repo. Most servers resolve cold
+acceptably (tsserver ~0.6 s; jdtls ~26 s via the proxy). **Only C/C++ (clangd)
+needs a baked warm** — the real `compile_commands.json` build + `.cache/clangd`
+index. For each repo: test the server **cold** first; bake a snapshot (warm-then-
+`docker commit`, transplanted into `Dockerfile.lsp` via `COPY --from`) **only**
+when cold is unacceptably slow or wrong. Record `setup_s` either way — that the
+warm cost is concentrated in C/C++ is itself a finding, and baking everything
+would hide it.
+
 ## Per-server prework recipes (the four container-setup types)
 
 ### clangd (C / C++) — needs a real compile DB
@@ -100,13 +111,25 @@ jdtls ≥ 1.31 needs **Java 21** to run (base ships 17). spring-boot is a 451-mo
 composite Gradle build — a real import is impractical and the experiment's spine is
 **intra-module**. So run jdtls in **invisible-project** mode: disable gradle/maven
 import and inject `java.project.addToSourcePath` for each opened file's source
-root. A transparent proxy (`experiment/lsp/jdtls-noimport.py`) does both; the
-`jdtls` shim launches it under JDK 21 (`experiment/lsp/jdtls-launch.sh`).
+root. A transparent proxy (`experiment/lsp/jdtls-noimport.py`) does both.
 
-```jsonc
-// the official jdtls-lsp plugin's command is `jdtls`; our PATH shim supplies
-// JDK 21 + the noimport proxy transparently.
+**Critical: the proxy must live INSIDE the `jdtls` shim.** The official
+`jdtls-lsp` plugin invokes the bare `jdtls` command, so `/usr/local/bin/jdtls`
+(`experiment/lsp/jdtls-launch.sh`) must itself wrap the proxy under JDK 21:
+
+```bash
+exec python3 /usr/local/bin/jdtls-noimport.py \
+     python3 /opt/jdtls/bin/jdtls -data "${JDTLS_DATA:-/home/bench/.jdtls-ws}" "$@"
 ```
+
+If the shim launches raw jdtls instead, the agent gets the doomed 451-module
+Gradle import and never resolves (this was the bug behind the 24-min hangs).
+Wired through the shim, jdtls resolves **cold in ~26 s, no baked `-data`**
+(`BindHandler` (Binder.java:73) → `BindHandler.java:31:18` line-exact).
+
+Verify via the **agent flow** (open the file, goToDefinition at a position), not
+`jdtls-probe.py` alone — the standalone probe launches raw jdtls its own way and
+does not exercise the plugin/shim path.
 
 Limitation (record it): cross-module refs into dependency jars don't resolve (no
 gradle classpath); the spine doesn't need them.
@@ -144,12 +167,16 @@ data — clock it even though the warm artifacts are baked into the one image.
 
 ## Observed cost (why this axis matters)
 
-| repo | server | setup_s | what dominated |
+| repo | server | setup_s (bake) | what dominated |
 |---|---|--:|---|
-| typescript | tsserver | ~1 | none — repo self-configures (cheapest) |
-| spring-boot | jdtls | ~9 | JDK21+jdtls image build (one-time); runtime `addToSourcePath` ~5 s |
+| typescript | tsserver | ~0 | none — repo self-configures; ~0.6 s cold resolve |
+| spring-boot | jdtls | ~0 | no bake — invisible-project proxy; ~26 s cold resolve folded into the run |
 | bitcoin | clangd | 148 | `cmake -DCMAKE_EXPORT_COMPILE_COMMANDS` (configure only) |
 | redis | clangd | 2749 | `bear -- make` (a real build) |
 
-≈0.6 s → 46 min: **three orders of magnitude.** Semantic precision is bought with
-a large, uneven, per-language operational cost — the central result of the lsp arm.
+`setup_s` here is the **one-time bake** cost. For cold-resolving servers it is ≈0
+and the cold cost (tsserver ~0.6 s, jdtls ~26 s) is paid inside each run instead.
+The spread that matters is the bake cost: **0 → 46 min**, concentrated entirely in
+C/C++. Semantic precision is bought with a large, uneven, per-language operational
+cost — and that cost lives almost entirely in clangd's compile-DB build, which is
+the sharper central result of the lsp arm.
