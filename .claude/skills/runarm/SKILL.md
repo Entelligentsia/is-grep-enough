@@ -23,7 +23,7 @@ rung, second arm, rest repo. Read the arm's config from `experiment/spine.json`
 ### 1. Preflight
 - Prompt exists: `experiment/prompts/<repo>/<rung>.txt`. Else `statectl block <id> "no prompt (repo not prepped)"`.
 - Image present: `docker image inspect <arm.image>` succeeds. Else block "image missing: <image>".
-- If `arm.needs_index` (lsp): require `statectl status` to show `setup[<arm>/<repo>].ready`. Not ready → block "lsp bridge not wired for <repo>". (The bridge config path comes from setup; see LSP note.)
+- If `arm.needs_index` (lsp): require `statectl status` to show `setup[<arm>/<repo>].ready` (the per-repo warm + line-exact verify recorded by `/lsp-setup`). Not ready → block "lsp not warmed/verified for <repo>". (Servers that resolve cold are marked ready by `/lsp-setup` with `setup_s≈0`; only C/C++ needs a baked clang index.)
 - No stale race containers for this repo; creds at `~/.claude/.credentials.json`.
 
 ### 2. Run
@@ -33,8 +33,8 @@ rung, second arm, rest repo. Read the arm's config from `experiment/spine.json`
   ```
   scripts/run-side.sh <repo>-<rung> <repo> <arm> --model sonnet --out out/exp \
     --prompt experiment/prompts/<repo>/<rung>.txt \
-    [--grove <arm.image>            # arm=grove ]
-    [--lsp <arm.image> --mcp-config <bridge-config-from-setup>   # arm=lsp ]
+    [--grove <arm.image>   # arm=grove ]
+    [--lsp <arm.image>     # arm=lsp; official LSP plugins are baked into the image ]
   ```
   baseline needs no image flag (default base). Record wall seconds.
 - **Runaway guard:** rungs L3/L4/L5 must run under the 1.5 MB watchdog (`spine.watchdog`).
@@ -76,7 +76,9 @@ Print: `<id>` result line (context, run_wall_s, turns, tool_calls, the engagemen
 ## Notes
 - **MCP route first** when testing a fresh (rung,repo): run the `grove` arm before
   `baseline`, to exercise the MCP plumbing under the fixed harness early.
-- **LSP** stays `blocked`/unrunnable until its per-repo bridge is wired and
-  `setup[lsp/<repo>].ready` is set (with the bridge config path) — by design.
+- **LSP** stays `blocked`/unrunnable until `/lsp-setup <repo>` has warmed (where
+  needed) + line-exact-verified its server and set `setup[lsp/<repo>].ready` — by
+  design. The official LSP plugins are baked into `lsp:latest`; readiness is about
+  the per-repo server resolving, not a plugin/bridge config path.
 - Genesis artifacts (`experiment/prompts/<repo>/*`, reference keys) are NEVER shown
   to a running arm; only `<rung>.txt` is passed as the prompt.
