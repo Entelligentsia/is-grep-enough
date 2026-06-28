@@ -651,6 +651,13 @@
       "index_log": "typescript-language-server 5.3.0 (official typescript-lsp); cold, no bake — SAME as typescript. webpack ships a root tsconfig.json (checkJs over JS, 608 .js + types.d.ts) so tsserver project-loads it; the old bridge-era 'inferred mode / needs jsconfig' note was stale. Verified Module -> lib/Module.js:243 via LSP workspaceSymbol ~14s.",
       "image_digest": "sha256:49e9fc4bb3aec99588891a201d0d9bb1cbf5e7d82bad317adab450ed2d6190f4",
       "ts": "2026-06-28T10:10:46.716Z"
+    },
+    "lsp/tokio": {
+      "ready": true,
+      "setup_s": 300,
+      "index_log": "rust-analyzer 1.96 (official rust-analyzer-lsp); WARM bake — chown CARGO_HOME/RUSTUP_HOME(root->bench) + cargo fetch + cargo check (build proc-macros/deps; default-features OK, --all-features has 2 errors); baked cargo(195M)+rustup(629M)+tokio/target(110M) via COPY --from lsp:tokio. Cold failed ('not finished indexing'). Verified Header -> tokio/src/runtime/task/core.rs:168 via LSP workspaceSymbol after ~brief index wait (run ~45s). setup_s≈ cargo fetch+check wall. RA needs an index-wait per run (no persistent index).",
+      "image_digest": "sha256:f5cd21f1eb9b11af1e78bafc876d9a7c01e82ed24ca0a772d2a78a405c692f85",
+      "ts": "2026-06-28T11:03:51.795Z"
     }
   },
   "judge": {

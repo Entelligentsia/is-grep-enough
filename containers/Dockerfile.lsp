@@ -84,8 +84,16 @@ COPY --from=grove-testbench/lsp:bitcoin --chown=bench:bench \
 # write both denied). Transplant the warmed, bench-owned GOPATH (go1.26 toolchain
 # + hugo's full module graph from `go mod download all`, ~2.8G) so gopls loads.
 COPY --from=grove-testbench/lsp:hugo --chown=bench:bench /home/bench/go /home/bench/go
-# typescript self-configures; django/laravel resolve cold (no warm baked).
-# webpack/tokio/rails: warmed per-repo via /lsp-setup.
+# rust-analyzer (tokio): base creates CARGO_HOME/RUSTUP_HOME root-owned; cold RA
+# never finishes indexing the large crate graph. Transplant the warmed, bench-owned
+# cargo registry (fetched deps) + rust toolchain + tokio target/ (built proc-macros)
+# so RA indexes and resolves cross-file (~37 s after a brief index wait). ~930 MB.
+COPY --from=grove-testbench/lsp:tokio --chown=bench:bench /usr/local/cargo /usr/local/cargo
+COPY --from=grove-testbench/lsp:tokio --chown=bench:bench /usr/local/rustup /usr/local/rustup
+COPY --from=grove-testbench/lsp:tokio --chown=bench:bench \
+     /home/bench/repos/tokio/target /home/bench/repos/tokio/target
+# typescript/webpack self-configure; django/laravel resolve cold (no warm baked).
+# rails: warmed per-repo via /lsp-setup (bundle install).
 
 # =========================================================================
 # 3. OFFICIAL LSP PLUGINS — install + enable at build time, stash for runtime
