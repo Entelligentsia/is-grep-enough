@@ -644,6 +644,13 @@
       "index_log": "gopls (official gopls-lsp); WARM bake — chown GOPATH(root->bench) + go mod download all (go1.26 toolchain + hugo deps, 2.8G) baked via COPY --from lsp:hugo; cold failed ('no active workspace views'); verified media.Type -> media/mediaType.go:36 via LSP workspaceSymbol ~21s; setup_s≈ go-mod-download wall",
       "image_digest": "sha256:49e9fc4bb3aec99588891a201d0d9bb1cbf5e7d82bad317adab450ed2d6190f4",
       "ts": "2026-06-28T08:17:42.193Z"
+    },
+    "lsp/webpack": {
+      "ready": true,
+      "setup_s": 0,
+      "index_log": "typescript-language-server 5.3.0 (official typescript-lsp); cold, no bake — SAME as typescript. webpack ships a root tsconfig.json (checkJs over JS, 608 .js + types.d.ts) so tsserver project-loads it; the old bridge-era 'inferred mode / needs jsconfig' note was stale. Verified Module -> lib/Module.js:243 via LSP workspaceSymbol ~14s.",
+      "image_digest": "sha256:49e9fc4bb3aec99588891a201d0d9bb1cbf5e7d82bad317adab450ed2d6190f4",
+      "ts": "2026-06-28T10:10:46.716Z"
     }
   },
   "judge": {

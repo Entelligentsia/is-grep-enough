@@ -101,8 +101,9 @@ readiness, not a baked index.
 
 - **typescript-language-server:** the repo must have a `tsconfig`/`jsconfig` so
   tsserver runs in *project* (not *inferred*) mode — otherwise `workspace/symbol`
-  is empty. `typescript` self-configures (solution tsconfigs); **webpack** needs a
-  `jsconfig.json` added at the root.
+  is empty. Both **typescript** (solution tsconfigs) and **webpack** (root
+  `tsconfig.json` with `checkJs` over its JS) ship one, so both resolve cold with
+  no prework — identical behavior, identical server.
 - **pyright:** no persistent index (re-scans each run); scope the workspace to the
   package dir and confirm cold readiness.
 - **intelephense:** indexes the workspace on open.

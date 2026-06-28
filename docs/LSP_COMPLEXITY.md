@@ -47,8 +47,8 @@ cost concentrates: from `0` to **46 minutes**, plus a **+7 GB** image.
 | redis | C | clangd 14.0.6 | `clangd-lsp` | — | ❌ | **2749** | ~60 s | **high** — real `bear -- make` build |
 | hugo | Go | gopls 0.22.0 (go 1.26) | `gopls-lsp` | **Go 1.26** | ❌ | **~300** | ~21 s | **high** — toolchain pin + root GOPATH |
 | tokio | Rust | rust-analyzer 1.96.0 | `rust-analyzer-lsp` | Rust 1.96 | ❌² | *TBD* | — | **very high** — no bakeable index |
+| webpack | JS | typescript-language-server 5.3.0 | `typescript-lsp` | node | ✅ | 0 | ~14 s | **low** — ships root `tsconfig.json` (same as typescript) |
 | rails | Ruby | ruby-lsp 0.26.9 | `ruby-lsp` | Ruby 3.1.2 | ❌² | *TBD* | — | *TBD* — index timeout |
-| webpack | JS | typescript-language-server 5.3.0 | `typescript-lsp` | node | *untested* | *TBD* | — | low-med — needs `jsconfig.json` |
 
 ¹ jdtls resolves *intra-module* cold via the proxy; cross-module (dependency-jar)
 refs do not — by design, the spine is intra-module.
@@ -141,9 +141,13 @@ toolchains + 8 plugins + baked warm). hugo's baked GOPATH alone is **+3.7 GB**.
   indexing rails. Likely needs `bundle install` (gems present for indexing) and/or
   a longer budget. *Diagnosed, not resolved; no `ready` recorded.*
 
-### webpack — typescript-language-server · **status: not yet tested**
-- **Expected:** tsserver runs files in *inferred* mode without a root config, so a
-  `jsconfig.json` is needed for whole-repo `workspaceSymbol`. Light setup; untested.
+### webpack — typescript-language-server 5.3.0 · `setup_s = 0` (cold)
+- **Same server + plugin as typescript, and same cold behavior.** The pinned
+  webpack ships a **root `tsconfig.json`** (608 `.js` + `types.d.ts`, `checkJs`),
+  so tsserver project-loads the repo — no inferred-mode degradation. An earlier
+  bridge-era note claimed webpack lacked a root config and needed a `jsconfig.json`;
+  that is **stale** — the server and outcome are identical to typescript.
+- **Verified:** `Module → lib/Module.js:243` line-exact, ~14 s.
 
 ## Cross-cutting complexity dimensions (for synthesis)
 
@@ -169,7 +173,7 @@ The per-language pain clusters into recurring, generalizable obstacles:
 
 ## Status
 
-7 of 10 wired (`setup[lsp/<repo>].ready`): typescript, django, laravel,
-spring-boot, bitcoin, redis, hugo. Open: **tokio** (rust-analyzer index — hardest),
-**rails** (ruby-lsp timeout), **webpack** (jsconfig). Figures are n=1 and will be
-refined as the remaining three are wired.
+8 of 10 wired (`setup[lsp/<repo>].ready`): typescript, webpack, django, laravel,
+spring-boot, bitcoin, redis, hugo. Open: **tokio** (rust-analyzer index — hardest)
+and **rails** (ruby-lsp timeout). Figures are n=1 and will be refined as the
+remaining two are wired.

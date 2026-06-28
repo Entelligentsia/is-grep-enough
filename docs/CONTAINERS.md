@@ -103,7 +103,7 @@ we put a **shim script with the server's name earlier on `PATH`** (the plugin's
 | Server | Prework (developer-style) | Shim on PATH? |
 |---|---|---|
 | clangd | generate the **real** `compile_commands.json` (`bear -- make` for redis, `cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON` for bitcoin) at the repo root; let clangd background-index; bake `.cache/clangd/`. clangd auto-discovers the DB from the workspace root. | optional (`--background-index`) |
-| typescript-language-server | repo must have a `tsconfig`/`jsconfig` so tsserver runs in project (not inferred) mode. typescript self-configures (solution tsconfigs); webpack needs a `jsconfig.json` added. | no |
+| typescript-language-server | repo must have a `tsconfig`/`jsconfig` so tsserver runs in project (not inferred) mode. Both typescript (solution tsconfigs) and webpack (root `tsconfig.json` with `checkJs`) ship one → resolve cold, no prework. | no |
 | pyright | scope the workspace to the package dir; pyright re-indexes per run (no persistent cache) — the per-repo concern is cold readiness, not warm. | no |
 | intelephense | indexes the workspace on open; bake its index if persistent. | no |
 | gopls / rust-analyzer / ruby-lsp | resolve the module graph (`go mod`, `cargo metadata`, bundle) so cross-file works. | as needed |
