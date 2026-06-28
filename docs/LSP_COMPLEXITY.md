@@ -46,17 +46,19 @@ cost concentrates: from `0` to **46 minutes**, plus a **+7 GB** image.
 | bitcoin | C++ | clangd 14.0.6 | `clangd-lsp` | — | ❌ | **148** | — | **med-high** — cmake compile DB |
 | redis | C | clangd 14.0.6 | `clangd-lsp` | — | ❌ | **2749** | ~60 s | **high** — real `bear -- make` build |
 | hugo | Go | gopls 0.22.0 (go 1.26) | `gopls-lsp` | **Go 1.26** | ❌ | **~300** | ~21 s | **high** — toolchain pin + root GOPATH |
-| tokio | Rust | rust-analyzer 1.96.0 | `rust-analyzer-lsp` | Rust 1.96 | ❌² | *TBD* | — | **very high** — no bakeable index |
+| tokio | Rust | rust-analyzer 1.96.0 | `rust-analyzer-lsp` | Rust 1.96 | ❌ | **~300** | ~45 s³ | **very high** — chown caches + cargo warm; per-run index wait |
 | webpack | JS | typescript-language-server 5.3.0 | `typescript-lsp` | node | ✅ | 0 | ~14 s | **low** — ships root `tsconfig.json` (same as typescript) |
-| rails | Ruby | ruby-lsp 0.26.9 | `ruby-lsp` | Ruby 3.1.2 | ❌² | *TBD* | — | *TBD* — index timeout |
+| rails | Ruby | ruby-lsp 0.26.9 | `ruby-lsp` | **Ruby ≥ 3.3.1** | ❌ | *unresolved* | — | **highest** — Ruby-version pin + pre-release bundle won't resolve |
 
 ¹ jdtls resolves *intra-module* cold via the proxy; cross-module (dependency-jar)
 refs do not — by design, the spine is intra-module.
-² documentSymbol (file-local) works; cross-file `workspaceSymbol`/`goToDefinition`
-need a full workspace index that is not yet warmed (see below).
+³ tokio's resolve wall includes a per-run rust-analyzer index wait (it keeps no
+persistent index); a first query may report "not finished indexing" and resolve on
+retry.
 
-**Image cost:** `base` 5.61 GB → `lsp:latest` **12.6 GB** (+7 GB for all servers +
-toolchains + 8 plugins + baked warm). hugo's baked GOPATH alone is **+3.7 GB**.
+**Image cost:** `base` 5.61 GB → `lsp:latest` **13.9 GB** (+8.3 GB for all servers +
+toolchains + 8 plugins + baked warm). The compiled-language warms dominate: hugo's
+GOPATH +3.7 GB, tokio's cargo+toolchain+target +1.3 GB.
 
 ## Per-language record
 
@@ -125,21 +127,36 @@ toolchains + 8 plugins + baked warm). hugo's baked GOPATH alone is **+3.7 GB**.
 - **Cost:** ≈300 s (module download wall). **Verified:**
   `media.Type → media/mediaType.go:36` line-exact, ~21 s.
 
-### tokio — rust-analyzer 1.96.0 · **status: not yet wired** · **complexity very high**
-- **Observed:** `cargo metadata` resolves; **documentSymbol (file-local) works
-  cold**, but cross-file `workspaceSymbol`/`goToDefinition` return *"has not
-  finished indexing"* — rust-analyzer needs a full workspace index of a large
-  crate graph (+ proc-macro builds), which exceeds a normal run window.
-- **Open problem:** rust-analyzer has **no easily-bakeable persistent index** (it
-  rebuilds in-session), so neither a quick bake nor a normal run resolves cross-file.
-  Candidate warms: pre-`cargo check` (build proc-macros/target) + a longer per-run
-  index budget. Likely the **worst-case** LSP cost of the bench. *No `setup[].ready`
-  recorded — honestly unresolved.*
+### tokio — rust-analyzer 1.96.0 · `setup_s ≈ 300` (baked) · **complexity very high**
+- **The failure:** cold, `workspaceSymbol`/`goToDefinition` return *"has not
+  finished indexing"* — rust-analyzer needs a full index of a large crate graph
+  (+ proc-macro builds). Same root cause family as gopls: `CARGO_HOME`/`RUSTUP_HOME`
+  are **root-owned**, so the agent user can't fetch/build.
+- **Fix / warm:** `chown -R bench:bench /usr/local/{cargo,rustup}` + `cargo fetch`
+  (deps) + `cargo check` (build proc-macros/metadata — default features compile;
+  `--all-features` has 2 errors, irrelevant to RA). Baked the cargo registry +
+  rust toolchain + `tokio/target` via `COPY --from lsp:tokio` (**~930 MB →
+  +1.3 GB image**).
+- **Per-run caveat:** rust-analyzer keeps **no persistent index**, so even warmed it
+  re-indexes in-session — a first query may say *"not finished indexing"* and
+  resolve on retry. **Verified:** `Header → tokio/src/runtime/task/core.rs:168`
+  line-exact, ~45 s. The bench's **worst per-run** LSP latency.
 
-### rails — ruby-lsp 0.26.9 · **status: not yet wired**
-- **Observed:** binary + `Gemfile.lock` fine, but a cold run **timed out at 260 s**
-  indexing rails. Likely needs `bundle install` (gems present for indexing) and/or
-  a longer budget. *Diagnosed, not resolved; no `ready` recorded.*
+### rails — ruby-lsp 0.26.9 · **status: UNRESOLVED — the hardest case** · **complexity highest**
+- **Two compounding blockers:**
+  1. **Ruby-version pin.** rails' Gemfile requires **Ruby ≥ 3.3.1** (via `releaser`);
+     base ships 3.1.2, so `bundle install` fails version-solving outright. Building
+     Ruby 3.3.6 (ruby-build, ~98 s) clears this — but:
+  2. **Pre-release bundle.** The repo is pinned to **`8.2.0.alpha`** (a `main`-branch
+     commit), so even under Ruby 3.3 `bundle install` **fails to resolve** (~492 s →
+     `activesupport 8.2.0.alpha` dep chain). ruby-lsp couples to the bundle and
+     **crashes** without it (*"connection got disposed"* on Ruby 3.1; still
+     index-stalls under 3.3).
+- **Status:** not wired. ruby-lsp source-only resolution under Ruby 3.3 was attempted
+  but inconclusive (index stall / bundle coupling). This is the **most operationally
+  expensive and fragile** lsp setup of the bench — and a **decision point**: pinning
+  rails to a *stable* tag (not `8.2.0.alpha`) would let the bundle resolve. *No
+  `ready` recorded — honestly unresolved.*
 
 ### webpack — typescript-language-server 5.3.0 · `setup_s = 0` (cold)
 - **Same server + plugin as typescript, and same cold behavior.** The pinned
@@ -154,11 +171,12 @@ toolchains + 8 plugins + baked warm). hugo's baked GOPATH alone is **+3.7 GB**.
 The per-language pain clusters into recurring, generalizable obstacles:
 
 1. **Toolchain version pin.** The server needs a *specific* language runtime the
-   base doesn't have: jdtls→JDK 21, gopls→go 1.26 (repo-pinned). Each is a bespoke
-   image layer or an auto-download that must be warmed.
-2. **Root-owned shared caches.** `GOPATH`/`CARGO_HOME` are created root-owned by
-   the image build; the non-root agent user can't write them → silent
-   "no workspace" failures until chowned.
+   base doesn't have — and it bit **three** of the hard repos: jdtls→**JDK 21**,
+   gopls→**go 1.26** (repo-pinned), ruby-lsp/rails→**Ruby ≥ 3.3.1**. Each is a
+   bespoke image layer / auto-download / source compile that must be warmed.
+2. **Root-owned shared caches.** `GOPATH`/`CARGO_HOME`/`RUSTUP_HOME` are created
+   root-owned by the image build; the non-root agent user can't write them → silent
+   "no workspace" / "not finished indexing" failures until chowned (gopls, tokio).
 3. **The server needs a real build artifact.** clangd needs a true
    `compile_commands.json` (a guess gives a useless index); the build *is* the cost.
 4. **Whole-program index vs file-local.** documentSymbol (one file) is cheap
@@ -173,17 +191,18 @@ The per-language pain clusters into recurring, generalizable obstacles:
 
 ## Status
 
-8 of 10 wired (`setup[lsp/<repo>].ready`): typescript, webpack, django, laravel,
-spring-boot, bitcoin, redis, hugo. Open: **tokio** (rust-analyzer index — hardest)
-and **rails** (ruby-lsp timeout). Figures are n=1 and will be refined as the
-remaining two are wired.
+**9 of 10 wired** (`setup[lsp/<repo>].ready`): typescript, webpack, django, laravel,
+spring-boot, bitcoin, redis, hugo, **tokio**. Open: **rails** — blocked by a Ruby
+≥ 3.3.1 pin **and** a pre-release (`8.2.0.alpha`) bundle that won't resolve; a
+stable rails pin would unblock it. Figures are n=1.
 
-**Canonical artifact.** All 8 are baked, reproducibly, into one image
-(`grove-testbench/lsp:latest`, **12.6 GB**) built by `containers/build/build-lsp.sh`
+**Canonical artifact.** All 9 are baked, reproducibly, into one image
+(`grove-testbench/lsp:latest`, **13.9 GB**) built by `containers/build/build-lsp.sh`
 — every server + the 8 official plugins + the baked warm (clang `.cache` for
-redis/bitcoin, the go1.26 GOPATH for hugo, the jdtls proxy-shim for spring-boot).
-Verified end-to-end on a clean build: all 8 run error-free and LSP-resolve through
-the real `run-side.sh` harness (e.g. hugo gopls → `media/mediaType.go:36` line-exact
-via LSP, not a file-read fallback). The clang/hugo warm artifacts are transplanted
-via `COPY --from` the per-repo warm-source images (`lsp:{redis,bitcoin,hugo}`),
-which can be retired once `lsp:latest` is the source of truth.
+redis/bitcoin, the go1.26 GOPATH for hugo, the cargo+toolchain+target for tokio,
+the jdtls proxy-shim for spring-boot). Verified end-to-end on a clean build: all 9
+run error-free and LSP-resolve through the real `run-side.sh` harness (e.g. hugo
+gopls → `media/mediaType.go:36`, tokio rust-analyzer → `…/task/core.rs:168`, both
+line-exact via LSP, not file-read fallbacks). Warm artifacts are transplanted via
+`COPY --from` the per-repo warm-source images (`lsp:{redis,bitcoin,hugo,tokio}`),
+retire-able once `lsp:latest` is the source of truth.
