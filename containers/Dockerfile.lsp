@@ -44,9 +44,13 @@ RUN GOBIN=/usr/local/bin /usr/local/go/bin/go install golang.org/x/tools/gopls@l
 RUN rustup component add rust-analyzer \
     && ln -sf "$(rustup which rust-analyzer)" /usr/local/bin/rust-analyzer
 
-# ruby-lsp — Ruby (rails). Ruby + gem are in base.
+# ruby-lsp — Ruby (rails). Ruby + gem are in base. The official ruby-lsp plugin
+# invokes bare `ruby-lsp`; a shim runs the project's BUNDLED ruby-lsp (bundle
+# exec) so it indexes fast (~14s) instead of ruby-lsp's slow composed-bundle path.
 RUN gem install --no-document ruby-lsp \
-    && ln -sf "$(ruby -e 'print Gem.bindir')/ruby-lsp" /usr/local/bin/ruby-lsp 2>/dev/null || true
+    && cp "$(ruby -e 'print Gem.bindir')/ruby-lsp" /usr/local/bin/ruby-lsp.real
+COPY experiment/lsp/ruby-lsp-launch.sh /usr/local/bin/ruby-lsp
+RUN chmod +x /usr/local/bin/ruby-lsp /usr/local/bin/ruby-lsp.real
 
 # jdtls — Java (spring-boot). jdtls >= 1.31 needs Java 21 to RUN (base ships 17);
 # the analysed project's own Java level is independent. A bundled JDK 21 launches

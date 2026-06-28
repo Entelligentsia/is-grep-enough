@@ -17,5 +17,5 @@ webpack      javascript  https://github.com/webpack/webpack.git             ff19
 redis        c           https://github.com/redis/redis.git                 d2d3390d0c4d01ab7bfb46054ad0d5003d63c11b
 bitcoin      cpp         https://github.com/bitcoin/bitcoin.git             6d8e15dff015d3df8e87de63e650a5aee32ff12f
 spring-boot  java        https://github.com/spring-projects/spring-boot.git e16c5d01417f5a6efc35714e83060aadc17a9321
-rails        ruby        https://github.com/rails/rails.git                 abbcb8d7dcf908bc2e6bc70b03651cae671a6e75
+rails        ruby        https://github.com/rails/rails.git                 3f32215efb068fd941d03b58295730560227f648
 laravel      php         https://github.com/laravel/framework.git           2107d3d7079993fd2e82777674fae5b65d87997f
