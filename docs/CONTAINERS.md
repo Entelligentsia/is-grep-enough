@@ -149,15 +149,17 @@ line-exact through the real run flow):
   old hand-rolled setup put the proxy in a `.lsp.json` command; under official
   plugins it has to be the shim, or the agent gets raw jdtls attempting the doomed
   451-module Gradle import.
-- **Warm policy — cold-first, bake only where cold fails.** Most servers resolve
-  cold acceptably (tsserver ~0.6 s, jdtls ~26 s via the proxy). **Only C/C++
-  (clangd) needs a baked warm** — the real `compile_commands.json` build + index.
-  So we do *not* uniformly "warm + commit" every repo; `/lsp-setup` tests each
-  server cold and bakes a snapshot only when cold is unacceptably slow or wrong,
-  recording `setup_s` either way. *That LSP warm cost is concentrated in C/C++ is
-  itself a finding* — baking everything would have hidden it. Baked warm
-  (clangd `.cache` + compile DB) is transplanted into the image via `COPY --from`
-  the per-repo warm-source images; `setup_s` is still recorded as the cost paid.
+- **Warm policy — cold-first, set up only where cold fails.** Some servers resolve
+  cold (tsserver ~0.6 s; jdtls ~26 s via the proxy); others do not. Observed so far:
+  **clangd (C/C++)** needs a baked `compile_commands.json` build + index; **gopls
+  (Go)** fails cold with *"no active workspace views"* and needs workspace/module
+  setup. So we do *not* uniformly "warm + commit" every repo: `/lsp-setup` tests
+  each server cold and only does the prework/bake when cold actually fails,
+  recording `setup_s` either way (and the engagement gate must see the LSP **resolve**,
+  not just be called — gopls "resolved" via the agent's file-reads, which does NOT
+  count). *That the setup cost is large and uneven across servers is the finding* —
+  warming everything blindly would have hidden it. Baked warm (clangd `.cache` +
+  compile DB) is transplanted via `COPY --from` the per-repo warm-source images.
 
 ## Building & maintaining the images
 

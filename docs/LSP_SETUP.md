@@ -64,14 +64,16 @@ server binary isn't installed.
 
 ## Warm policy — cold-first, bake only where cold fails
 
-Do **not** uniformly warm-and-commit every repo. Most servers resolve cold
-acceptably (tsserver ~0.6 s; jdtls ~26 s via the proxy). **Only C/C++ (clangd)
-needs a baked warm** — the real `compile_commands.json` build + `.cache/clangd`
-index. For each repo: test the server **cold** first; bake a snapshot (warm-then-
-`docker commit`, transplanted into `Dockerfile.lsp` via `COPY --from`) **only**
-when cold is unacceptably slow or wrong. Record `setup_s` either way — that the
-warm cost is concentrated in C/C++ is itself a finding, and baking everything
-would hide it.
+Do **not** uniformly warm-and-commit every repo. Some servers resolve cold
+(tsserver ~0.6 s; jdtls ~26 s via the proxy); others need per-repo setup.
+Observed: **clangd (C/C++)** needs a baked `compile_commands.json` build +
+`.cache/clangd` index; **gopls (Go)** fails cold (*"no active workspace views"*)
+and needs workspace/module setup. For each repo: test the server **cold** first
+(the LSP must actually **resolve** the anchor — an answer the agent got by
+*reading* files does not count); do the prework/bake (warm-then-`docker commit`,
+transplanted into `Dockerfile.lsp` via `COPY --from`) **only** when cold fails.
+Record `setup_s` either way — that the setup cost is large and uneven across
+servers is the finding, and warming blindly would hide it.
 
 ## Per-server prework recipes (the four container-setup types)
 
@@ -176,7 +178,8 @@ data — clock it even though the warm artifacts are baked into the one image.
 
 `setup_s` here is the **one-time bake** cost. For cold-resolving servers it is ≈0
 and the cold cost (tsserver ~0.6 s, jdtls ~26 s) is paid inside each run instead.
-The spread that matters is the bake cost: **0 → 46 min**, concentrated entirely in
-C/C++. Semantic precision is bought with a large, uneven, per-language operational
-cost — and that cost lives almost entirely in clangd's compile-DB build, which is
-the sharper central result of the lsp arm.
+The spread that matters is the bake/setup cost: **0 → 46 min**, and it is **uneven
+by language** — clangd's compile-DB build is the heaviest (redis 46 min), gopls
+needs workspace setup to serve at all, while tsserver/jdtls need none. Semantic
+precision is bought with a large, uneven, per-language operational cost — the
+central result of the lsp arm (filled in per repo as `/lsp-setup` wires each).
