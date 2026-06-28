@@ -637,6 +637,13 @@
       "index_log": "pyright (official pyright-lsp) on lsp:latest; cold, no bake; resolved ResolverMatch -> django/urls/resolvers.py:34 via LSP workspaceSymbol ~17s",
       "image_digest": "sha256:f117667a8f3269a529acd20eb7f1b0c725ab328f909fd92753cec9ac6a907ff7",
       "ts": "2026-06-28T08:07:30.633Z"
+    },
+    "lsp/hugo": {
+      "ready": true,
+      "setup_s": 300,
+      "index_log": "gopls (official gopls-lsp); WARM bake — chown GOPATH(root->bench) + go mod download all (go1.26 toolchain + hugo deps, 2.8G) baked via COPY --from lsp:hugo; cold failed ('no active workspace views'); verified media.Type -> media/mediaType.go:36 via LSP workspaceSymbol ~21s; setup_s≈ go-mod-download wall",
+      "image_digest": "sha256:49e9fc4bb3aec99588891a201d0d9bb1cbf5e7d82bad317adab450ed2d6190f4",
+      "ts": "2026-06-28T08:17:42.193Z"
     }
   },
   "judge": {

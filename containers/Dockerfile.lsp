@@ -79,8 +79,13 @@ COPY --from=grove-testbench/lsp:bitcoin --chown=bench:bench \
      /home/bench/repos/bitcoin/compile_commands.json /home/bench/repos/bitcoin/compile_commands.json
 COPY --from=grove-testbench/lsp:bitcoin --chown=bench:bench \
      /home/bench/repos/bitcoin/.cache /home/bench/repos/bitcoin/.cache
-# typescript self-configures (solution tsconfigs) — no warm baked.
-# django/webpack/laravel/hugo/tokio/rails: warmed per-repo via /lsp-setup.
+# gopls (hugo): base creates GOPATH root-owned and hugo pins `go 1.26.0`, so cold
+# gopls fails ("no active workspace views" — toolchain auto-download + modcache
+# write both denied). Transplant the warmed, bench-owned GOPATH (go1.26 toolchain
+# + hugo's full module graph from `go mod download all`, ~2.8G) so gopls loads.
+COPY --from=grove-testbench/lsp:hugo --chown=bench:bench /home/bench/go /home/bench/go
+# typescript self-configures; django/laravel resolve cold (no warm baked).
+# webpack/tokio/rails: warmed per-repo via /lsp-setup.
 
 # =========================================================================
 # 3. OFFICIAL LSP PLUGINS — install + enable at build time, stash for runtime
