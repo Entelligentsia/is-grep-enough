@@ -139,8 +139,17 @@ GOPATH +3.7 GB, tokio's cargo+toolchain+target +1.3 GB.
   +1.3 GB image**).
 - **Per-run caveat:** rust-analyzer keeps **no persistent index**, so even warmed it
   re-indexes in-session — a first query may say *"not finished indexing"* and
-  resolve on retry. **Verified:** `Header → tokio/src/runtime/task/core.rs:168`
-  line-exact, ~45 s. The bench's **worst per-run** LSP latency.
+  resolve on retry. **Verified** (with a wait-and-retry prompt): `Header →
+  tokio/src/runtime/task/core.rs:168` line-exact, ~45 s. The bench's **worst per-run**
+  LSP latency.
+- **Engagement finding (important).** Under the *plain* L1 prompt the agent loaded
+  the LSP tool but then answered via `Read`/`Bash` **without calling it**
+  (`lsp_tools=0`) — rust-analyzer's index latency is high enough that the agent
+  *abandons* it and falls back to reading (still reaching the right answer). So the
+  tokio lsp arm tends to **degenerate toward the baseline** in practice: the server
+  is capable, but its operational cost makes it not worth the agent's while. This is
+  a result, not a defect — and it means tokio lsp cells may DNF the engagement gate
+  unless the agent is pushed to wait out the index.
 
 ### rails — ruby-lsp 0.26.9 · `setup_s ≈ 90` (baked) · **complexity high**
 - **What it took (4 obstacles in a row):**
