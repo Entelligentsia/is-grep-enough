@@ -177,3 +177,13 @@ The per-language pain clusters into recurring, generalizable obstacles:
 spring-boot, bitcoin, redis, hugo. Open: **tokio** (rust-analyzer index — hardest)
 and **rails** (ruby-lsp timeout). Figures are n=1 and will be refined as the
 remaining two are wired.
+
+**Canonical artifact.** All 8 are baked, reproducibly, into one image
+(`grove-testbench/lsp:latest`, **12.6 GB**) built by `containers/build/build-lsp.sh`
+— every server + the 8 official plugins + the baked warm (clang `.cache` for
+redis/bitcoin, the go1.26 GOPATH for hugo, the jdtls proxy-shim for spring-boot).
+Verified end-to-end on a clean build: all 8 run error-free and LSP-resolve through
+the real `run-side.sh` harness (e.g. hugo gopls → `media/mediaType.go:36` line-exact
+via LSP, not a file-read fallback). The clang/hugo warm artifacts are transplanted
+via `COPY --from` the per-repo warm-source images (`lsp:{redis,bitcoin,hugo}`),
+which can be retired once `lsp:latest` is the source of truth.
