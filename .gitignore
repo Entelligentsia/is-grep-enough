@@ -1,0 +1,17 @@
+# run outputs / artifacts (regenerated per-run, not framework state)
+out/
+
+# build contexts (host grove binary staged here)
+.grovectx/
+grove
+
+# scratch
+*.log
+
+# offline prompt-genesis: pinned source clones (reproducible from repos.manifest)
+experiment/repos/
+experiment/statectl/node_modules/
+
+# python bytecode
+__pycache__/
+*.pyc

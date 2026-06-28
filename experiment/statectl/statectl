@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Thin wrapper: the validated state CLI. The ONLY sanctioned writer of
+# experiment/state.json — skills and humans call this, never edit the JSON.
+set -euo pipefail
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$here"
+exec npx --yes tsx "$here/cli.ts" "$@"

@@ -1,0 +1,1 @@
+I'm reasoning about how webpack represents a single module while it's being compiled — the in-memory object that stands for one module as a node in the module graph, what field identifies the kind of module it is, what it carries away from its own build step, and how it holds the edges to the other modules it depends on. Walk me through the makeup of that object.

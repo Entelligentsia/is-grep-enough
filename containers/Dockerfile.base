@@ -1,0 +1,111 @@
+# grove-testbench :: base  (FROZEN — all-languages substrate)
+# ---------------------------------------------------------------------------
+# The publishable, secret-free base image. It is the SINGLE uniform substrate
+# under all three arms (baseline/grove/lsp) — the only variable between arms is
+# the navigation capability layered on top, never the toolchain. So every
+# project's build tools + language runtime live HERE, installed once:
+#   - node + Claude Code CLI + pi CLI            (TS/JS: typescript, webpack)
+#   - C/C++ toolchain: gcc/g++/make/cmake/bear   (redis, bitcoin)
+#   - Python 3 + pip + venv                      (django)
+#   - Go                                         (hugo)
+#   - Rust (rustup: rustc + cargo)               (tokio)
+#   - JDK 17                                     (spring-boot)
+#   - Ruby + bundler                             (rails)
+#   - PHP + composer                             (laravel)
+#   - asciinema + git + jq + ripgrep + the harness scripts
+#   - the 10 codebases cloned at pinned SHAs (see repos.manifest)
+#
+# DESIGN: this base is meant to be FROZEN for the whole 10-repo matrix so every
+# cell runs on an identical substrate (single-base reproducibility). The build
+# *execution* per repo (compile_commands via bear/cmake, cargo metadata, pip
+# install, gradle import, the LSP index warm) is NOT done here — it is the LSP
+# arm's per-repo setup cost (setup_s). Toolchains are uniform; their USE is
+# arm-specific.
+#
+# Intentionally NOT here (added at runtime, never published): auth / API keys.
+# run-side.sh injects creds into a per-run tmpfs .claude, so no baked-auth
+# `baseline` image is needed; grove/lsp build straight FROM this base.
+#
+# Build (from repo root):  scripts/build-base.sh
+# ---------------------------------------------------------------------------
+FROM node:22-bookworm
+
+# --- system deps + C/C++/Python/Java/Ruby/PHP toolchains (apt) --------------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git \
+        curl \
+        ca-certificates \
+        jq \
+        ripgrep \
+        asciinema \
+        less \
+        bash \
+        unzip \
+        build-essential \
+        gcc \
+        g++ \
+        make \
+        cmake \
+        bear \
+        python3 \
+        python3-pip \
+        python3-venv \
+        python3-dev \
+        ruby-full \
+        php-cli \
+        php-mbstring \
+        php-xml \
+        php-curl \
+        openjdk-17-jdk-headless \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- Go (official tarball; Debian's package is too old for hugo) ------------
+ENV GO_VERSION=1.23.4
+RUN curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o /tmp/go.tgz \
+    && tar -C /usr/local -xzf /tmp/go.tgz \
+    && rm /tmp/go.tgz
+
+# --- Rust (rustup, system-wide so every user shares one toolchain) ----------
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo
+RUN curl -fsSL https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal \
+    && chmod -R a+rX "$RUSTUP_HOME" "$CARGO_HOME"
+
+# Expose go + rust on the DEFAULT login-shell PATH. run-side.sh runs `bash -lc`,
+# a login shell that sources /etc/profile and resets PATH to
+# /usr/local/bin:/usr/bin:..., dropping /usr/local/{go,cargo}/bin — so the ENV
+# PATH below alone is not enough. Symlink the toolchain entrypoints into
+# /usr/local/bin (the cargo/* shims still resolve via CARGO_HOME/RUSTUP_HOME env).
+RUN ln -sf /usr/local/go/bin/go /usr/local/go/bin/gofmt /usr/local/bin/ \
+    && ln -sf /usr/local/cargo/bin/* /usr/local/bin/
+
+# Toolchains on PATH for non-login shells too; GOPATH lives in the user's home.
+ENV PATH=/usr/local/go/bin:/usr/local/cargo/bin:${PATH} \
+    GOPATH=/home/bench/go
+
+# --- PHP composer + Ruby bundler --------------------------------------------
+RUN curl -fsSL https://getcomposer.org/installer -o /tmp/composer-setup.php \
+    && php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+    && rm /tmp/composer-setup.php \
+    && gem install --no-document bundler
+
+# --- agent CLIs (global, via npm — no TTY needed) --------------------------
+# pi requires Node >=22.19 and its shell installer needs a terminal; installing
+# the npm package directly avoids both. Package names are stable upstream.
+RUN npm install -g @anthropic-ai/claude-code @earendil-works/pi-coding-agent
+
+# --- non-root user (agents refuse / warn when run as root) -----------------
+ARG USER=bench
+RUN useradd -m -s /bin/bash "$USER"
+USER ${USER}
+WORKDIR /home/${USER}
+
+# --- clone the 10 codebases at pinned SHAs ---------------------------------
+COPY --chown=bench:bench repos.manifest ./repos.manifest
+COPY --chown=bench:bench scripts ./harness/scripts
+RUN bash ./harness/scripts/clone-repos.sh ./repos.manifest ./repos
+
+# Repos live at /home/bench/repos/<name>; harness at /home/bench/harness.
+ENV GROVE_TESTBENCH_REPOS=/home/bench/repos
+
+CMD ["bash"]

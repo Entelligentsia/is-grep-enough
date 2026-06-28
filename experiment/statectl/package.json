@@ -1,0 +1,13 @@
+{
+  "name": "exp-statectl",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Deterministic, zod-validated state manager for the navigation 3-way experiment. The ONLY writer of experiment/state.json — no free-form JSON edits.",
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
+  }
+}

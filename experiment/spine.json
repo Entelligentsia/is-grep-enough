@@ -1,0 +1,31 @@
+{
+  "experiment": "nav-3way",
+  "purpose": "Which code-introspection tooling serves coding agents best, and why — text (baseline) vs structural (grove) vs semantic (lsp), across a task-complexity ladder. See experiment/DESIGN.md.",
+  "model": "sonnet",
+  "arms": {
+    "baseline": { "capability": "bash + coreutils (text search)",           "image": "grove-testbench/base:latest",  "mcp": null,         "needs_index": false },
+    "grove":    { "capability": "bash + grove MCP/CLI (structural)",         "image": "grove-testbench/grove:v0.1.11", "mcp": "grove",      "needs_index": false },
+    "lsp":      { "capability": "bash + native Claude Code LSP tool (semantic)", "image": "grove-testbench/lsp:latest", "mcp": null,      "needs_index": false }
+  },
+  "rungs": ["L1", "L2", "L3", "L4", "L5"],
+  "repos_source": "repos.manifest",
+  "cell_id": "<rung>-<arm>-<repo>",
+  "order_policy": {
+    "by": ["rung", "arm", "repo"],
+    "rung_order": ["L1", "L2", "L3", "L4", "L5"],
+    "arm_order": ["baseline", "grove", "lsp"],
+    "repo_order": "manifest"
+  },
+  "watchdog": { "max_bytes": 1500000, "poll_s": 60 },
+  "metrics": ["context", "run_wall_s", "setup_s", "complexity_scorecard", "answer_quality"],
+  "readiness": {
+    "side_ready_iff": "prompt file experiment/prompts/<repo>/<rung>.txt exists AND (arm.needs_index ? setup[<arm>/<repo>].ready : true)"
+  },
+  "provenance": {
+    "harness_fix_commit": "edaa3ce",
+    "grove_version": "0.1.10",
+    "repo_pins": "repos.manifest (per-repo SHAs)",
+    "prompts_spec": "experiment/PROMPT_GENESIS.md",
+    "genesis_walled_off": true
+  }
+}

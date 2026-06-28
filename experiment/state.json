@@ -1,0 +1,812 @@
+{
+  "experiment": "nav-3way",
+  "spine": "experiment/spine.json",
+  "registered_repos": [
+    "redis",
+    "django",
+    "bitcoin",
+    "laravel",
+    "rails",
+    "typescript",
+    "webpack",
+    "spring-boot",
+    "tokio",
+    "hugo"
+  ],
+  "sides": {
+    "L1-baseline-redis": {
+      "status": "harvested",
+      "run_wall_s": 61,
+      "context": 126393,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/redis-L1.claude.baseline.jsonl",
+      "ts": "2026-06-27T07:00:26.049Z"
+    },
+    "L1-grove-redis": {
+      "status": "harvested",
+      "run_wall_s": 84,
+      "context": 267978,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/redis-L1.claude.grove.jsonl",
+      "ts": "2026-06-27T16:48:52.588Z"
+    },
+    "L1-lsp-redis": {
+      "status": "harvested",
+      "run_wall_s": 70,
+      "context": 192777,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/redis-L1.claude.lsp.jsonl",
+      "ts": "2026-06-27T10:08:14.256Z"
+    },
+    "L2-baseline-redis": {
+      "status": "pending"
+    },
+    "L2-grove-redis": {
+      "status": "pending"
+    },
+    "L2-lsp-redis": {
+      "status": "pending"
+    },
+    "L3-baseline-redis": {
+      "status": "pending"
+    },
+    "L3-grove-redis": {
+      "status": "pending"
+    },
+    "L3-lsp-redis": {
+      "status": "pending"
+    },
+    "L4-baseline-redis": {
+      "status": "harvested",
+      "run_wall_s": 113,
+      "context": 309894,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/redis-L4.claude.baseline.jsonl",
+      "ts": "2026-06-27T15:35:20.457Z"
+    },
+    "L4-grove-redis": {
+      "status": "harvested",
+      "run_wall_s": 119,
+      "context": 359299,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/redis-L4.claude.grove.jsonl",
+      "ts": "2026-06-27T16:44:10.193Z"
+    },
+    "L4-lsp-redis": {
+      "status": "harvested",
+      "run_wall_s": 153,
+      "context": 566133,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/redis-L4.claude.lsp.jsonl",
+      "ts": "2026-06-27T15:38:33.760Z"
+    },
+    "L5-baseline-redis": {
+      "status": "harvested",
+      "run_wall_s": 191,
+      "context": 1578920,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/redis-L5.claude.baseline.jsonl",
+      "ts": "2026-06-27T11:44:17.469Z"
+    },
+    "L5-grove-redis": {
+      "status": "harvested",
+      "run_wall_s": 189,
+      "context": 387167,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/redis-L5.claude.grove.jsonl",
+      "ts": "2026-06-27T16:52:04.688Z"
+    },
+    "L5-lsp-redis": {
+      "status": "harvested",
+      "run_wall_s": 128,
+      "context": 398131,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/redis-L5.claude.lsp.jsonl",
+      "ts": "2026-06-27T11:21:52.434Z"
+    },
+    "L1-baseline-django": {
+      "status": "harvested",
+      "run_wall_s": 34,
+      "context": 72102,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/django-L1.claude.baseline.jsonl",
+      "ts": "2026-06-27T09:54:42.390Z"
+    },
+    "L1-grove-django": {
+      "status": "harvested",
+      "run_wall_s": 65,
+      "context": 101968,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/django-L1.claude.grove.jsonl",
+      "ts": "2026-06-27T16:53:22.490Z"
+    },
+    "L1-lsp-django": {
+      "status": "harvested",
+      "run_wall_s": 42,
+      "context": 127173,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/django-L1.claude.lsp.jsonl",
+      "ts": "2026-06-27T09:55:26.787Z"
+    },
+    "L2-baseline-django": {
+      "status": "pending"
+    },
+    "L2-grove-django": {
+      "status": "pending"
+    },
+    "L2-lsp-django": {
+      "status": "pending"
+    },
+    "L3-baseline-django": {
+      "status": "pending"
+    },
+    "L3-grove-django": {
+      "status": "pending"
+    },
+    "L3-lsp-django": {
+      "status": "pending"
+    },
+    "L4-baseline-django": {
+      "status": "pending"
+    },
+    "L4-grove-django": {
+      "status": "pending"
+    },
+    "L4-lsp-django": {
+      "status": "pending"
+    },
+    "L5-baseline-django": {
+      "status": "harvested",
+      "run_wall_s": 110,
+      "context": 182567,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/django-L5.claude.baseline.jsonl",
+      "ts": "2026-06-27T11:46:10.168Z"
+    },
+    "L5-grove-django": {
+      "status": "harvested",
+      "run_wall_s": 143,
+      "context": 515693,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/django-L5.claude.grove.jsonl",
+      "ts": "2026-06-27T16:55:49.596Z"
+    },
+    "L5-lsp-django": {
+      "status": "harvested",
+      "run_wall_s": 132,
+      "context": 621281,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/django-L5.claude.lsp.jsonl",
+      "ts": "2026-06-27T11:38:55.112Z"
+    },
+    "L1-baseline-bitcoin": {
+      "status": "pending"
+    },
+    "L1-grove-bitcoin": {
+      "status": "pending"
+    },
+    "L1-lsp-bitcoin": {
+      "status": "pending"
+    },
+    "L2-baseline-bitcoin": {
+      "status": "pending"
+    },
+    "L2-grove-bitcoin": {
+      "status": "pending"
+    },
+    "L2-lsp-bitcoin": {
+      "status": "pending"
+    },
+    "L3-baseline-bitcoin": {
+      "status": "pending"
+    },
+    "L3-grove-bitcoin": {
+      "status": "pending"
+    },
+    "L3-lsp-bitcoin": {
+      "status": "pending"
+    },
+    "L4-baseline-bitcoin": {
+      "status": "pending"
+    },
+    "L4-grove-bitcoin": {
+      "status": "pending"
+    },
+    "L4-lsp-bitcoin": {
+      "status": "pending"
+    },
+    "L5-baseline-bitcoin": {
+      "status": "harvested",
+      "run_wall_s": 252,
+      "context": 1670994,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/bitcoin-L5.claude.baseline.jsonl",
+      "ts": "2026-06-27T18:18:16.171Z"
+    },
+    "L5-grove-bitcoin": {
+      "status": "harvested",
+      "run_wall_s": 375,
+      "context": 546658,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/bitcoin-L5.claude.grove.jsonl",
+      "ts": "2026-06-27T17:43:31.219Z"
+    },
+    "L5-lsp-bitcoin": {
+      "status": "harvested",
+      "run_wall_s": 269,
+      "context": 1441623,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/bitcoin-L5.claude.lsp.jsonl",
+      "ts": "2026-06-27T18:12:18.685Z"
+    },
+    "L1-baseline-laravel": {
+      "status": "pending"
+    },
+    "L1-grove-laravel": {
+      "status": "pending"
+    },
+    "L1-lsp-laravel": {
+      "status": "pending"
+    },
+    "L2-baseline-laravel": {
+      "status": "pending"
+    },
+    "L2-grove-laravel": {
+      "status": "pending"
+    },
+    "L2-lsp-laravel": {
+      "status": "pending"
+    },
+    "L3-baseline-laravel": {
+      "status": "pending"
+    },
+    "L3-grove-laravel": {
+      "status": "pending"
+    },
+    "L3-lsp-laravel": {
+      "status": "pending"
+    },
+    "L4-baseline-laravel": {
+      "status": "pending"
+    },
+    "L4-grove-laravel": {
+      "status": "pending"
+    },
+    "L4-lsp-laravel": {
+      "status": "pending"
+    },
+    "L5-baseline-laravel": {
+      "status": "pending"
+    },
+    "L5-grove-laravel": {
+      "status": "pending"
+    },
+    "L5-lsp-laravel": {
+      "status": "pending"
+    },
+    "L1-baseline-rails": {
+      "status": "pending"
+    },
+    "L1-grove-rails": {
+      "status": "pending"
+    },
+    "L1-lsp-rails": {
+      "status": "pending"
+    },
+    "L2-baseline-rails": {
+      "status": "pending"
+    },
+    "L2-grove-rails": {
+      "status": "pending"
+    },
+    "L2-lsp-rails": {
+      "status": "pending"
+    },
+    "L3-baseline-rails": {
+      "status": "pending"
+    },
+    "L3-grove-rails": {
+      "status": "pending"
+    },
+    "L3-lsp-rails": {
+      "status": "pending"
+    },
+    "L4-baseline-rails": {
+      "status": "pending"
+    },
+    "L4-grove-rails": {
+      "status": "pending"
+    },
+    "L4-lsp-rails": {
+      "status": "pending"
+    },
+    "L5-baseline-rails": {
+      "status": "pending"
+    },
+    "L5-grove-rails": {
+      "status": "pending"
+    },
+    "L5-lsp-rails": {
+      "status": "pending"
+    },
+    "L1-baseline-typescript": {
+      "status": "pending"
+    },
+    "L1-grove-typescript": {
+      "status": "pending"
+    },
+    "L1-lsp-typescript": {
+      "status": "pending"
+    },
+    "L2-baseline-typescript": {
+      "status": "pending"
+    },
+    "L2-grove-typescript": {
+      "status": "pending"
+    },
+    "L2-lsp-typescript": {
+      "status": "pending"
+    },
+    "L3-baseline-typescript": {
+      "status": "pending"
+    },
+    "L3-grove-typescript": {
+      "status": "pending"
+    },
+    "L3-lsp-typescript": {
+      "status": "pending"
+    },
+    "L4-baseline-typescript": {
+      "status": "pending"
+    },
+    "L4-grove-typescript": {
+      "status": "pending"
+    },
+    "L4-lsp-typescript": {
+      "status": "pending"
+    },
+    "L5-baseline-typescript": {
+      "status": "harvested",
+      "run_wall_s": 214.449,
+      "context": 2427126,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/typescript-L5.claude.baseline.jsonl",
+      "ts": "2026-06-28T00:44:21.195Z"
+    },
+    "L5-grove-typescript": {
+      "status": "harvested",
+      "run_wall_s": 165.27,
+      "context": 569597,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/typescript-L5.claude.grove.jsonl",
+      "ts": "2026-06-27T18:38:19.552Z"
+    },
+    "L5-lsp-typescript": {
+      "status": "harvested",
+      "run_wall_s": 201.763,
+      "context": 773286,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/typescript-L5.claude.lsp.jsonl",
+      "ts": "2026-06-28T02:35:27.796Z"
+    },
+    "L1-baseline-webpack": {
+      "status": "pending"
+    },
+    "L1-grove-webpack": {
+      "status": "pending"
+    },
+    "L1-lsp-webpack": {
+      "status": "pending"
+    },
+    "L2-baseline-webpack": {
+      "status": "pending"
+    },
+    "L2-grove-webpack": {
+      "status": "pending"
+    },
+    "L2-lsp-webpack": {
+      "status": "pending"
+    },
+    "L3-baseline-webpack": {
+      "status": "pending"
+    },
+    "L3-grove-webpack": {
+      "status": "pending"
+    },
+    "L3-lsp-webpack": {
+      "status": "pending"
+    },
+    "L4-baseline-webpack": {
+      "status": "pending"
+    },
+    "L4-grove-webpack": {
+      "status": "pending"
+    },
+    "L4-lsp-webpack": {
+      "status": "pending"
+    },
+    "L5-baseline-webpack": {
+      "status": "pending"
+    },
+    "L5-grove-webpack": {
+      "status": "pending"
+    },
+    "L5-lsp-webpack": {
+      "status": "pending"
+    },
+    "L1-baseline-spring-boot": {
+      "status": "pending"
+    },
+    "L1-grove-spring-boot": {
+      "status": "pending"
+    },
+    "L1-lsp-spring-boot": {
+      "status": "pending"
+    },
+    "L2-baseline-spring-boot": {
+      "status": "pending"
+    },
+    "L2-grove-spring-boot": {
+      "status": "pending"
+    },
+    "L2-lsp-spring-boot": {
+      "status": "pending"
+    },
+    "L3-baseline-spring-boot": {
+      "status": "pending"
+    },
+    "L3-grove-spring-boot": {
+      "status": "pending"
+    },
+    "L3-lsp-spring-boot": {
+      "status": "pending"
+    },
+    "L4-baseline-spring-boot": {
+      "status": "harvested",
+      "run_wall_s": 135.049,
+      "context": 391260,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/spring-boot-L4.claude.baseline.jsonl",
+      "ts": "2026-06-28T04:32:57.120Z"
+    },
+    "L4-grove-spring-boot": {
+      "status": "harvested",
+      "run_wall_s": 178.928,
+      "context": 455343,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/spring-boot-L4.claude.grove.jsonl",
+      "ts": "2026-06-28T04:29:36.017Z"
+    },
+    "L4-lsp-spring-boot": {
+      "status": "pending"
+    },
+    "L5-baseline-spring-boot": {
+      "status": "harvested",
+      "run_wall_s": 173.463,
+      "context": 396900,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/spring-boot-L5.claude.baseline.jsonl",
+      "ts": "2026-06-28T03:37:59.687Z"
+    },
+    "L5-grove-spring-boot": {
+      "status": "harvested",
+      "run_wall_s": 269.059,
+      "context": 877060,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/spring-boot-L5.claude.grove.jsonl",
+      "ts": "2026-06-28T02:53:05.542Z"
+    },
+    "L5-lsp-spring-boot": {
+      "status": "harvested",
+      "run_wall_s": 184.394,
+      "context": 558939,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/spring-boot-L5.claude.lsp.jsonl",
+      "ts": "2026-06-28T03:51:23.232Z"
+    },
+    "L1-baseline-tokio": {
+      "status": "pending"
+    },
+    "L1-grove-tokio": {
+      "status": "pending"
+    },
+    "L1-lsp-tokio": {
+      "status": "pending"
+    },
+    "L2-baseline-tokio": {
+      "status": "pending"
+    },
+    "L2-grove-tokio": {
+      "status": "pending"
+    },
+    "L2-lsp-tokio": {
+      "status": "pending"
+    },
+    "L3-baseline-tokio": {
+      "status": "pending"
+    },
+    "L3-grove-tokio": {
+      "status": "pending"
+    },
+    "L3-lsp-tokio": {
+      "status": "pending"
+    },
+    "L4-baseline-tokio": {
+      "status": "pending"
+    },
+    "L4-grove-tokio": {
+      "status": "pending"
+    },
+    "L4-lsp-tokio": {
+      "status": "pending"
+    },
+    "L5-baseline-tokio": {
+      "status": "pending"
+    },
+    "L5-grove-tokio": {
+      "status": "pending"
+    },
+    "L5-lsp-tokio": {
+      "status": "pending"
+    },
+    "L1-baseline-hugo": {
+      "status": "pending"
+    },
+    "L1-grove-hugo": {
+      "status": "pending"
+    },
+    "L1-lsp-hugo": {
+      "status": "pending"
+    },
+    "L2-baseline-hugo": {
+      "status": "pending"
+    },
+    "L2-grove-hugo": {
+      "status": "pending"
+    },
+    "L2-lsp-hugo": {
+      "status": "pending"
+    },
+    "L3-baseline-hugo": {
+      "status": "pending"
+    },
+    "L3-grove-hugo": {
+      "status": "pending"
+    },
+    "L3-lsp-hugo": {
+      "status": "pending"
+    },
+    "L4-baseline-hugo": {
+      "status": "pending"
+    },
+    "L4-grove-hugo": {
+      "status": "pending"
+    },
+    "L4-lsp-hugo": {
+      "status": "pending"
+    },
+    "L5-baseline-hugo": {
+      "status": "pending"
+    },
+    "L5-grove-hugo": {
+      "status": "pending"
+    },
+    "L5-lsp-hugo": {
+      "status": "pending"
+    }
+  },
+  "setup": {
+    "lsp/redis": {
+      "ready": true,
+      "setup_s": 2749,
+      "index_log": "bear-make compile_commands.json(10755L)+clangd .cache(9.5M); verified definition(dictAdd)->src/dict.c:493 line-exact via mcp bridge+seed server.c; setup_s=start->index-complete wall est",
+      "image_digest": "sha256:b99153953bd444cf8bfed721ced8c42868c951dbeb7a6cf8d49d15c6ea9dc180",
+      "ts": "2026-06-27T06:54:55.266Z"
+    },
+    "lsp/bitcoin": {
+      "ready": true,
+      "setup_s": 148,
+      "index_log": "cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON (wallet/gui/zmq/usdt/multiprocess/tests/bench/fuzz OFF; deps libboost-dev+libevent-dev) -> compile_commands.json(237 TUs) at repo root; clangd --background-index -> .cache/clangd 1655 shards/13M; verified goToDefinition BroadcastTransaction @rpc/mempool.cpp:127 -> node/transaction.cpp:32 line-exact (native LSP plugin). setup_s=configure->index-complete (CMake export, no full make).",
+      "image_digest": "sha256:1358cb56edbe5d8d694543bbee47e53fcf75a730330826ccb6cef3824f9224da",
+      "ts": "2026-06-27T18:06:55.751Z"
+    },
+    "lsp/typescript": {
+      "ready": true,
+      "setup_s": 1,
+      "index_log": "native Claude Code LSP plugin (typescript-language-server --stdio, redis/bitcoin pattern). NO per-repo config or warm-cache baking: repo ships solution-style tsconfigs (src/tsconfig.json project-refs + src/*/tsconfig.json) so tsserver resolves each opened file via its owning project. Verified from COLD in lsp:latest against baked /home/bench/repos/typescript: textDocument/definition@src/compiler/parser.ts:1344 (createSourceFile) -> line-exact in 0.6s; workspace/symbol(createSourceFile) -> 3 line-exact hits. lsp:typescript tag == lsp:latest (no baked artifacts). setup_s ~= cold project-load-to-line-exact (vs redis 2749s build / bitcoin 148s cmake) — cheapest lsp repo.",
+      "image_digest": "sha256:2590dea5098a56568d9b365c417d1a8b4afa4e19c6538c7fbc46053335a14ea6",
+      "ts": "2026-06-28T02:23:26.873Z"
+    },
+    "lsp/spring-boot": {
+      "ready": true,
+      "setup_s": 9,
+      "index_log": "native Claude Code LSP plugin, jdtls 1.60.0 under bundled JDK 21 (base image ships only Java 17; jdtls>=1.31 needs 21). spring-boot is a 451-module composite Gradle build with heavy buildSrc -> full jdtls Gradle import is impractical/fragile, and the L5 binding spine is intra-module. Approach: transparent LSP proxy (jdtls-noimport.py, lsp-seed.py lineage) deep-merges java.import.{gradle,maven}.enabled=false into the client initialize (-> jdtls default project, no gradle download) and, for every file the agent opens, injects workspace/executeCommand java.project.addToSourcePath for its .../src/main/java root so sibling/intra-module types resolve via jdtls's own type model. Verified END-TO-END through the proxy with a vanilla initialize (no java settings): textDocument/definition Binder.java:73(BindHandler) -> BindHandler.java:31 line-exact in ~5s, no gradle. Limitation: cross-module refs into dependency jars do not resolve (no gradle); the L5 spine does not need them. setup_s ~= cold addToSourcePath+first-resolve (vs redis 2749s bear-make / bitcoin 148s cmake).",
+      "image_digest": "sha256:d6031c1041cf8b7864ae8dc6f7f34ee832eba6466cb309487020564831e70b5a",
+      "ts": "2026-06-28T03:21:14.537Z"
+    }
+  },
+  "judge": {
+    "L1-redis": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.93,
+          "completeness": 1,
+          "verdict": "Full. Identifies struct redisObject/robj at object.h:100-112, nails the type-vs-encoding distinction, and covers all 6 spine fields plus iskvobj/metabits/kvobj extras. Cites resolve well (object.h:96-98 for refcount sentinels is slightly loose since 98 is OBJ_FIRST_SPECIAL, and objectSetLRUOrLFU is at 189 not 188-190), but server.h:126 OBJ_SHARED_INTEGERS and kvobjGetAllocPtr@194 confirm. Used grep then a full Read."
+        },
+        "grove": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "(grove v0.1.11 re-run) Full. All 6 spine elements: struct redisObject/robj at object.h:100, type:4(101), encoding:4(102) with a clear logical-vs-representation distinction, refcount with both sentinels (OBJ_SHARED/STATIC_REFCOUNT), lru with LRU/LFU dual-meaning, ptr as payload, plus credited extras (iskvobj, metabits, kvobj). Reproduced struct verbatim-accurate to object.h:100-112; encoding constants 0-13 match object.h:75-88; the explicit cite object.h:100 resolves exact and OBJ_REFCOUNT_BITS=23(95), LRU_BITS=24(90), sentinels(96-97) all check out. No loose cites."
+        },
+        "lsp": {
+          "grounding": 0.95,
+          "completeness": 1,
+          "verdict": "Full. After the LSP index failed to warm, fell back to grep + Read and still produced a complete, accurate answer: struct at object.h:100-112, type constants server.h:856-884 (verified), encoding 75-88, LRU_CLOCK_RESOLUTION object.h:92, and a sharp two-level type-system summary. All 6 spine elements plus kvobj layout. Cites resolve (incr/decr 129-130 slightly loose on decr@128)."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms scored Full on completeness with strong grounding — each correctly centered the type (logical) vs encoding (concrete) distinction and covered refcount, lru, ptr, and the kvobj extras. Grove was marginally tightest on citations via its structural tools; baseline and LSP both reached the same answer via grep+Read, with LSP notable for recovering gracefully after its index failed to warm.",
+      "ts": "2026-06-27T17:12:30.752Z"
+    },
+    "L1-django": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.95,
+          "completeness": 1,
+          "verdict": "Cites class:34, _func_path 64-71, view_name 73-74, namespace filtering at lines 59/61 — all resolve correctly in source. Covers every spine element: func, args/kwargs with the captured/extra split, url_name/route, both namespace axes, view_name, and the __getitem__ triple consumed by the base handler."
+        },
+        "grove": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "(grove v0.1.11 re-run) Full. Nails all 6 spine pieces: class ResolverMatch (resolvers.py:34, exact), func, args/kwargs + captured_kwargs/extra_kwargs split, url_name/route, the full namespacing chain (app_names/app_name, namespaces/namespace, view_name from namespaces + _func_path), and __getitem__ (func,args,kwargs) with the base.py dispatch contract. The lone numbered cite (resolvers.py:34) lands exactly on `class ResolverMatch:`; the three verbatim blocks reproduce lines 64-77 faithfully; base.py resolve_request unpacks the triple at 183/237. Light on explicit line numbers beyond 34, but every quoted construct verifies — grounding by cite-accuracy is exact (up from 0.80 on the v0.1.9 run, which was penalized for cite density)."
+        },
+        "lsp": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Most line-precise of the three: func:48, view_class:64, url_name:51, _func_path:70-71, view_path/view_name:73-74, route:52, tried:53, __getitem__:76-77 — every cite resolves exactly. Complete coverage of all spine elements and correctly names BaseHandler.resolve_request as the triple's consumer."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms correctly identify ResolverMatch and hit the full required spine with no factual errors. LSP edges out on grounding with the most numerous and exactly-correct line citations, baseline is close behind with accurate range cites, and grove is equally complete in content but offers the fewest explicit line numbers.",
+      "ts": "2026-06-27T17:12:32.164Z"
+    },
+    "L5-redis": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.88,
+          "completeness": 1,
+          "verdict": "Traces the full cross-cutting path: dirty-delta detection in call, deferred alsoPropagate into server.also_propagate, the afterCommand->postExec->propagatePendingCommands flush with MULTI/EXEC wrapping, propagateNow split to AOF/replicationFeedSlaves, and RESP encoding into the shared repl buffer, even extending to per-replica socket write. Cites mostly resolve (3978, 4032, 4127-4154, 3732, 3811, 3867, 3704, 631, server.h:1802, networking 2734 all correct); a few are loose (setGenericCommand labeled t_string.c:190 which is the server.dirty++ line, and putClientInPendingWriteQueue tied to networking.c:275 which is the write-handler-install region)."
+        },
+        "grove": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "(grove v0.1.11 re-run) Full. All 6 spine elements connected — proc-in-call (server.c:3949/4015), dirty detection (3978/4032), deferred alsoPropagate into also_propagate (queue-then-flush made explicit), afterCommand(4271)->postExec->propagatePendingCommands(3811)->propagateNow(3704) flush bridge, fan-out replicationFeedSlaves(3716), RESP/SELECT-injection into the repl buffer (replication.c:631). Every sampled cite exact: call 3949, alsoPropagate 3732, shouldPropagate 3673, propagatePendingCommands 3811, afterCommand 4271, propagateNow 3704, replicationFeedSlaves replication.c:631, prepareReplicasToWrite 363, replBufWriterEnd 565, _writeToClientSlave networking.c:2734 — no loose lines. Tightest grounding of the redis cells."
+        },
+        "lsp": {
+          "grounding": 0.93,
+          "completeness": 1,
+          "verdict": "Full chain covered end-to-end with the deferred-flush rationale and nesting guard explained; core cites (3949, 3978, 4015, 4032, 4127-4153, 3732, 3811, 3867, 3704, 631, replBufWriter 466/565, prepareReplicasToWrite 363) all verify. Slightly loose only on the SELECT-injection (cited 672-699; actual createObject/feed is ~682-688) and RESP-encoding (702-724) line ranges, which are approximate but in the right region."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms reached Full: each traced proc->dirty-detection->deferred alsoPropagate->afterCommand/postExec/propagatePendingCommands flush->propagateNow->replicationFeedSlaves/feedReplicationBuffer and explicitly named the queue-then-flush indirection that is the crux. Grove had the tightest grounding (every cite exact), LSP nearly as good with a couple of approximate line ranges, and baseline was equally complete (going furthest into the per-replica socket-write path) but carried two slightly loose citations.",
+      "ts": "2026-06-27T17:12:31.462Z"
+    },
+    "L5-django": {
+      "scores": {
+        "baseline": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Traced the full save->save_base->_save_table->_do_update/_do_insert->QuerySet._update/_insert->compiler.execute_sql->cursor.execute chain with both branches. All cited lines (base.py 841/950/1069/1206/1246, query.py 1428/2112, compiler.py 1801/1925/2037) resolve correctly. Describes pre_save/post_save signals and the updated/created feedback though without citing the exact signal lines."
+        },
+        "grove": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "(grove v0.1.11 re-run) Full. All 6 spine elements connected — save (base.py:841) -> save_base(950) with pre_save/post_save (created=not updated), _save_table update-first/insert-fallback (1069 -> _do_update 1140 -> if not updated 1157 -> _do_insert 1199), hand-off through _do_insert(1246)/manager._insert(1251)/QuerySet._insert(query.py:2112) and the _update mirror (query.py:1428), down to SQLInsertCompiler.execute_sql(compiler.py:1925)->cursor.execute(1936), with _assign_returned_values(1259) feeding updated/created back up. Every sampled cite exact (base.py 841/950/976/1069/1140/1157/1199/1246/1251/1259, query.py 1428/2112, compiler.py 1801/1925/1936/2037/2114); class boundaries confirm insert vs update compiler split. No loose lines."
+        },
+        "lsp": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Most granular and fully accurate: cites the precise signal line (base.py:976 pre_save), PK setup (1098), the fast-insert and update/insert ranges, plus base SQLCompiler.execute_sql (1595) under the update path. Every sampled cite resolves correctly and the full cross-cutting path is connected end to end."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms produced Full answers tracing the entire cross-cutting write path with grounding that checks out against the pinned source. LSP is marginally the most precise (it cites the exact pre_save signal line and the base execute_sql), while baseline and grove describe the signals correctly but cite fewer exact signal line numbers; the difference is cosmetic since all hit every required spine element.",
+      "ts": "2026-06-27T17:12:32.876Z"
+    },
+    "L4-redis": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. All four spine pieces — launch/fork (bgsaveCommand rdb.c:4833, rdbSaveBackground rdb.c:2070, redisFork server.c:7428, openChildInfoPipe childinfo.c:25), child write (rdbSave rdb.c:2027, atomic rename rdb.c:2041), the childinfo progress pipe (sendChildInfoGeneric childinfo.c:49, receiveChildInfo childinfo.c:150 called from cron server.c:1694), and parent reap+finalize (checkChildrenDone server.c:1416 -> backgroundSaveDoneHandler rdb.c:4605 -> Disk rdb.c:4544, updateSlavesWaitingBgsave rdb.c:4628). Best-grounded on the progress mechanism: cited the throttle block rdb.c:1855 and described the 1024-key & >=1s gate before sendChildInfo exactly as in source. Every sampled cite resolves exact; also nailed the dirty -= dirty_before_bgsave bookkeeping and SIGUSR1 clean-abort. Reached this on 19 turns / 310k context — cheapest arm."
+        },
+        "grove": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full (re-run on grove v0.1.11, the shipped route-by-task steering — image grove-testbench/grove:v0.1.11, baked block). All four spine pieces: launch/fork (bgsaveCommand rdb.c:4833, rdbSaveBackground rdb.c:2070, redisFork server.c:7428, openChildInfoPipe childinfo.c:25), child write (rdbSave rdb.c:2027 -> rdbSaveInternal rdb.c:1956 -> rdbSaveRio rdb.c:1880), progress pipe (sendChildInfoGeneric childinfo.c:49), and reap+finalize (checkChildrenDone server.c:1416 @cron 1695 -> backgroundSaveDoneHandler rdb.c:4605 / Disk rdb.c:4544). Every sampled cite resolves exact. This run navigated pure-grove (21 grove calls, no shell) but far leaner than the pre-steering rigid run (36 source calls): 359k context vs 560k. The route-by-task steering's win holds whether or not the model combines on a given run — fewer, better-targeted grove calls via map/breadth-control. (Prior records: rigid v0.1.10 baked = 560k/36-grove; host-injected new steering = 329k/20-grove+3-grep+2-read. n=1 each; stochastic on whether it combines, consistent ~330-360k band.)"
+        },
+        "lsp": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. All four pieces with good structural depth on the child write path (rdbSave rdb.c:2027 -> rdbSaveInternal rdb.c:1956 -> rdbSaveRio, temp file rdb.c:2032, atomic rename rdb.c:2041, rio/incremental-fsync detail), the childinfo pipe (sendChildInfoGeneric childinfo.c:49, receiveChildInfo childinfo.c:150), and reap+finalize (serverCron server.c:1692, checkChildrenDone server.c:1416, backgroundSaveDoneHandler rdb.c:4605/Disk rdb.c:4544, dispatcher post-handler rdb.c:4622). Every cite in the answer resolves exact; leaned on a couple of grep/Read anchors mid-trace and carried one fewer distinct childinfo-helper line than baseline. 566k context / 29 turns."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms reached Full on every spine piece — launch/fork, child rdbSave, the childinfo progress pipe, and parent reap+finalize (checkChildrenDone -> backgroundSaveDoneHandler -> Disk) — each connecting the fork+copy-on-write rationale for non-blocking and the dirty_before_bgsave bookkeeping. This is the cleanest-grounded cell measured: every sampled citation from all three arms resolves exactly against the pinned source (grounding 0.97-0.98, a near-tie). The differentiator is COST, and it inverts L5-redis: on this bounded 3-file subsystem (rdb.c/server.c/childinfo.c) baseline's targeted grep+Read was both fully correct and the CHEAPEST (310k context / 19 turns), while grove (560k / 38) and lsp (566k / 29) fanned out across many symbols for ~1.8x the context to reach the same Full answer. Baseline was also the most precise on the progress-pipe throttle (rdb.c:1855, 1024-key & >=1s gate).",
+      "ts": "2026-06-27T16:44:54.114Z"
+    },
+    "L5-bitcoin": {
+      "scores": {
+        "grove": {
+          "grounding": 0.95,
+          "completeness": 0.97,
+          "verdict": "Full. All 6 spine elements connected with accurate, specific cites: sendrawtransaction (rpc/mempool.cpp:47)->BroadcastTransaction (node/transaction.cpp:32)->ProcessTransaction (validation.cpp:4455)->AcceptToMemoryPool->AcceptSingleTransactionInternal (validation.cpp:1323); PreChecks (validation.cpp:786) with CheckTransaction and IsStandardTx named (script verification covered via PolicyScriptChecks/ConsensusScriptChecks, though CheckInputScripts/:1150 not named outright); InitiateTxBroadcastToAll (net_processing.cpp:2272) with explicit 'nothing sent yet'; per-peer m_tx_inventory_to_send queueing; and SendMessages (net_processing.cpp:5792) building CInv{MSG_WTX/MSG_TX} -> MakeAndPushMessage(NetMsgType::INV). Queue-then-flush indirection (the crux) clearly acknowledged. Every load-bearing cite present resolves; only minor docking for a few omitted sub-line numbers. Tightest grounding of the three at the lowest context cost (547k)."
+        },
+        "lsp": {
+          "grounding": 0.9,
+          "completeness": 1,
+          "verdict": "Full. All 6 spine elements connected: sendrawtransaction (rpc/mempool.cpp:47)->BroadcastTransaction (node/transaction.cpp:32)->ProcessTransaction/AcceptToMemoryPool/MemPoolAccept with CheckTransaction, IsStandardTx, CheckInputScripts (PreChecks validation.cpp:786, PolicyScriptChecks ~1139); InitiateTxBroadcastToAll relay trigger (net_processing.cpp:2272); per-peer m_tx_inventory_to_send queueing; SendMessages flush (net_processing.cpp:5792) building CInv and emitting NetMsgType::INV. Queue-then-flush deferred indirection explicitly emphasized ('announcement decoupled from acceptance'). Cites specific and largely accurate; minor looseness (CheckInputScripts placed ~:1139 vs ref :1150, a few unverified net.cpp extras) keeps grounding just below grove. Engaged native LSP (lsp_tools=2) with grep-anchoring (bash=22) -- the honest cold-index cost."
+        },
+        "baseline": {
+          "grounding": 0.8,
+          "completeness": 0.95,
+          "verdict": "Full. All six spine elements connected: sendrawtransaction->BroadcastTransaction; ProcessTransaction->AcceptToMemoryPool->AcceptSingleTransactionInternal (validation.cpp:4455/1781/1323 correct); full check set CheckTransaction/IsStandardTx/CheckInputScripts (line numbers omitted); InitiateTxBroadcastToAll (net_processing.cpp:2272); per-peer m_tx_inventory_to_send queueing (with the 2287 handshake gate, 2290 known-filter); SendMessages flush (5792, range 6112-6172) emitting CInv/NetMsgType::INV; queue-then-flush indirection called out. Grounding dented: routes the relay trigger through the validationinterface signal path (ChainImpl::TransactionAddedToMempool calling InitiateTxBroadcastToAll) whereas the locally-submitted flow has BroadcastTransaction call node.peerman->InitiateTxBroadcastToAll directly at node/transaction.cpp:137; validation.cpp:591/1318 cites unsupported. Highest context cost (1.67M, ~3x grove)."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms reached Full: each threaded sendrawtransaction->BroadcastTransaction->ProcessTransaction->AcceptToMemoryPool/MemPoolAccept (CheckTransaction/IsStandardTx/CheckInputScripts)->InitiateTxBroadcastToAll relay trigger->per-peer m_tx_inventory_to_send queue->SendMessages flush emitting CInv/NetMsgType::INV, and each named the queue-then-flush deferred indirection that is the crux. Differentiation is in grounding and context cost, not completeness: grove tightest (0.95) at 547k context; lsp fully complete (1.0) but slightly looser cites (0.90) at 1.44M with grep-anchored native-LSP engagement; baseline complete (0.95) but took a wrong turn routing the relay trigger through the validationinterface TransactionAddedToMempool signal rather than the direct node.peerman->InitiateTxBroadcastToAll(node/transaction.cpp:137) and carried two unsupported cites (grounding 0.80) at the highest context cost (1.67M, ~3x grove). Blind-judged (anonymized A/B/C, mapping withheld from judges).",
+      "ts": "2026-06-27T18:21:51.275Z"
+    },
+    "L5-typescript": {
+      "scores": {
+        "grove": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. All four stages in order: parse (createProgram program.ts:1515 -> processSourceFile/findSourceFileWorker:3545 -> createSourceFile parser.ts:1344, call at program.ts:410), bind (getTypeChecker:2684 -> createTypeChecker -> initializeTypeChecker checker.ts:51555 -> bindSourceFile binder.ts:502), check (getSemanticDiagnosticsForFile:2858 -> checkSourceFile checker.ts:49547, lazy+cached), emit (emit:2688 -> emitWorker:2718 -> emitFiles emitter.ts:752 -> getTransformers transformer.ts:120 -> transformNodes). Every sampled cite line-exact (incl. getSyntacticDiagnosticsForFile:2831, getPreEmitDiagnostics:634). Cheapest context (570k), 10 grove structural calls + opportunistic shell."
+        },
+        "lsp": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. Same checker-driven-bind / lazy-cached-check / transform-then-write chain; cites line-exact (createGetSourceFile:392, getMergedBindAndCheckDiagnostics:2923, emitJsFileOrBundle emitter.ts:821, emitDeclarationFileOrBundle:886, getTransformers transformer.ts:120). One self-flagged approximate (onProgramCreateComplete ~1725). 12 native-LSP calls, read-anchored (19 reads, 2 bash). 773k ctx."
+        },
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Most line-dense answer (~45 cites), overwhelmingly exact incl. call-sites (nextToken:1812, parseList:1814, bind binder.ts:2751, bindContainer:953, printSourceFileOrBundle emitter.ts:993, getScriptTransformers transformer.ts:127, transformNodes:248, internal bindSourceFile binder.ts:571 / locals-guard:584). One label conflation: 'getBindAndCheckDiagnosticsForFile' cited at program.ts:2887, but 2887 is the NoCache variant (plain is 2869). 3 Explore subagents, 114 tool calls, 2.43M ctx (~4.3x grove)."
+        }
+      },
+      "verdict": "All three arms Full on completeness with line-exact grounding; answer quality does not separate the tools on this cross-cutting parse->bind->check->emit trace. Cost is the differentiator and it is dramatic: baseline 2.43M ctx (3 parallel Explore subagents, 114 tool calls, 57 bash + 54 read) vs grove 570k (1.00 grounding, 10 structural calls) vs lsp 773k (12 LSP calls, read-anchored). Note: the reference key anchors steps at call-sites (initializeTypeChecker call checker.ts:2410, emitWorker call program.ts:2699, getDiagnostics call :2906) while the arms cite definitions (checker.ts:51555, program.ts:2718) -- both valid, no key revision.",
+      "ts": "2026-06-28T02:40:22.088Z"
+    },
+    "L5-spring-boot": {
+      "scores": {
+        "grove": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. All 6 spine elements + extras across a 9-stage walkthrough: attach (ConfigurationPropertySources.attach@89, get@120) -> adapt (SpringConfigurationPropertySources.adapt@64 -> SpringConfigurationPropertySource.from@171, SYSTEM_ENVIRONMENT_MAPPERS) -> name resolution (getConfigurationProperty@85, mapper.map, getPropertySourceProperty@106; SystemEnvironmentPropertyMapper.map@47 four forms + reverse map@63/convertName@72/processElementValue@81) -> Binder.bind@287/private bind@365/onStart -> bindObject@423/findProperty@476/bindProperty@490 -> handleBindResult@384 (onSuccess/onFinish, BindConverter convert@105) -> BindResult. Every sampled cite line-exact vs the actual core/spring-boot/ tree; found the cache reverse-lookup path beyond the key. Heaviest navigation of the bench (42 grove calls) at 877k ctx; recovered from the repo's restructured layout."
+        },
+        "baseline": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. All 6 spine elements across a 7-stage walkthrough, and uniquely nailed the attach() vs from() two-path distinction (spine 1) explicitly. Hits the env-var name mapping (SystemEnvironmentPropertyMapper, 4 candidate forms, SYSTEM_ENVIRONMENT vs LEGACY buildSimpleToString/Form.UNIFORM-ORIGINAL), handler callbacks (onStart/onSuccess/onFinish), conversion (BindConverter delegates), and BindResult.of/UNBOUND. LINE-LIGHT — names classes/methods, almost no file:line cites — but the concrete claims are accurate (no wrong cites), so grounding is not docked per cite-accuracy-not-density. CHEAPEST cell of the triple (397k ctx, 1 Explore subagent) despite the repo-layout restructure."
+        },
+        "lsp": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full (RE-RUN; the original run DNF'd mid-synthesis on a transient 'Connection closed' API error, which the new is_error gate now catches). The MOST line-precise of the three arms: an 11-stage walkthrough with every sampled cite line-exact vs the actual tree -- attach (ConfigurationPropertySources.java:89), SpringConfigurationPropertySource.from:171/getConfigurationProperty:85/getPropertySourceProperty:106, SystemEnvironmentPropertyMapper.map:47/:63, SpringIterableConfigurationPropertySource:105/tryUpdate:258 (the cache), ConfigurationPropertiesBindingPostProcessor:82, ConfigurationPropertiesBinder.bind:92/getBindHandler:113/getBinder:185/onStart:239, Binder constructor:201/:218/bind:248/:365/bindObject:423/findProperty:476/bindProperty:490/bindDataObject:498, BindConverter:64/:95. Uniquely traced the NO_DIRECT_PROPERTY short-circuit and the forward+reverse cache mapping. 3 native-LSP/jdtls calls, read-anchored (13 reads); 559k ctx -- cheaper than grove here."
+        }
+      },
+      "key_revisions": [
+        {
+          "level": "L5",
+          "reason": "Reference key example paths use the legacy spring-boot-project/spring-boot/ module layout; the pinned repo has since been restructured to core/spring-boot/. Package-relative structure and verified spine line numbers (attach@89, getConfigurationProperty@85, map@47/63, convertName@72, processElementValue@81, bindObject@423, findProperty@476, bindProperty@490, BindConverter@58/126) still match — only the module path prefix changed.",
+          "cite": "core/spring-boot/src/main/java/org/springframework/boot/context/properties/{source,bind}/",
+          "ts": "2026-06-28"
+        }
+      ],
+      "verdict": "All three arms Full with line-exact grounding (baseline accurate-but-line-light). The cell inverts the usual cost story: baseline is CHEAPEST (397k vs grove 877k vs lsp 559k) and uniquely called out the attach()-vs-from() nuance, while grove went deepest (42 structural calls, found the cache reverse-lookup) and lsp was the most line-precise (11 stages, every cite exact, incl. NO_DIRECT_PROPERTY + forward/reverse cache). The lsp value is a RE-RUN: its first run DNF'd mid-synthesis on a transient 'Connection closed mid-response' API error that the original gate missed (has_result was true despite is_error=true, subtype:success); side-metrics.sh + the runarm gate now reject is_error==true. Note: the pinned repo was restructured to core/spring-boot/ vs the key's legacy spring-boot-project/ paths (see key_revisions); all arms navigated the actual tree, verified line-exact.",
+      "ts": "2026-06-28T03:52:46.066Z"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+# grove-testbench :: grove = baseline + grove (grove ON)
+# ---------------------------------------------------------------------------
+# Layers grove onto the authenticated baseline image. For the Claude path this
+# is all that's needed: run-race.sh passes `--mcp-config` pointing at
+# `grove serve` at runtime, so grove only has to be on PATH with its grammars
+# cached.
+#
+# (pi's grove integration is a CLI skill you add manually — out of scope here.)
+#
+# Build:  scripts/build-grove.sh   (stages the host grove binary into context)
+# ---------------------------------------------------------------------------
+ARG DB_IMAGE=grove-testbench/base:latest
+FROM ${DB_IMAGE}
+
+# grove binary (host-built, linux x86_64 — matches the image arch)
+USER root
+COPY grove /usr/local/bin/grove
+RUN chmod +x /usr/local/bin/grove
+USER bench
+
+# Pre-fetch grammars for the 10 scene languages so the first MCP call is instant
+# and the image works offline.
+RUN grove fetch rust go python typescript javascript c cpp java ruby php \
+ && grove --version
+
+# Set grove up PROPERLY in each repo: `grove init --as mcp` writes the steering
+# CLAUDE.md (so the agent actually uses grove's tools), the .mcp.json, and
+# grove.lock. This is the realistic "grove is set up" experience — the baseline
+# image repos stay vanilla (no steering), which is the baseline we race against.
+RUN set -e; for d in /home/bench/repos/*; do \
+      echo ">> grove init $d"; \
+      (cd "$d" && grove init --as mcp) || { echo "init failed: $d"; exit 1; }; \
+    done
+
+CMD ["bash"]

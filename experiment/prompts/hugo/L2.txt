@@ -1,0 +1,1 @@
+I'm planning a change to Hugo's draft / future-dated / expired content filtering — the rule for when a content page should actually be built versus silently skipped — and I need to know the per-page eligibility check and the assembly-time places that consult it. Help me see where that check fires during page assembly and what the different callers do when a page fails it.
