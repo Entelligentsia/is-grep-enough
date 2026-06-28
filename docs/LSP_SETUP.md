@@ -159,7 +159,6 @@ Then record into the ledger (clock `setup_s` = cold-server → line-exact):
 
 ```bash
 statectl setup-set lsp/<repo> ready=true setup_s=<n> \
-  image=grove-testbench/lsp:latest \
   index_log="<server>; <what dominated>; verified <symbol>@<use> -> <def> line-exact"
 ```
 

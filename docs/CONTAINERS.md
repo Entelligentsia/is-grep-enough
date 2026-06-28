@@ -118,7 +118,6 @@ run. Then record into the validated state ledger:
 
 ```bash
 statectl setup-set lsp/<repo> ready=true setup_s=<n> \
-  image=grove-testbench/lsp:latest \
   index_log="<server>; <what dominated>; verified <symbol>@<use> -> <def> line-exact"
 ```
 

@@ -64,7 +64,6 @@ spring-boot→jdtls).
 ### 4. Record (validated state)
 ```
 statectl setup-set lsp/<repo> ready=true setup_s=<n> \
-  image=grove-testbench/lsp:latest \
   index_log="<server>; cold|baked; verified <symbol>@<use> -> <def> line-exact in <wall>s"
 ```
 Only then does `statectl next` consider that repo's lsp cells runnable.
@@ -75,9 +74,11 @@ Print: `<repo>` lsp → server, cold-vs-baked, `setup_s`, the verified anchor, a
 refs into dependency jars don't resolve — intra-module spine doesn't need them).
 
 ## Notes
-- **Cold-first is the policy AND a finding:** so far only C/C++ (clangd) needs a
-  baked warm; tsserver/jdtls/(likely gopls/rust-analyzer/ruby/php) resolve cold.
-  Do not bake reflexively — record the cold cost and move on.
+- **Cold-first is the policy AND a finding — and the split tracks compilation.**
+  Cold-resolve (no bake): tsserver, jdtls (via proxy), **pyright** (django ~17 s),
+  **intelephense** (laravel ~30 s). Need a build/index warm: **clangd** (C/C++
+  compile DB), **gopls** (Go toolchain + workspace), **rust-analyzer** (cargo
+  index). ruby-lsp (rails) is slow/TBD. Do not bake reflexively — cold-test, record.
 - The official plugins are baked once in `lsp:latest` (all 8 enabled); this skill
   is about the per-repo **server readiness**, not plugin install.
 - creds at `~/.claude/.credentials.json`; the verify run injects them like `run-side.sh`.

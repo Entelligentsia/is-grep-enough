@@ -167,7 +167,7 @@ uses it.
 | webpack, typescript | JS/TS | typescript-language-server | none |
 | laravel | PHP | intelephense | none |
 | rails | Ruby | ruby-lsp | light |
-| /new | Go | gopls | go modules |
+| hugo | Go | gopls | go modules |
 | tokio | Rust | rust-analyzer | cargo index (heavy) |
 | redis, bitcoin | C/C++ | clangd | compile_commands.json (build) |
 | spring-boot | Java | jdtls | gradle/maven import (heavy) |
