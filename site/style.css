@@ -129,6 +129,17 @@ td.repo:hover { color: var(--ink); }
 .keyrev { font-size: .78rem; color: var(--ink); background: var(--paper-2); border-left: 2px solid var(--ink-faint); padding: .4rem .6rem; margin-top: .5rem; }
 .flag { font-family: var(--mono); font-size: .7rem; color: var(--ink-faint); border: 1px solid var(--rule-strong); padding: 0 .3rem; margin-left: .3rem; }
 
+/* free cell-vs-cell compare (§8, T2.3) */
+.fc-pickers { display: flex; gap: 1.4rem; flex-wrap: wrap; align-items: center; font-size: .85rem; margin-bottom: 1rem; }
+.fc-pickers label { color: var(--ink-faint); margin-right: .4rem; }
+.fc-pickers select { font-family: var(--mono); font-size: .82rem; padding: .2rem .4rem; background: var(--paper); color: var(--ink); border: 1px solid var(--rule-strong); }
+table.fc-metrics { border-collapse: collapse; font-size: .82rem; }
+table.fc-metrics th { text-align: left; font-weight: 600; padding: .25rem .8rem .25rem 0; }
+table.fc-metrics th .bar { width: .6rem; height: .6rem; display: inline-block; }
+table.fc-metrics td { padding: .2rem .8rem .2rem 0; border-top: 1px solid var(--rule); }
+table.fc-metrics .fc-k { color: var(--ink-faint); }
+table.fc-metrics .fc-v { font-family: var(--mono); }
+
 /* spine-coverage strip (§8, T2.2): aligned per-arm Full/Partial/Miss verdict */
 .spine { margin-top: 1.2rem; border-top: 1px solid var(--rule); padding-top: .7rem; }
 .spine-h { font-size: .82rem; color: var(--ink-soft); margin-bottom: .5rem; }

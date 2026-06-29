@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P2 / T2.3` — **P1 complete (T1.1–T1.6, TX.1); T2.1–T2.2 done** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P3 / T3.1` — **P1 complete; P2 complete (T2.1–T2.3)** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -112,7 +112,16 @@ raw byte in ≤3 clicks.
   coverage, never a good/bad hue (truthbound: no verdict coloring). Verified
   headless: L1-redis all ● Full; L5-bitcoin baseline ◐ Partial vs grove/lsp ●
   Full; unjudged L4-spring-boot shows no strip; no page errors.
-- [ ] **T2.3 Free cell-vs-cell compare** (e.g. grove L2 vs L3 redis) (§8).
+- [x] **T2.3 Free cell-vs-cell compare** (e.g. grove L2 vs L3 redis) (§8). New
+  "Free compare" section: two `#fc-a`/`#fc-b` pickers over all harvested cells with
+  a readable trail. `renderFreeCompare` draws an aligned metric strip (context/
+  turns/wall/cost + judge coverage word) with the lower value on each cost-axis
+  marked "lower" factually (never "winner"), then the two trails in parallel panes
+  (reuses `buildPanes` with a cell-id label; sync-scroll off by default). State is
+  URL-encoded (`fca`/`fcb`, T1.6 parity) so a comparison is shareable. Verified
+  headless on the canonical grove L2-vs-L3-redis (L3 costs more context/wall/$ for
+  the same Full coverage — the scaling story §8 wants), a cross-arm baseline-vs-lsp
+  pair, the same-cell guard, and URL restore; no page errors.
 
 ## Phase 3 — Polish & trust toolkit
 

@@ -28,7 +28,8 @@ const METRICS = {
 const METRIC_FAMILIES = ["context", "turns", "wall", "cache", "cost"];
 
 const state = { rung: "", repo: "", cell: null, showJudged: false, showIncomplete: true,
-  arms: { baseline: true, grove: true, lsp: true } };
+  arms: { baseline: true, grove: true, lsp: true }, fcA: "", fcB: "" };
+const cellById = (id) => DATA.cells.find((c) => c.id === id);
 const visibleArms = () => ARMS.filter((a) => state.arms[a]);
 // a cell counts as incomplete/DNF if it never reached harvested OR a harvested
 // run carries the dnf flag (had no clean result / errored) — §5.3 toggle target.
@@ -69,6 +70,13 @@ async function init() {
 
   $("#t-judged").onchange = (e) => { state.showJudged = e.target.checked; renderCoverage(); syncURL(); };
   $("#t-incomplete").onchange = (e) => { state.showIncomplete = e.target.checked; render(); };
+
+  // free compare (§8, T2.3): pick any two harvested cells with a readable trail.
+  const fcCells = DATA.cells.filter((c) => c.status === "harvested" && c.evidence?.readable)
+    .map((c) => c.id).sort();
+  fillSelect($("#fc-a"), fcCells); fillSelect($("#fc-b"), fcCells);
+  $("#fc-a").onchange = (e) => { state.fcA = e.target.value; renderFreeCompare(); syncURL(); };
+  $("#fc-b").onchange = (e) => { state.fcB = e.target.value; renderFreeCompare(); syncURL(); };
   $("#tx-close").onclick = () => $("#tx-overlay").classList.remove("open");
   $("#tx-overlay").onclick = (e) => { if (e.target.id === "tx-overlay") e.target.classList.remove("open"); };
 
@@ -92,6 +100,8 @@ function applyURL() {
   else for (const a of ARMS) state.arms[a] = true;
   state.showJudged = p.get("judged") === "1";
   state.showIncomplete = p.get("incomplete") !== "0";
+  const fca = p.get("fca"); state.fcA = DATA.cells.some((c) => c.id === fca) ? fca : "";
+  const fcb = p.get("fcb"); state.fcB = DATA.cells.some((c) => c.id === fcb) ? fcb : "";
 }
 
 // reflect current state into the form controls (after URL load / popstate)
@@ -101,6 +111,8 @@ function syncControls() {
   for (const cb of $("#f-arms").querySelectorAll("input")) cb.checked = state.arms[cb.dataset.arm];
   $("#t-judged").checked = state.showJudged;
   $("#t-incomplete").checked = state.showIncomplete;
+  $("#fc-a").value = state.fcA;
+  $("#fc-b").value = state.fcB;
 }
 
 // serialize state into the query string; only non-default keys are written so a
@@ -113,6 +125,8 @@ function syncURL() {
   if (visibleArms().length !== ARMS.length) p.set("arms", visibleArms().join(","));
   if (state.showJudged) p.set("judged", "1");
   if (!state.showIncomplete) p.set("incomplete", "0");
+  if (state.fcA) p.set("fca", state.fcA);
+  if (state.fcB) p.set("fcb", state.fcB);
   const qs = p.toString();
   history.replaceState(null, "", qs ? `${location.pathname}?${qs}` : location.pathname);
 }
@@ -127,6 +141,7 @@ function render() {
   renderCoverage();
   renderMetrics();
   if (state.cell) renderDetail(state.cell);
+  renderFreeCompare();
   syncURL();
 }
 
@@ -360,6 +375,72 @@ function renderDetail(cid) {
   renderCoverage();
 }
 
+// Free cell-vs-cell compare (§8, T2.3): two arbitrary harvested cells side by
+// side — e.g. grove L2 vs L3 redis to see how an arm scales with complexity, or
+// two arms on one task. Aligned metric strip (lower-on-each-cost-axis marked
+// factually, never "winner") + the two readable trails in parallel panes.
+function renderFreeCompare() {
+  const out = $("#fc-out"); if (!out) return;
+  out.replaceChildren();
+  const a = state.fcA && cellById(state.fcA);
+  const b = state.fcB && cellById(state.fcB);
+  if (!a || !b) {
+    out.append(el("p", { className: "caveat", textContent: "pick two harvested cells above to compare." }));
+    return;
+  }
+  if (a.id === b.id) {
+    out.append(el("p", { className: "caveat", textContent: "pick two different cells." }));
+    return;
+  }
+  const pair = [a, b];
+  const AXES = { context: (c) => c.metrics?.context, turns: (c) => c.metrics?.turns,
+                 wall: (c) => c.metrics?.run_wall_s, cost: (c) => c.cost?.usd };
+  const lower = {};
+  for (const [k, get] of Object.entries(AXES)) {
+    const vals = pair.map(get).filter((v) => v != null);
+    lower[k] = vals.length === 2 ? Math.min(...vals) : null;
+  }
+  const fmt = { context: (v) => v?.toLocaleString() ?? "—", turns: (v) => v ?? "—",
+    wall: (v) => v != null ? v + "s" : "—", cost: (v) => v != null ? "$" + v.toFixed(4) : "—" };
+
+  // aligned metric strip: rows = metrics, columns = the two cells
+  const tbl = el("table", { className: "fc-metrics" });
+  const hr = el("tr", {}, el("th", { textContent: "" }));
+  for (const c of pair) hr.append(el("th", {}, [el("span", { className: "bar", style: `background:${ARM_COLOR[c.arm]}` }), document.createTextNode(" " + c.id)]));
+  tbl.append(hr);
+  for (const [k, get] of Object.entries(AXES)) {
+    const tr = el("tr", {}, el("td", { className: "fc-k", textContent: k }));
+    for (const c of pair) {
+      const v = get(c);
+      const td = el("td", { className: "fc-v" });
+      td.append(document.createTextNode(fmt[k](v)));
+      if (lower[k] != null && v === lower[k]) td.append(el("span", { className: "lowtag", textContent: " lower" }));
+      tr.append(td);
+    }
+    tbl.append(tr);
+  }
+  // judge coverage row (the judge's own word per arm), when both cells are judged
+  const covRow = el("tr", {}, el("td", { className: "fc-k", textContent: "coverage" }));
+  for (const c of pair) {
+    const s = DATA.judge[`${c.rung}-${c.repo}`]?.scores?.[c.arm];
+    const cov = s ? coverageOf(s.verdict) : null;
+    covRow.append(el("td", { className: "fc-v", textContent: cov ? `${COV_GLYPH[cov] ?? ""} ${cov}` : "—" }));
+  }
+  tbl.append(covRow);
+  out.append(tbl);
+
+  // the two transcripts in parallel — reuse the compare-pane machinery, labelled
+  // by full cell id (arm alone wouldn't disambiguate L2 vs L3 of the same arm).
+  const bar = el("div", { className: "compare-bar", style: "margin-top:.8rem" });
+  const sync = el("label", { className: "toggle compare-sync" },
+    [el("input", { type: "checkbox" }), document.createTextNode(" sync scroll")]);
+  bar.append(sync); out.append(bar);
+  const panes = el("div", { className: "compare-panes" });
+  panes.style.gridTemplateColumns = "repeat(2, 1fr)";
+  out.append(panes);
+  buildPanes(pair, panes, sync.querySelector("input"), (c) => c.id);
+}
+
 // Spine-coverage strip (§8, T2.2 / §13.5 #5). The reference key's required spine
 // is NOT in the feed and stays judge-only (genesis wall), so a fabricated
 // per-element checklist is off the table. Instead we render the spec's endorsed
@@ -432,13 +513,13 @@ function renderCompareTranscripts(host, arms) {
   };
 }
 
-function buildPanes(arms, panes, syncBox) {
+function buildPanes(arms, panes, syncBox, labelFor = (c) => c.arm) {
   const scrollers = [];
   for (const c of arms) {
     const pane = el("div", { className: "cmp-pane" });
     pane.append(el("div", { className: "cmp-head" },
       [el("span", { className: "bar", style: `background:${ARM_COLOR[c.arm]}` }),
-       document.createTextNode(c.arm),
+       document.createTextNode(labelFor(c)),
        ...(c.metrics?.turns != null ? [el("span", { className: "cmp-turns", textContent: `${c.metrics.turns} turns` })] : [])]));
     const scroll = el("div", { className: "cmp-scroll" }, el("p", { className: "caveat", textContent: "loading…" }));
     pane.append(scroll);
