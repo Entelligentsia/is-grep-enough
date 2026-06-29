@@ -233,11 +233,11 @@
     },
     "L5-lsp-django": {
       "status": "harvested",
-      "run_wall_s": 132,
-      "context": 621281,
+      "run_wall_s": 153,
+      "context": 516686,
       "engaged": true,
       "evidence": "evidence/nav3/L5/raw/django-L5.claude.lsp.jsonl",
-      "ts": "2026-06-27T11:38:55.112Z"
+      "ts": "2026-06-29T05:48:16.250Z"
     },
     "L1-baseline-bitcoin": {
       "status": "pending"

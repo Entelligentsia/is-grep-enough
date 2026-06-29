@@ -1,164 +1,180 @@
 # transcript: I'm planning a change to how persisting a model instance interacts with the database, so I need to understand the full journey of saving a single object. Sta...
 
 
-💬 I'll trace this using the LSP tool, starting from the public entry point.
+💬 Let me load the LSP tool and start from the `Model.save` entry point.
   ▸ ToolSearch(select:LSP)
   ▸ LSP(Model.save)
   ▸ LSP(Model.save)
   ▸ LSP({"operation":"documentSymbol","filePath":"/home/bench/repos/django/django/db/models/base.py","line":1,"character":1})
 
-💬 Now let me read the key methods in sequence.
+💬 I can see all the key methods. Let me read the relevant sections in parallel.
+  ▸ Read(/home/bench/repos/django/django/db/models/base.py)
   ▸ Read(/home/bench/repos/django/django/db/models/base.py)
 
-💬 Now let me follow `_update` and `_insert` down into the QuerySet layer.
+💬 Now let me read `_save_table`, `_do_update`, and `_do_insert` in parallel.
+  ▸ Read(/home/bench/repos/django/django/db/models/base.py)
+  ▸ Read(/home/bench/repos/django/django/db/models/base.py)
+  ▸ Read(/home/bench/repos/django/django/db/models/base.py)
+
+💬 Now I need to follow `manager._insert` down to where the SQL is built and executed. Let me find `_insert` on the manager.
+  ▸ LSP({"operation":"goToDefinition","filePath":"/home/bench/repos/django/django/db/models/base.py","line":1251,"character":20})
+  ▸ LSP({"operation":"goToDefinition","filePath":"/home/bench/repos/django/django/db/models/base.py","line":1241,"character":30})
+
+💬 Let me look at the `QuerySet._update` and `Manager._insert` directly.
+  ▸ LSP(_insert)
+  ▸ LSP({"operation":"documentSymbol","filePath":"/home/bench/repos/django/django/db/models/manager.py","line":1,"character":1})
+
+💬 `_insert` is in `QuerySet` at `query.py:2112`. Let me read that and `_update` too.
   ▸ LSP({"operation":"documentSymbol","filePath":"/home/bench/repos/django/django/db/models/query.py","line":1,"character":1})
 
-💬 Now let me read the `_update` and `_insert` methods from `query.py`.
+💬 Now let me read `QuerySet._insert` (line 2112) and `QuerySet._update` (line 1428) together.
   ▸ Read(/home/bench/repos/django/django/db/models/query.py)
   ▸ Read(/home/bench/repos/django/django/db/models/query.py)
 
-💬 Now let me look at the SQL compiler layer — `UpdateQuery` and `InsertQuery`.
-  ▸ Bash(ls /home/bench/repos/django/django/db/models/sql/)
+💬 Both paths end at `sql.InsertQuery` / `sql.UpdateQuery` compilers. Let me find those.
   ▸ LSP({"operation":"documentSymbol","filePath":"/home/bench/repos/django/django/db/models/sql/subqueries.py","line":1,"character":1})
-  ▸ Read(/home/bench/repos/django/django/db/models/sql/subqueries.py)
-
-💬 Now let me look at the SQL compiler — `SQLUpdateCompiler` and `SQLInsertCompiler`.
   ▸ LSP({"operation":"documentSymbol","filePath":"/home/bench/repos/django/django/db/models/sql/compiler.py","line":1,"character":1})
 
-💬 Now let me read the two key compiler methods — `SQLUpdateCompiler.execute_sql` / `execute_returning_sql` and `SQLInsertCompiler.execute_sql` — to see how the...
+💬 Let me read the final execution steps in both compilers.
   ▸ Read(/home/bench/repos/django/django/db/models/sql/compiler.py)
   ▸ Read(/home/bench/repos/django/django/db/models/sql/compiler.py)
 
-💬 Let me also read the base `SQLCompiler.execute_sql` since `SQLUpdateCompiler` delegates to it.
-  ▸ Read(/home/bench/repos/django/django/db/models/sql/compiler.py)
+💬 Here is the full journey, stage by stage.  ---  ## Stage 1 — `Model.save()` (`base.py:841`): public entry point  This is the only method users call. Before t...
 
-💬 Now I have the full picture. Here's the complete walkthrough.  ---  ## The full save journey  ### Stage 1 — `Model.save()` (base.py:841): public entry point ...
-
-──────── RESULT (success, 130827ms, 16 turns) ────────
-Now I have the full picture. Here's the complete walkthrough.
+──────── RESULT (success, 152672ms, 21 turns) ────────
+Here is the full journey, stage by stage.
 
 ---
 
-## The full save journey
+## Stage 1 — `Model.save()` (`base.py:841`): public entry point
 
-### Stage 1 — `Model.save()` (base.py:841): public entry point
+This is the only method users call. Before touching the database it does three things:
 
-This is the user-facing API. Before delegating anywhere it does three things:
+1. **Validates related fields** — `_prepare_related_fields_for_save()` ensures no FK/O2O on this instance still points to an unsaved object.
+2. **Resolves the database** — `router.db_for_write()` picks the alias (`using`) if the caller didn't supply one.
+3. **Narrows `update_fields` for deferred instances** — if some fields were never loaded (`__dict__` is missing them) and this instance was fetched from the same DB it's being written back to, `save()` automatically restricts the update to only the loaded non-PK fields, so it doesn't wipe unloaded columns with `None`.
 
-1. **Validates related-object fields** via `_prepare_related_fields_for_save()` (base.py:858) — ensures FK targets are saved/have PKs.
-2. **Picks the database alias** — `using or router.db_for_write(...)`.
-3. **Decides whether to narrow to `update_fields`** — if the instance was loaded from the DB but some fields are deferred (not in `self.__dict__`), it automatically converts a bare `save()` into an `update_fields` save of only the fields that were loaded (base.py:889–902). This prevents overwriting columns that were never fetched.
-
-Then it hands off to `save_base()`.
+After those checks it hands off unconditionally to `save_base()`.
 
 ---
 
-### Stage 2 — `Model.save_base()` (base.py:950): once-per-save bookkeeping
+## Stage 2 — `Model.save_base()` (`base.py:950`): per-save bookkeeping and signals
 
-The docstring says explicitly: *"parts that should happen only once per save"* — signals and transaction setup. The interesting parts:
+This is the once-per-save coordination layer. Its job is lifecycle management, not SQL.
 
-- **`pre_save` signal** is emitted here (base.py:976), before any DB work.
-- **Transaction wrapping**: if the model has parents (MTI), an `atomic(savepoint=False)` block wraps everything; otherwise `mark_for_rollback_on_error` is used instead (only marks the connection, no savepoint overhead).
-- **`_save_parents()`** recurses up the inheritance tree, saving each parent's table. If a parent was inserted (not updated), the child inherits that insert-flag.
-- **`_save_table()`** is called for the concrete model's own table.
-- After the context manager exits: `_state.db` is stamped and `_state.adding` is set to `False`.
-- **`post_save` signal** fires, with `created=(not updated)` so receivers can tell insert from update.
+```
+pre_save signal  →  [atomic savepoint if MTI]  →  _save_parents()  →  _save_table()  →  post_save signal
+```
 
----
-
-### Stage 3 — `Model._save_table()` (base.py:1069): INSERT-or-UPDATE decision
-
-This is where the branching logic lives.
-
-**PK setup**: if the PK isn't set, `meta.pk.get_pk_value_on_save(self)` is called (base.py:1098) — this is where UUID/sequence-based PKs get their value before the query.
-
-**Fast-insert short-circuit** (base.py:1105–1112): if the instance is flagged as `_state.adding` and every PK field has a default/db_default, `force_insert` is set to `True` and the UPDATE attempt is skipped entirely.
-
-**UPDATE attempt** (base.py:1115–1156): when `pk_set and not force_insert`:
-- Calls `field.pre_save(self, False)` on each non-PK, non-generated concrete field to get the value to write.
-- Computes `returning_fields`: generated columns that reference the updated fields, plus any fields whose value is an expression (F/Value etc.) — these need to be read back after the write.
-- Delegates to `_do_update()` → `filtered._update(values, returning_fields)`.
-- `updated = bool(results)` — the update is considered successful only if at least one row was matched.
-- If `force_update` or `update_fields` was set and zero rows matched → raises `self.NotUpdated`.
-
-**INSERT path** (base.py:1157–1203): runs if `not updated`:
-- Handles `order_with_respect_to` auto-increment (queries for `MAX(_order) + 1`).
-- Builds `insert_fields` — all local concrete non-generated fields (auto-field is excluded when PK was externally set).
-- Calls `field.pre_save(self, add=True)` per field (this is where `auto_now_add`, callable defaults, etc. run).
-- Determines `returning_fields` from `meta.db_returning_fields`, then adds expression-valued fields. Removes fields the backend can't return if `can_return_columns_from_insert` is False.
-- Calls `_do_insert(cls._base_manager, using, insert_fields, returning_fields, raw)`.
-- Calls `_assign_returned_values()` to write DB-generated values (e.g. auto-PK) back onto the instance.
+- **`pre_save`** is sent before any SQL runs (`sender=origin` keeps the proxy model as the sender).
+- If the model has parent tables (multi-table inheritance), everything is wrapped in `transaction.atomic(savepoint=False)`; single-table models use the lighter `mark_for_rollback_on_error`.
+- `_save_parents()` is skipped when `raw=True` (fixture loading).
+- After `_save_table()` returns, `_state.db` is set and `_state.adding` is cleared.
+- **`post_save`** receives `created=(not updated)` — it knows whether a row was born or just updated.
 
 ---
 
-### Stage 4 — QuerySet (`_update` / `_insert`) (query.py): query object assembly
+## Stage 3 — `Model._save_parents()` (`base.py:1022`): multi-table inheritance recursion
 
-**`QuerySet._update(values, returning_fields)`** (query.py:1428):
-- Chains the current queryset query into an `UpdateQuery` via `self.query.chain(sql.UpdateQuery)`.
-- Calls `query.add_update_fields(values)` — populates `query.values` with `(field, model, resolved_value)` triples, resolving any expressions against the query.
-- Dispatches: if `returning_fields` is `None`, calls `compiler.execute_sql(ROW_COUNT)`; otherwise calls `compiler.execute_returning_sql(returning_fields)`.
+For MTI models, each parent's DB table gets its own row. `_save_parents()` recurses up the inheritance chain — parents before children — so that child rows can reference parent PKs. Each parent save calls `_save_table()` for that parent's table and propagates `force_insert` downward.
 
-**`QuerySet._insert(objs, fields, ...)`** (query.py:2112):
-- Creates an `InsertQuery(self.model)`.
-- Calls `query.insert_values(fields, objs, raw=raw)` — just stores `query.fields`, `query.objs`, `query.raw`.
-- Returns `query.get_compiler(using=using).execute_sql(returning_fields)`.
-
-In both cases `query.get_compiler(using)` looks up the compiler class name stored on the query object (`"SQLUpdateCompiler"` / `"SQLInsertCompiler"`), instantiates it with the query and the database connection, and returns it.
+For single-table models this method does nothing.
 
 ---
 
-### Stage 5 — SQL compilers (compiler.py): SQL generation and execution
+## Stage 4 — `Model._save_table()` (`base.py:1069`): the UPDATE-or-INSERT decision
 
-**`SQLInsertCompiler.as_sql()`** (compiler.py:1801):
-- Gets the verb from `connection.ops.insert_statement(on_conflict=...)` — normally `"INSERT INTO"`, but backends can return `"INSERT OR IGNORE INTO"` etc.
-- Iterates fields × objects. Per field: calls `field.pre_save(obj, add=True)` (via `pre_save_val()`), then `field.get_db_prep_save(value, connection=...)` (via `prepare_value()`) to get a DB-ready value. Fields with `has_db_default()` that all resolve to `DatabaseDefault` are dropped from the column list.
-- `assemble_as_sql()` turns field values into `%s` placeholder strings and flat param lists.
-- Appends `RETURNING …` clause if `can_return_columns_from_insert`.
-- Returns a list of `(sql_string, params_tuple)` — one tuple per row for row-at-a-time backends, one tuple for bulk backends.
+This is the heart of the logic. The key decision tree:
 
-**`SQLInsertCompiler.execute_sql(returning_fields)`** (compiler.py:1925):
-- Opens `connection.cursor()`.
-- Iterates `as_sql()` results, calling `cursor.execute(sql, params)` for each.
-- If returning fields are wanted: uses `connection.ops.fetch_returned_rows(cursor, ...)` (backends that support `RETURNING`) or falls back to `connection.ops.last_insert_id(cursor, ...)` for single-row auto-field inserts.
-- Applies value converters (e.g. type coercion) and returns the list of rows.
+```
+pk not set?  →  get_pk_value_on_save() (e.g. generate a UUID)
 
-**`SQLUpdateCompiler.as_sql()`** (compiler.py:2037):
-- Calls `pre_sql_setup()` first — if the update touches multiple tables or the backend can't self-select (MySQL), it pre-fetches the matching PKs with a SELECT and rewrites the WHERE to `pk__in` those IDs.
-- Builds `UPDATE <table> SET col1 = %s, col2 = %s WHERE <pk filter>`.
-- Calls `field.get_db_prep_save()` for each value; expressions are compiled inline via `self.compile(val)`.
-- Appends `RETURNING …` if `returning_fields` is set.
+_state.adding AND all pk fields have defaults?
+    →  force_insert = True  (skip the UPDATE probe entirely)
 
-**`SQLUpdateCompiler.execute_returning_sql()`** (compiler.py:2135): if `can_return_rows_from_update`, calls `cursor.execute(sql, params)` then `fetch_returned_rows()`; otherwise falls back to `execute_sql(ROW_COUNT)` and synthesizes `[()] * row_count` placeholders.
+pk is set AND not force_insert?
+    →  attempt _do_update()
+       updated == True?  →  done
+       updated == False AND force_update?  →  raise NotUpdated
+       updated == False AND update_fields?  →  raise NotUpdated
+       updated == False otherwise?  →  fall through to INSERT
 
-**`SQLCompiler.execute_sql()`** (compiler.py:1595) — base used by the non-returning update path: calls `self.as_sql()`, opens `connection.cursor()`, calls `cursor.execute(sql, params)`, returns `cursor.rowcount` for `ROW_COUNT`, a single row for `SINGLE`, or a chunked iterator for `MULTI`.
+not updated?
+    →  handle order_with_respect_to  (auto-populate _order)
+    →  _do_insert()
+```
+
+Field values for the UPDATE path go through `field.pre_save(self, add=False)` (applying `auto_now`, transforms, etc.) and for the INSERT path through `field.pre_save(self, add=True)` (applying `auto_now_add`).
+
+**Returning fields** — both paths build a list of fields whose values need to come back from the DB: generated columns (`GeneratedField`) and any field whose pre-save value is a SQL expression rather than a Python literal. After either path executes, `_assign_returned_values()` writes those DB-computed values back onto `self.__dict__`.
 
 ---
 
-### How the stages connect — the chain
+## Stage 5a — `Model._do_update()` → `QuerySet._update()` (`base.py:1206`, `query.py:1428`): the UPDATE path
+
+`_do_update` filters `base_qs` to `pk=pk_val` and calls `filtered._update(values, returning_fields)`.
+
+Edge cases handled here:
+- **No values** (pure-PK model, or `update_fields` targets no columns in this table): returns `[()]` if the row exists, `[]` if not, without issuing an UPDATE.
+- **`select_on_save`**: first checks `exists()`, then calls `_update()`, then checks `exists()` again if 0 rows returned — to distinguish "row was concurrently deleted" from "DB returned 0 despite success."
+
+`QuerySet._update()` chains the existing queryset query as an `sql.UpdateQuery`, calls `query.add_update_fields(values)`, then dispatches to the compiler:
+- **With returning fields** → `get_compiler(db).execute_returning_sql(returning_fields)`
+- **Without** → `get_compiler(db).execute_sql(ROW_COUNT)`
+
+---
+
+## Stage 5b — `Model._do_insert()` → `QuerySet._insert()` (`base.py:1246`, `query.py:2112`): the INSERT path
+
+`_do_insert` calls `manager._insert(...)`, which is a queryset method proxied onto the manager via `_get_queryset_methods`. `QuerySet._insert()` (`query.py:2112`):
+
+```python
+query = sql.InsertQuery(self.model, ...)
+query.insert_values(fields, objs, raw=raw)
+return query.get_compiler(using=using).execute_sql(returning_fields)
+```
+
+`insert_values` stores the field list and object list on the query object; the compiler will iterate them when building SQL.
+
+---
+
+## Stage 6 — Compiler `as_sql()` + `execute_sql()`: turning the query into actual SQL
+
+**`SQLInsertCompiler.as_sql()`** (`compiler.py:1801`) builds the `INSERT INTO table (col1, col2, ...) VALUES (%s, %s, ...)` string. It:
+- Iterates the query's fields; for each field+object pair calls `field_as_sql()` → `field.get_db_prep_save()` → the connection's value preparation.
+- Handles DB defaults (`DEFAULT` keyword), bulk inserts, and any ON CONFLICT suffix for `update_conflicts`.
+
+**`SQLInsertCompiler.execute_sql()`** (`compiler.py:1925`) fires the cursor:
+
+```python
+with self.connection.cursor() as cursor:
+    for sql, params in self.as_sql():
+        cursor.execute(sql, params)      # ← actual DB call
+```
+
+Then fetches returned values:
+- PostgreSQL (`can_return_columns_from_insert`): `connection.ops.fetch_returned_rows(cursor, ...)` reads the `RETURNING` clause result.
+- Older/simpler backends: `connection.ops.last_insert_id(cursor, db_table, column)` for auto-increment PKs.
+
+**`SQLUpdateCompiler.as_sql()`** (`compiler.py:2037`) builds `UPDATE table SET col=%s WHERE pk=%s`.
+
+**`SQLUpdateCompiler.execute_returning_sql()`** (`compiler.py:2135`) covers the case where the backend supports `RETURNING` on UPDATE (PostgreSQL): appends the `RETURNING` clause to the UPDATE SQL and fetches rows. On backends that don't support it, it falls back to `execute_sql(ROW_COUNT)` and synthesizes `[()] * row_count` so that the caller can at least know the UPDATE hit some rows.
+
+---
+
+## The connection chain, summarised
 
 ```
 Model.save()
-  └─ Model.save_base()
-       ├─ pre_save signal
-       ├─ [transaction/savepoint]
-       ├─ Model._save_parents()       ← recurses for MTI ancestors
-       │    └─ Model._save_table()    ← one call per ancestor table
-       └─ Model._save_table()         ← for own concrete table
-            ├─ [UPDATE path] → Model._do_update()
-            │    └─ QuerySet._update(values, returning_fields)
-            │         └─ UpdateQuery + SQLUpdateCompiler
-            │              ├─ .as_sql()           → "UPDATE … SET … WHERE pk=%s"
-            │              └─ .execute_sql() / .execute_returning_sql()
-            │                   └─ cursor.execute(sql, params)
-            │
-            └─ [INSERT path] → Model._do_insert()
-                 └─ QuerySet._insert(objs, fields, ...)
-                      └─ InsertQuery + SQLInsertCompiler
-                           ├─ .as_sql()           → "INSERT INTO … (cols) VALUES (%s …)"
-                           └─ .execute_sql(returning_fields)
-                                └─ cursor.execute(sql, params)
-                                     └─ fetch returned rows / last_insert_id
-       └─ post_save signal
+ └─ save_base()          [pre_save, transaction, post_save]
+     └─ _save_parents()  [MTI recursion]
+     └─ _save_table()    [UPDATE or INSERT decision, field.pre_save()]
+         ├─ _do_update()
+         │   └─ QuerySet._update()
+         │       └─ sql.UpdateQuery  →  SQLUpdateCompiler.as_sql()  →  cursor.execute()
+         └─ _do_insert()
+             └─ QuerySet._insert()
+                 └─ sql.InsertQuery  →  SQLInsertCompiler.as_sql()  →  cursor.execute()
 ```
 
-The key design point is that `save_base` is the **signal and transaction fence** — everything that should happen exactly once per logical save lives there. `_save_table` is the **routing logic** — it decides INSERT vs UPDATE and owns the pre-save field value computation. The QuerySet methods (`_update`, `_insert`) are thin **query object factories**. The compilers are purely **SQL renderers + executors**: `as_sql()` produces the string, `execute_sql()` opens the cursor and fires it.
+The two cleanest seam points for intercepting the flow: `save_base()` (receives the signals and owns the transaction boundary) and `_save_table()` (owns the INSERT/UPDATE branch and all field value preparation). Everything below `_save_table()` is SQL assembly and cursor execution, with no further model-level decisions.
