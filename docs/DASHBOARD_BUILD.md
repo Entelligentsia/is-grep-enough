@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P1 / T1.3` — **T1.1, TX.1, T1.2 done** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P1 / T1.4` — **T1.1, TX.1, T1.2, T1.3 done** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -62,8 +62,11 @@ raw byte in ≤3 clicks.
   color. Provenance line points at the **raw file** ("build-derived, not the
   ledger scalar"), honoring §3.1 — and visibly so (e.g. baseline L2-redis shows
   19 series turns vs the ledger's 14 `num_turns`, which the curve is honest about).
-- [ ] **T1.3 Honest aggregation.** Min–max whisker / dot spread + printed `n`
-  everywhere an aggregate appears; never a lone mean/median (§5.3).
+- [x] **T1.3 Honest aggregation.** Each small-multiple now layers a min–max
+  whisker (`Plot.ruleX` groupX min/max) behind the raw per-repo dots and the
+  median tick, so no aggregate shows as a lone mark. Per-rung `n` is printed on
+  each facet header (`Plot.axisFx` top, `L2 · n=10`, `L4 · n=2`) so partial rungs
+  self-report a smaller n; caption restates whisker/tick/n + the n=1 caveat (§5.3).
 - [ ] **T1.4 Arm-visibility toggle** in the global filter bar (§4).
 - [ ] **T1.5 DNF / incomplete toggle** (default: shown, flagged) (§5.3).
 - [ ] **T1.6 URL-encoded filter state.** rung·repo·arm·cell encoded in the URL so

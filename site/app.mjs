@@ -146,18 +146,31 @@ function renderMetrics() {
       continue;
     }
 
+    // honest aggregation (§5.3, T1.3): per-rung n printed on the facet axis, and
+    // a min–max whisker behind the dots so no aggregate is shown as a lone tick.
+    // n here = distinct repos contributing a value in that rung (partial rungs
+    // self-report a smaller n).
+    const nByRung = {};
+    for (const r of rows) (nByRung[r.rung] ??= new Set()).add(r.repo);
+
     // one small chart per rung; arms (x) side by side within each.
     const nFacets = rungsShown.length;
     const width = Math.min(980, Math.max(360, nFacets * 200));
     const plot = Plot.plot({
-      width, height: 200, marginLeft: 58, marginBottom: 36, marginTop: 8,
+      width, height: 224, marginLeft: 58, marginBottom: 42, marginTop: 26,
       style: { fontFamily: "system-ui, sans-serif", fontSize: "11px", background: "transparent" },
       fx: { label: null, domain: rungsShown },
       x: { label: null, domain: ARMS, tickRotate: 0 },
       y: { label: null, grid: true, zero: true, nice: true, tickFormat: "~s" },
       color: { domain: ARMS, range: ARMS.map((a) => ARM_COLOR[a]) },
       marks: [
+        // facet header per rung carrying its honest n (partial rungs read smaller)
+        Plot.axisFx({ anchor: "top", label: null, tickSize: 0, fontWeight: 600,
+          tickFormat: (rg) => `${rg} · n=${nByRung[rg]?.size ?? 0}` }),
         Plot.frame({ stroke: "#e3e1dc" }),
+        // min–max whisker per (arm,rung) — the full spread, never a lone mean
+        Plot.ruleX(rows, Plot.groupX({ y1: "min", y2: "max" },
+          { fx: "rung", x: "arm", y1: "value", y2: "value", stroke: "arm", strokeOpacity: 0.35, strokeWidth: 1.2 })),
         // per-(arm,rung) median tick — central tendency beside the raw spread
         Plot.tickY(rows, Plot.groupX({ y: "median" },
           { fx: "rung", x: "arm", y: "value", stroke: "arm", strokeWidth: 2.5 })),
@@ -171,8 +184,9 @@ function renderMetrics() {
 
     const n = new Set(rows.map((r) => r.id)).size;
     fig.append(el("figcaption", { className: "mf-cap" },
-      `${m.label} — one dot per repo across ${rungsShown.length} rung${rungsShown.length === 1 ? "" : "s"} ` +
-      `(n=${n} task${n === 1 ? "" : "s"} shown); tick = per-rung-per-arm median. Axis from zero. n=1 per cell — a direction, not a measurement.`));
+      `${m.label} — one dot per repo; whisker = min–max, tick = median (per rung × arm). ` +
+      `Per-rung n is on the axis (partial rungs self-report a smaller n); ${n} task${n === 1 ? "" : "s"} shown total. ` +
+      `Axis from zero. n=1 per cell — a direction, not a measurement.`));
     host.append(fig);
   }
 }
