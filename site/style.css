@@ -30,6 +30,13 @@
 }
 
 * { box-sizing: border-box; }
+/* a11y (T3.6): skip link, visible focus ring, no-JS notice */
+.skip-link { position: absolute; left: -999px; top: 0; background: var(--ink); color: var(--paper);
+             padding: .5rem .8rem; z-index: 100; }
+.skip-link:focus { left: .5rem; top: .5rem; border-bottom: 0; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.noscript-note { border: 1px solid var(--rule-strong); background: var(--paper-2); padding: .8rem 1rem;
+                 font-size: .85rem; color: var(--ink-soft); margin: 0 0 1.4rem; }
 html { font-size: 15px; }
 body {
   margin: 0; color: var(--ink); background: var(--paper);
@@ -204,7 +211,9 @@ table.fc-metrics .fc-v { font-family: var(--mono); }
 .tx-overlay.open { display: block; }
 .tx-panel { position: fixed; inset: 3vh 4vw; background: var(--paper); border: 1px solid var(--rule-strong);
             overflow: auto; padding: 1.6rem 2rem; }
-.tx-panel .close { float: right; cursor: pointer; border: 1px solid var(--rule-strong); padding: .1rem .5rem; }
+.tx-panel .close { float: right; cursor: pointer; border: 1px solid var(--rule-strong); padding: .1rem .5rem;
+                    background: none; color: var(--ink-soft); font-family: var(--sans); font-size: .82rem; }
+.tx-panel .close:hover { color: var(--ink); border-color: var(--ink); }
 .tx-panel { font-size: .9rem; }
 .tx-panel pre { white-space: pre-wrap; word-break: break-word; font-family: var(--mono); font-size: .82rem; }
 .tx-panel table { border-collapse: collapse; }

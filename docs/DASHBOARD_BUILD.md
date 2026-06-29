@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P3 / T3.6` — **P1 + P2 complete; T3.1–T3.5 done** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `COMPLETE` — **all phases done (P0 spike, P1, P2, P3); TX.2 deferred** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -179,7 +179,20 @@ raw byte in ≤3 clicks.
   pinned source is a reporting step (like judging), not shown to any arm — genesis
   wall intact. Build stays ~0.5s. Verified headless on L1-redis (10/10·1/1·10/10);
   no errors.
-- [ ] **T3.6 Accessibility + no-JS fallback + reduced-motion** pass (§11).
+- [x] **T3.6 Accessibility + no-JS fallback + reduced-motion** pass (§11). Content
+  column is now a semantic `<main id="main">` with a focus-revealed **skip link**;
+  a `<noscript>` notice points a JS-disabled reader at the committed reports/evidence/
+  ledger (the script only makes the same evidence interactive, hides nothing); the
+  JS-filled masthead bits got graceful static defaults so no-JS shows real prose, not
+  "Loading…". Keyboard: the click-only coverage **cells, rung headers, and repo
+  labels** are now `role="button"` + `tabindex=0` with Enter/Space activation
+  (`clickable()` helper); the transcript modal is `role="dialog" aria-modal`, its
+  close is a real `<button>`, **Esc closes it and focus returns to the opener**, and
+  a `:focus-visible` ring makes the focus path visible. Reduced-motion: the existing
+  transition-kill plus smooth-scroll now gated on `prefers-reduced-motion`
+  (`scrollToEl`). Colorblind-safety (Okabe–Ito, shape/glyph for status) was already
+  in by construction. Verified headless: no-JS masthead + noscript render; Enter on a
+  coverage cell opens detail; Esc closes the modal; no page errors.
 
 ## Cross-cutting (do when it unblocks a task above)
 

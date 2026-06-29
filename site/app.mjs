@@ -15,6 +15,18 @@ const el = (t, props = {}, kids = []) => {
 // read a CSS custom property off :root so charts track the active theme (light/
 // dark) instead of baking a hardcoded hue that glares in the other mode (T3.2).
 const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+// a11y (T3.6): make a non-button element behave as a keyboard-operable control —
+// role+tabindex so it's focusable, Enter/Space to activate like a real button.
+const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+const scrollToEl = (sel) => $(sel)?.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth" });
+function clickable(node, fn, label) {
+  node.setAttribute("role", "button");
+  node.setAttribute("tabindex", "0");
+  if (label) node.setAttribute("aria-label", label);
+  node.addEventListener("click", fn);
+  node.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fn(e); } });
+  return node;
+}
 
 const ARM_COLOR = { baseline: "#0072B2", grove: "#E69F00", lsp: "#009E73" };
 const ARMS = ["baseline", "grove", "lsp"];
@@ -104,8 +116,12 @@ async function init() {
   for (const b of $("#theme-switch").querySelectorAll("button"))
     b.onclick = () => { applyTheme(b.dataset.themeSet); render(); };
 
-  $("#tx-close").onclick = () => $("#tx-overlay").classList.remove("open");
-  $("#tx-overlay").onclick = (e) => { if (e.target.id === "tx-overlay") e.target.classList.remove("open"); };
+  $("#tx-close").onclick = () => closeTranscript();
+  $("#tx-overlay").onclick = (e) => { if (e.target.id === "tx-overlay") closeTranscript(); };
+  // a11y (T3.6): Esc closes the transcript modal and focus returns to its opener
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && $("#tx-overlay").classList.contains("open")) closeTranscript();
+  });
 
   // URL-encoded filter state (§4, T1.6): any view is a shareable link. Read the
   // URL first, reflect it into the controls, then keep the URL in sync on change
@@ -271,7 +287,7 @@ function renderCoverage() {
   const head = el("tr", {}, el("th", { textContent: "repo" }));
   for (const rg of rungs) {
     const th = el("th", { className: "rung", textContent: rg, title: "filter to " + rg });
-    th.onclick = () => { state.rung = state.rung === rg ? "" : rg; $("#f-rung").value = state.rung; render(); };
+    clickable(th, () => { state.rung = state.rung === rg ? "" : rg; $("#f-rung").value = state.rung; render(); }, `filter to rung ${rg}`);
     head.append(th);
   }
   table.append(head);
@@ -279,7 +295,7 @@ function renderCoverage() {
   for (const repo of repos) {
     const tr = el("tr");
     const rc = el("td", { className: "repo", textContent: repo, title: "filter to " + repo });
-    rc.onclick = () => { state.repo = state.repo === repo ? "" : repo; $("#f-repo").value = state.repo; render(); };
+    clickable(rc, () => { state.repo = state.repo === repo ? "" : repo; $("#f-repo").value = state.repo; render(); }, `filter to repo ${repo}`);
     tr.append(rc);
     for (const rg of rungs) {
       const td = el("td");
@@ -304,7 +320,7 @@ function renderCoverage() {
           title: omitted ? `${rg} · ${arm} · ${repo}: hidden (incomplete/DNF)` : `${rg} · ${arm} · ${repo}: ${c?.status ?? "pending"}${flagstr}${reason}`,
         }));
       }
-      mark.onclick = () => { state.cell = cid; renderDetail(cid); $("#detail-section").scrollIntoView({ behavior: "smooth" }); renderCoverage(); syncURL(); };
+      clickable(mark, () => { state.cell = cid; renderDetail(cid); scrollToEl("#detail-section"); renderCoverage(); syncURL(); }, `inspect cell ${cid}`);
       td.append(mark); tr.append(td);
     }
     table.append(tr);
@@ -714,9 +730,17 @@ function renderSparkline(host, c) {
 // transcript modal: readable trail (marked) ↔ raw stream-json. The raw view
 // renders one collapsible row per event (summary cheap, pretty JSON lazy on
 // expand) so a large jsonl never builds a multi-MB <pre> in one shot.
+let txOpener = null; // element to restore focus to when the modal closes (T3.6)
+function closeTranscript() {
+  $("#tx-overlay").classList.remove("open");
+  if (txOpener?.focus) txOpener.focus();
+  txOpener = null;
+}
 async function openTranscript(c) {
   const body = $("#tx-body");
+  txOpener = document.activeElement;
   $("#tx-overlay").classList.add("open");
+  $("#tx-close").focus();
   let view = "readable";
   const cache = {};
 

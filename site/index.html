@@ -8,7 +8,11 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrap">
+<a class="skip-link" href="#main">Skip to content</a>
+<main class="wrap" id="main">
+  <noscript>
+    <p class="noscript-note">This dashboard renders its coverage grid, charts, and transcripts with JavaScript, which is disabled. The full evidence is still readable directly in the repository: <a href="https://github.com/Entelligentsia/is-grep-enough/tree/master/reports">blind judgements &amp; findings</a>, <a href="https://github.com/Entelligentsia/is-grep-enough/tree/master/evidence/nav3">raw + readable transcripts</a>, and the cell ledger <code>experiment/state.json</code>. No data is hidden behind the script — it only makes the same committed evidence interactive.</p>
+  </noscript>
   <header class="masthead">
     <div class="theme-switch" id="theme-switch" role="group" aria-label="color theme">
       <button data-theme-set="auto" type="button">auto</button>
@@ -17,19 +21,19 @@
     </div>
     <h1>is grep enough?</h1>
     <p class="sub">When a coding agent explores a large, unfamiliar codebase, are basic text tools (grep/read) enough — or does it need something <b>fast and light</b> (structural, tree-sitter) or something more <b>authoritative and accurate</b> (semantic, LSP)? This measures the three side by side and lets you check the answer yourself.</p>
-    <p class="sub" id="purpose" style="margin-top:.4rem;color:var(--ink-faint)">Loading…</p>
+    <p class="sub" id="purpose" style="margin-top:.4rem;color:var(--ink-faint)"></p>
     <div class="legend">
       <span><span class="swatch baseline"></span>baseline · text</span>
       <span><span class="swatch grove"></span>grove · structural</span>
       <span><span class="swatch lsp"></span>lsp · semantic</span>
       <span class="caveat">color = arm identity, never quality. n=1 per cell.</span>
     </div>
-    <p class="provenance" id="provenance">—</p>
+    <p class="provenance" id="provenance"></p>
   </header>
 
   <section id="finding">
     <h2>What this shows</h2>
-    <p class="note" id="finding-text">—</p>
+    <p class="note" id="finding-text">The same exploration task, given to an agent with three rungs of navigation power — plain text search (baseline), fast-light structural (grove), and authoritative semantic (lsp) — across a task-complexity ladder. The question is where on that ladder the extra power stops paying for itself. Everything below links to the raw run that produced it.</p>
   </section>
 
   <section>
@@ -114,10 +118,10 @@
       <li id="caveats"></li>
     </ul>
   </section>
-</div>
+</main>
 
-<div class="tx-overlay" id="tx-overlay">
-  <div class="tx-panel"><span class="close" id="tx-close">close ✕</span><div id="tx-body"></div></div>
+<div class="tx-overlay" id="tx-overlay" role="dialog" aria-modal="true" aria-label="transcript">
+  <div class="tx-panel"><button class="close" id="tx-close" type="button">close ✕</button><div id="tx-body"></div></div>
 </div>
 
 <script type="module" src="app.mjs"></script>
