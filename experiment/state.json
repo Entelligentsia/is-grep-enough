@@ -426,13 +426,28 @@
       "status": "pending"
     },
     "L5-baseline-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 193.607,
+      "context": 363422,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/laravel-L5.claude.baseline.jsonl",
+      "ts": "2026-06-29T12:48:48.765Z"
     },
     "L5-grove-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 261.792,
+      "context": 732508,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/laravel-L5.claude.grove.jsonl",
+      "ts": "2026-06-29T12:45:20.462Z"
     },
     "L5-lsp-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 132.705,
+      "context": 430910,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/laravel-L5.claude.lsp.jsonl",
+      "ts": "2026-06-29T12:51:15.761Z"
     },
     "L1-baseline-rails": {
       "status": "harvested",
@@ -516,13 +531,28 @@
       "status": "pending"
     },
     "L5-baseline-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 166.461,
+      "context": 1089570,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/rails-L5.claude.baseline.jsonl",
+      "ts": "2026-06-29T12:57:11.058Z"
     },
     "L5-grove-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 155.745,
+      "context": 297954,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/rails-L5.claude.grove.jsonl",
+      "ts": "2026-06-29T12:54:10.444Z"
     },
     "L5-lsp-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 189.233,
+      "context": 749782,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/rails-L5.claude.lsp.jsonl",
+      "ts": "2026-06-29T13:00:36.648Z"
     },
     "L1-baseline-typescript": {
       "status": "harvested",
@@ -711,13 +741,28 @@
       "status": "pending"
     },
     "L5-baseline-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 171.726,
+      "context": 859555,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/webpack-L5.claude.baseline.jsonl",
+      "ts": "2026-06-29T13:19:19.847Z"
     },
     "L5-grove-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 149.239,
+      "context": 257224,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/webpack-L5.claude.grove.jsonl",
+      "ts": "2026-06-29T13:16:12.888Z"
     },
     "L5-lsp-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 207.007,
+      "context": 723575,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/webpack-L5.claude.lsp.jsonl",
+      "ts": "2026-06-29T13:23:02.199Z"
     },
     "L1-baseline-spring-boot": {
       "status": "harvested",
@@ -916,13 +961,28 @@
       "status": "pending"
     },
     "L5-baseline-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 242.702,
+      "context": 4400290,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/tokio-L5.claude.baseline.jsonl",
+      "ts": "2026-06-29T13:08:50.882Z"
     },
     "L5-grove-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 210.91,
+      "context": 555024,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/tokio-L5.claude.grove.jsonl",
+      "ts": "2026-06-29T13:04:32.952Z"
     },
     "L5-lsp-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 249.473,
+      "context": 1171195,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/tokio-L5.claude.lsp.jsonl",
+      "ts": "2026-06-29T13:13:19.969Z"
     },
     "L1-baseline-hugo": {
       "status": "harvested",
@@ -1006,13 +1066,28 @@
       "status": "pending"
     },
     "L5-baseline-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 248.273,
+      "context": 2157055,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/hugo-L5.claude.baseline.jsonl",
+      "ts": "2026-06-29T12:35:51.926Z"
     },
     "L5-grove-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 201.334,
+      "context": 602520,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/hugo-L5.claude.grove.jsonl",
+      "ts": "2026-06-29T12:31:27.284Z"
     },
     "L5-lsp-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 213.623,
+      "context": 940058,
+      "engaged": true,
+      "evidence": "evidence/nav3/L5/raw/hugo-L5.claude.lsp.jsonl",
+      "ts": "2026-06-29T12:40:31.283Z"
     }
   },
   "setup": {
@@ -1935,6 +2010,123 @@
       "key_revisions": [],
       "verdict": "All three arms reached Full on the Illuminate\\Http\\Request spine — extends SymfonyRequest with inherited bags, the five Laravel-added fields ($json/$convertedFiles/$userResolver/$routeResolver/$cachedAcceptHeader), the getInputSource() JSON-vs-form selector, and the deferred user/route resolver closures. Grounding is tight (0.95-1.0): semantic cleanest (1.0), structural near-exact (0.99), baseline loosest (0.95, a cluster of off-by-one cites). COST is the notable inversion: the tooled arms were BOTH cheaper than text here — structural cheapest (239k / 18 turns) ~ semantic (243k / 11 turns) < baseline (285k / 13 turns) — and also better-grounded, on this large multi-trait class where grep had to read wide. Quality and cost both favored navigation. Blind-judged (anonymized A/B/C, mapping withheld).",
       "ts": "2026-06-29T09:45:53.789Z"
+    },
+    "L5-hugo": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.88,
+          "completeness": 0.85,
+          "verdict": "Partial. Covers event intake (processPartialFileEvents :865 with filter/trim/applyinfo and ResolvePaths), the handleChange component switch (:967) with collectAndMarkStaleIdentities, GenghisKhan/siteidentities.Data/glob shortcode identities and the structural sentinels, WhatChanged.Add accumulation, resolveAndClearStateForIdentities (content_map_page.go:900) called at the three drain points (309/364/378), the MarkStale pass, MemCache.ClearOnRebuild cascade eviction, the pageOutput renderState reset, and the assemble needsPagesAssemble gate feeding render (shouldRender hugo_sites.go:633, incrRenderState page__output.go:152); it also correctly surfaces the programmatic changesFromBuild/rebuildSitesForChanges path (:367/:1150). Two faults dock both axes: it never describes the template-refresh branch (TemplateStore.RefreshFiles :1212 / i18n Compile :1235) — leaving spine element 6 uncovered — and it credits identity.WalkIdentitiesDeep as the transitive traversal inside ClearOnRebuild, the debug-log mechanism the key explicitly flags as a wrong turn (real cascade is the evicted-identity drain + identity.NewFinder.Contains). Present cites resolve exact. Process (un-blind) CAVEAT: by far the most expensive arm — 2.16M context / 10 turns, 39 bash + 11 reads (brute-force grep+read scan) — and still only Partial."
+        },
+        "grove": {
+          "grounding": 0.95,
+          "completeness": 1,
+          "verdict": "Full. The most exhaustive trace and structurally faithful to the key: batcher handoff, dispatch, then the correct three-way process branch (events->processPartialFileEvents, WhatChanged.Changes->processPartialRebuildChanges, neither->processFull) — naming processPartialRebuildChanges rather than conflating it; event enrichment via filter/trim/applyinfo; ResolvePaths->ContentPathParser component classification with the cache-buster predicate, PredicateIdentity for deleted dirs, and collectIdentitiesSurrounding (10 neighbors) for added content; collectAndMarkStaleIdentities tree walk; resolveAndClearStateForIdentities with direct MarkStale, dynacache ClearOnRebuild using Finder.Contains (correctly NOT WalkIdentitiesDeep), the >=200 GenghisKhan mass-eviction collapse, and the two-level depth-2/depth-50 page-output reset; template RefreshFiles and i18n recompile; processContentAdaptersOnRebuild; the assemble needsPagesAssembly gate with createAllPages/step1/step2/stepFinal and drain-reinvalidate cycles; and render with PartialReRender. Includes the real initRebuild closure (hugo_sites_build.go:261) and resetBuildState. Grounding high: line-light relative to the semantic arm but every load-bearing claim resolves and it avoids the WalkIdentitiesDeep trap. Process: cheapest arm — 602k context / 37 turns, 34 structural grove calls."
+        },
+        "lsp": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Walks the entire spine in flow order: watch intake via processPartialFileEvents with fileEventsFilter/Trim/ApplyInfo and BaseFs.ResolvePaths; per-component handleChange classification (967-1086) with collectAndMarkStaleIdentities (content_map_page.go:143), needsPagesAssemble=true (:999), GenghisKhan for _markup/i18n (:1047/:1080), siteidentities.Data (:1073), structural sentinels and predicate identities for deleted dirs (:1120); WhatChanged bundling; resolveAndClearStateForIdentities (content_map_page.go:900) with MarkStale on resource.Staler, MemCache.ClearOnRebuild dynacache GC with transitive eviction and the <200/GenghisKhan collapse, and the two-level dependency-finder reset (depth 2 / depth 50); template RefreshFiles and i18n recompile branches; and the feedback into assemble (needsPagesAssembly gate, createAllPages/step1/step2 with repeated resolve passes) then render with PartialReRender. Grounding tight: every sampled load-bearing hugolib cite resolves exact and it correctly attributes invalidation to the identity finder rather than the debug WalkIdentitiesDeep log. Process: 940k context / 37 turns, 13 native LSP calls + 16 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Both the structural and semantic arms are Full on the partial-rebuild invalidation spine (completeness 1.0, grounding 0.95-0.97) — the watch-intake -> handleChange component classification -> collectAndMarkStaleIdentities -> resolveAndClearStateForIdentities (MarkStale + dynacache ClearOnRebuild cascade with the GenghisKhan mass-eviction collapse and the depth-2/depth-50 page-output reset) -> template/i18n RefreshFiles -> assemble needsPagesAssembly gate -> render PartialReRender chain — and both correctly avoid the WalkIdentitiesDeep debug-log trap the key flags. Here quality and cost separate together: the text arm (baseline) was the ONLY arm to miss a required spine element (the template-refresh branch) and to take the WalkIdentitiesDeep wrong turn, scoring Partial (0.85/0.88), while also being by far the most expensive — 2.16M context, ~3.6x grove's 602k. grove reached the same Full answer cheapest (602k / 34 structural calls); the native-LSP arm matched it on quality at mid cost (940k / 13 LSP + 16 reads). On this large, identity-cascade-heavy subsystem the structural arm is the efficiency frontier and the grep-scan arm pays the most for the least. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T13:35:24.296Z"
+    },
+    "L5-webpack": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. Hook-by-hook traversal of all six stages in order: run with beforeRun/run/readRecords then compile (Compiler.js:539/1403); newCompilationParams + thisCompilation/compilation; make firing EntryPlugin's addEntry (Compilation.js:2645) through NormalModuleFactory.create (NormalModuleFactory.js:1011) and NormalModule.build (NormalModule.js:1779), driven by the four async queues; finish/finishModules; seal (Compilation.js:3473) with optimizeDependencies -> buildChunkGraph (~3656) -> optimize* -> id assignment -> createModuleHashes -> codeGeneration -> runtime requirements -> createHash (firing contentHash ~5032) -> createModuleAssets/createChunkAssets (~5522) -> processAssets, freeze, needAdditionalSeal; then emit with shouldEmit, emitAssets (Compiler.js:746) parallelism-15 write/skip, afterEmit, emitRecords, done, afterDone. Distinguishes createChunkAssets from emitAssets. Grounding excellent — addEntry 2645, NMF.create 1011, NormalModule.build 1779, contentHash 5032, createChunkAssets 5522, emitAssets 746 all line-exact; a couple of cites carry ~approximations but land correctly. Process (un-blind): 860k context / 2 turns, 22 reads + 11 bash."
+        },
+        "grove": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. Walks all six spine stages in order: Compiler.run with beforeRun/run/readRecords then compile (Compiler.js:539, hooks 651/654, compile 1403); newCompilationParams + newCompilation firing thisCompilation/compilation (1390/1361); the make phase via EntryPlugin's make tap calling addEntry (EntryPlugin.js:33/47-48) into the recursive handleModuleCreation/factorize/addModule/buildModule/processModuleDependencies chain (Compilation.js:2298/1660/1745); finish/finishModules (3171/3381); seal with the correct internal ordering buildChunkGraph (3656) -> optimize -> ids -> createModuleHashes (4693) -> codeGeneration (3911) -> processRuntimeRequirements (4159) -> createHash (4797) -> createModuleAssets/createChunkAssets (5522) -> processAssets, freeze; then emitAssets (Compiler.js:746) with hooks.emit (1089) and per-file write/skip logic, finishing at emitRecords/Stats/done/afterDone. Correctly distinguishes in-memory createChunkAssets from on-disk emitAssets. Grounding perfect — every sampled load-bearing cite resolves exactly. Process: cheapest arm — 257k context / 13 turns, 11 structural grove calls."
+        },
+        "lsp": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. Covers all six stages in order with explicit Compiler-side vs Compilation-side ownership and the handoff hooks: run defining finalCallback then beforeRun/run/readRecords/compile (Compiler.js:539); newCompilationParams + newCompilation/thisCompilation/compilation (1390/1361); make via EntryPlugin.apply make tap (EntryPlugin.js:47) -> addEntry -> _addEntryItem (Compilation.js:2682) -> addModuleTree (2591) -> handleModuleCreation (2298) factorize/add/build/recurse; finish/finishModules (3171); seal (3473) with optimizeDependencies -> moduleGraph.freeze -> buildChunkGraph -> optimize* -> ids -> createModuleHashes -> codeGeneration (3911, NormalModule.codeGeneration NormalModule.js:2053) -> processRuntimeRequirements -> createHash -> createChunkAssets -> processAssets, freeze, needAdditionalSeal; afterCompile (1436); onCompiled (576) with shouldEmit/needAdditionalPass (600); emitAssets (746) write/skip; then emitRecords/Stats/done/storeBuildDependencies/finalCallback. Cleanly separates createChunkAssets (in-memory) from emitAssets (disk). Grounding excellent — all sampled cites resolve line-exact. Process: 724k context / 25 turns, 9 native LSP calls + 14 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms Full on the compile->make->seal->emit pipeline spine (completeness 1.0), with near-perfect grounding (0.99-1.0) — every arm correctly orders the six stages and distinguishes in-memory createChunkAssets from on-disk emitAssets. Quality is a clean three-way tie; the differentiator is purely COST. grove is the efficiency frontier (257k context / 11 structural calls), the text arm pays ~3.3x for the same answer (860k / 22 reads + 11 bash), and the semantic arm lands in the middle (724k / 9 LSP + 14 reads). On webpack's well-structured, hook-named compiler pipeline — where symbol names map cleanly onto the call graph — structural navigation reaches the full answer cheapest while no arm gains quality from spending more. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T13:36:41.576Z"
+    },
+    "L5-laravel": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Hits the entire required spine: dispatch (Dispatcher.php:280) with deferred/after-commit short-circuits, invokeListeners (:320) with the broadcasting sink fired first (shouldBroadcast :372 / broadcastEvent :398 -> BroadcastManager::queue :188), listener resolution (getListeners :409 -> makeListener :484 -> createClassListener :510 -> createClassCallable :529 routing fork), queued detection (handlerShouldBeQueued :570, ReflectionClass ShouldQueue check :574), job build (createQueuedHandlerCallable :588 -> handlerWantsToBeQueued :641 -> queueHandler :660 -> createListenerAndJob :706 building CallQueuedListener -> propagateListenerOptions :722 -> pushOn/laterOn), and the full worker terminal Job::fire (:96, fire at Worker:553) resolving CallQueuedHandler@call (:67) -> getCommand -> dispatchThroughMiddleware (:131) -> dispatchNow -> CallQueuedListener::handle (:133) -> real listener method, plus failed (:216). Correctly distinguishes the sync branch and treats broadcasting as a sibling sink. Grounding near-perfect: every sampled cite resolves line-exact. Process (un-blind): cheapest arm — 363k context / 3 turns, 10 reads + 3 bash."
+        },
+        "grove": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Covers the complete spine with the same correctness as the strongest answer: dispatch (:280), invokeListeners broadcasting check first (shouldBroadcast :372 -> broadcastEvent :398 -> BroadcastManager::queue :188), getListeners (:409) -> makeListener (:484) -> createClassListener (:510) -> createClassCallable (:529) fork, handlerShouldBeQueued (:570) reflection check, the two-phase queued path (createQueuedHandlerCallable :588 -> handlerWantsToBeQueued :641 -> queueHandler :660 -> createListenerAndJob :706 -> propagateListenerOptions :722 -> pushOn), the serialized payload via Queue::createObjectPayload (:170, job field CallQueuedHandler@call), and the worker terminal Job::fire (:96, Worker::process :534) -> CallQueuedHandler::call (:67) -> getCommand (:111) -> dispatchThroughMiddleware (:131) -> dispatchNow -> CallQueuedListener::handle (:133, prepareData :234) -> listener method, plus failed (:216). Correctly identifies CallQueuedHandler@call as the worker entry rather than CallQueuedListener directly. Cites line-exact; one loose spot — renders the payload commandName as get_class(job) where the source stores the job object itself (Queue.php:175), incidental not load-bearing. Process: most expensive arm — 732k context / 43 turns, 40 structural grove calls."
+        },
+        "lsp": {
+          "grounding": 0.84,
+          "completeness": 0.7,
+          "verdict": "Partial — blurs the worker-side CallQueuedListener/CallQueuedHandler indirection that the prompt names as load-bearing. The dispatch side is complete and exact: dispatch (:280, parseEventAndPayload :358, ShouldDispatchAfterCommit branch), invokeListeners broadcasting fork (shouldBroadcast :372 -> broadcastEvent :398 -> BroadcastManager::queue :188), getListeners (:409) -> makeListener (:484) -> createClassListener (:510) -> createClassCallable (:529), handlerShouldBeQueued (:570) reflection check, and the queued build (createQueuedHandlerCallable :588 -> handlerWantsToBeQueued :641 -> queueHandler :660 -> createListenerAndJob :706 -> propagateListenerOptions :722 -> pushOn), plus the broadcasting sibling sink incl. BroadcastEvent::handle (:90). But on the worker terminal (Stage 6) it states Job::fire (Worker::process :534) resolves the ShouldQueue class and calls handle() = CallQueuedListener::handle() directly (:133, setJobInstanceIfNecessary :199, failed :216). That is a structural wrong turn: the payload job field is CallQueuedHandler@call (Queue.php:175), so fire resolves CallQueuedHandler, whose call (:67) unserializes the command (getCommand :111), runs dispatchThroughMiddleware (:131), and re-enters the Bus via dispatchNow — none of which it mentions. The required CallQueuedHandler::call step and Bus re-entry are omitted and the indirection collapsed. Present cites resolve line-exact; grounding docked for routing the worker flow through the wrong function. Process: 431k context / 17 turns, 8 native LSP calls + 6 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "The text and structural arms are Full on the event-dispatch-to-queued-worker spine (completeness 1.0, grounding 0.97-0.98) — dispatch -> invokeListeners (broadcasting sibling sink first) -> createClassCallable routing fork -> handlerShouldBeQueued -> the createQueuedHandlerCallable/queueHandler/createListenerAndJob build -> worker Job::fire -> CallQueuedHandler::call -> getCommand/dispatchThroughMiddleware -> Bus dispatchNow -> CallQueuedListener::handle. The semantic arm (lsp) was the ONLY arm to score Partial (0.7/0.84): it collapsed the load-bearing worker-side indirection, routing Job::fire straight into CallQueuedListener::handle and omitting CallQueuedHandler::call and the Bus re-entry that the prompt explicitly names. This cell INVERTS the cost story of the structural-friendly cells: here the text arm was both fully correct AND cheapest (363k / 3 turns, a few targeted reads), while the structural arm paid the most (732k / 40 calls) for the same Full answer and the semantic arm landed mid-cost (431k) but incomplete — its limited exploration (8 LSP + 6 reads) missed the indirection a deeper trace would have caught. On a dispatch chain that a handful of well-chosen reads resolves, exhaustive structural navigation buys no extra quality and shallow semantic lookup risks the wrong turn. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T13:36:42.281Z"
+    },
+    "L5-rails": {
+      "scores": {
+        "baseline": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. Hits all six spine stages plus the transaction envelope and the adapter layer beneath the SQL: validation gate (validations.rb:47/:90/:69, default_validation_context :82) -> transaction wrapper (transactions.rb:361/:409, add_to_transaction :513, remember_transaction_record_state :441, committed! :381, rolledback! :393, restore_transaction_record_state :468) -> callback nesting (callbacks.rb:440-450, save{create{write}}, timestamps inside the update wrapper) -> new-vs-existing fork (persistence.rb:893) and attribute filtering (attributes_for_create :514, attributes_for_update :503, empty-diff sets @_trigger_update_callback) -> Arel build and adapter write (class _insert_record persistence.rb:238 / _update_record :265, connection.insert/update into database_statements.rb insert :195 / update :206, id write-back _write_attribute :935, @new_record=false ~:940) -> autosave (add_autosave_association_callbacks :189, belongs_to before_save vs has_one/has_many after_create/after_update, save_collection_association :375, changed_for_autosave? :273). Every sampled cite resolves line-exact, including the deeper adapter and trigger-flag lines; no wrong turns. Process (un-blind): most expensive arm by far — 1.09M context / 2 turns, 17 reads + 15 bash (brute-force grep+read scan)."
+        },
+        "grove": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. Traces all six spine stages in order and adds the transaction-envelope stage the key folds into validation: validation gate (validations.rb:47/:90/:69, returns false before any write) -> transaction wrapper (transactions.rb:361 with_transaction_returning_status :409, add_to_transaction, remember_transaction_record_state) -> callback gate (create_or_update = _run_save_callbacks { super } callbacks.rb:440, _create_record :444, _update_record :448, halt skips the block/write) -> new-vs-existing fork (persistence.rb:893) -> attribute selection (attributes_for_create attribute_methods.rb:514, attributes_for_update :503) -> SQL write (_insert_record persistence.rb:238 / class _update_record :265) -> association cascade (add_autosave_association_callbacks autosave_association.rb:189, belongs_to before_save vs has_one/has_many after_create/after_update with FK ordering) -> transaction outcome (committed! transactions.rb:381 / rolledback! :393 / restore_transaction_record_state :468). Every load-bearing cite resolves line-exact; the super-chain diagram and per-direction autosave timing are correct, no wrong turns. Process: cheapest arm — 298k context / 38 turns, 36 structural grove calls."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full, and the most layered of the three. All six spine stages plus the dirty/timestamp override stack and the connection-level transaction machinery: validation gate (validations.rb:47/:90/:69) with autosave validation hooks (define_autosave_validation_callbacks autosave_association.rb:219, association_valid? :337) -> transaction wrapper (transactions.rb:361/:409, add_to_transaction :513, remember_transaction_record_state :441) and nested-savepoint semantics -> callback shell (create_or_update = _run_save_callbacks { super } callbacks.rb:440, belongs_to before_save) -> new-vs-persisted fork (persistence.rb:893) -> attribute selection showing the real override chain for both paths (dirty.rb _update_record :233 / _create_record :239, timestamp.rb :119/:107/:125, attributes_for_update :503 / attributes_for_create :514, _update_row :886) -> autosave cascade (save_collection_association :375, save_has_one_association :429) -> transaction outcome through the adapter (before_commit_records transaction.rb:274, commit_records :298, rollback_records :254; committed! transactions.rb:381, @_trigger_update_callback). Nearly all cites line-exact; belongs_to before_save registration cited at :212 where it sits at :213 (off by one), the only loose anchor among many exact ones. Process: 750k context / 31 turns — notably leaned on grep + read (16 reads + 11 bash) and only 2 native LSP calls, under-using its semantic capability."
+        }
+      },
+      "key_revisions": [
+        {
+          "level": "L5",
+          "reason": "Reference key cites were written against SHA abbcb8d7 but the pinned repo is now at d0dcb8fa6073, shifting most persistence.rb / transactions.rb / callbacks.rb / attribute_methods.rb line numbers. Verified actuals: Persistence#save 392 (key 415), create_or_update 893 (key 990), _create_record 922 (key 1019), _update_record 902 (key 999), _update_row 886 (key 957); callbacks create_or_update 440 (key 439), _create_record 444 (key 443), _update_record 448 (key 447), define_model_callbacks 416 (key 415); attribute_methods attributes_for_update 503 (key 508), attributes_for_create 514 (key 519); transactions committed! 381 (key 402), rolledback! 393 (key 414), define_callbacks :commit 11 (key 10); autosave save_collection_association 375 (key 419), save_has_one_association 429 (key 473), save_belongs_to_association 492 (key 536), around_save_collection_association 358 (key 402); activemodel valid? 363 (key 377). _insert_record 238 and class _update_record 265 unchanged. All three answers cite the current (correct) lines and were graded against the actual source, not the stale key.",
+          "cite": "experiment/repos/rails @ d0dcb8fa6073a0c4d42600c15e82e3bb386b27d3",
+          "ts": "2026-06-29"
+        }
+      ],
+      "verdict": "All three arms Full on the save/callback/transaction/SQL/autosave spine (completeness 1.0) with near-perfect grounding (0.98-1.0): the validation gate -> with_transaction_returning_status envelope -> create_or_update _run_save_callbacks{super} shell -> new-vs-existing fork -> attributes_for_create/update selection -> _insert_record/_update_record adapter write -> autosave cascade with belongs_to-before / has_*-after FK ordering -> committed!/rolledback! outcome. The reference key's line numbers were stale (written against SHA abbcb8d7; pinned repo now d0dcb8fa) and all three arms cited the CURRENT correct lines — recorded as a key revision; no arm docked for being right where the key was wrong. The differentiator is COST: grove cheapest (298k / 36 structural calls), baseline most expensive at ~3.7x (1.09M / 17 reads + 15 bash), lsp mid (750k) but notable for leaning on grep+read with only 2 native LSP calls — passing the engagement gate while barely using its semantic capability. On this large ActiveRecord persistence subsystem structural navigation is again the efficiency frontier. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T13:37:45.956Z"
+    },
+    "L5-tokio": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.95,
+          "completeness": 1,
+          "verdict": "Full. All six spine elements present: spawn/bind (OwnedTasks::bind, Cell<T,S> core, run loop worker.rs:561, run_task :630, Harness::poll), I/O park (ScheduledIo::poll_readiness scheduled_io.rs:303 storing cx.waker() in waiters.reader, add_source io/driver.rs:266), timer park (Sleep::poll_elapsed sleep.rs:391, TimerEntry::init -> reregister, StateCell::poll into the AtomicWaker), and the combined-driver park made explicit — worker.park worker.rs:810, Mutex<Driver> park.rs:132, TimeDriver::park_internal time/mod.rs:213 deriving max_wait and calling IoDriver::turn io/driver.rs:179 -> poll :188, with the driver-stack layering (Time->Process->Signal->Io). Wake split into Path A (ScheduledIo::wake scheduled_io.rs:236) and Path B (process_at_time time/mod.rs:296, entry.fire entry.rs:210, wakers fired outside the lock), then reschedule (wake_by_val, schedule_task), re-poll, and completion (transition_to_complete, CoreStage::Finished, Trailer::waker). Most spine cites resolve exact, but the spawn entry is loose — bind_new_task cited at handle.rs:65 where the function is at :81 (off by 16); entry.fire :210 is the function at :211 (off by 1); Timeout::poll time/timeout.rs:205 is the impl header, poll body at :211. Structure unaffected; cite tightness softened. Process (un-blind): catastrophically expensive arm — 4.4M context / 5 turns, 126 tool calls (70 reads + 52 bash), a brute-force scan ~8x the structural arm for the same Full answer."
+        },
+        "grove": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Connects all six spine elements: spawn/first-poll (worker run loop worker.rs:561, run_task :630, Harness::poll), park on I/O (ScheduledIo::poll_readiness scheduled_io.rs:303 storing the waker in waiters.reader, returns Pending, plus add_source io/driver.rs:266 registration), park on timer (Sleep::poll_elapsed sleep.rs:391 -> TimerEntry::init entry.rs:481 -> reregister, then StateCell::poll entry.rs:142), and — strongest — the combined-driver crux explicitly: park_internal worker.rs:844 -> driver mutex park.rs:132 -> time::Driver::park_internal time/mod.rs:213 computing min(io,timer) and parking the I/O driver io/driver.rs:179 -> poll :188, with the prose 'the I/O thread IS the timer thread'. Wake from I/O (ScheduledIo::wake scheduled_io.rs:236, wake_all :285) and from timer (process_at_time time/mod.rs:296, entry.fire), then reschedule via schedule_task worker.rs:1327 / notify_parked_remote :1453, re-poll, and the completion bookend Stage::Finished core.rs:406 + Trailer.waker core.rs:205. The load-bearing cites all resolve exact; a handful of incidental cites (waker.rs:93, harness.rs:68, park.rs:228/277) are auxiliary, not spine-bearing. Process: cheapest arm — 555k context / 39 turns, 36 structural grove calls."
+        },
+        "lsp": {
+          "grounding": 0.97,
+          "completeness": 0.9,
+          "verdict": "Near-Full, with the task-cell completion bookend left implicit. Covers spawn (bind_new_task handle.rs:81 exact, OwnedTasks::bind, schedule_task worker.rs:1327, schedule_local :1353), I/O park (poll_readiness scheduled_io.rs:302, waker into waiters.reader, add_source io/driver.rs:263), timer park (TimerEntry::init entry.rs:481, reregister time/mod.rs:400, poll_elapsed :535, StateCell::poll entry.rs:142 -> register_by_ref), and the combined-driver crux in unusually fine detail — the park_internal core/parker shuffle worker.rs:844, TryLock<Driver> park.rs:132, Driver::park driver.rs:66 -> time::Driver::park_internal time/mod.rs:213 computing the soonest-timer bound and parking the I/O driver io/driver.rs:179, plus the condvar-loser path. Wake from I/O (ScheduledIo::wake scheduled_io.rs:236, handle.process time/mod.rs:255) and timer (process_at_time, wheel.poll :311, StateCell::fire entry.rs:211, take_waker), reschedule into the LIFO slot, re-poll resolving via readiness bits / STATE_DEREGISTERED. The one gap docking completeness: spine-6's tail — it stops at 'the combinator propagates the result upward' and does not name the task-cell finalization (Stage::Finished core.rs:406, release from owned, the JoinHandle waker), the 'until it completes' bookend the key calls out. Load-bearing cites resolve exact; a few off by one-to-three lines (scheduled_io.rs:302 vs 303, io/driver.rs:263 vs 266, time/mod.rs:400 vs 398) within tolerance. Process: 1.17M context / 28 turns, 5 native LSP calls + 15 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms reach the async wake/park spine — first-poll -> park on I/O (ScheduledIo::poll_readiness stores the waker) -> park on timer (Sleep::poll_elapsed/TimerEntry) -> the combined-driver crux (park_internal -> time::Driver::park_internal computes min(io,timer) and parks the single I/O driver, 'the I/O thread IS the timer thread') -> wake from I/O vs timer -> reschedule and re-poll. Quality nearly ties at the top: the text and structural arms are Full (grounding 0.95/0.97), and the semantic arm is Near-Full (0.9 completeness) — it traced the driver crux in the finest detail of any arm but left the task-cell completion bookend (Stage::Finished, JoinHandle waker) implicit, the one required tail the key calls out. The cost spread is the widest of the rung and damning for brute force: the structural arm reached the full answer for 555k context, while the text arm consumed 4.4M — roughly 8x — and 126 tool calls (70 reads + 52 bash) to land the same Full answer, and the semantic arm sat at 1.17M for a slightly-incomplete one. On this deep, indirection-heavy runtime subsystem structural navigation is decisively the efficiency frontier; unstructured scanning pays an order-of-magnitude context tax. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T13:37:46.692Z"
     }
   }
 }
