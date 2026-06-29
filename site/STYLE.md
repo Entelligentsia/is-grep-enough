@@ -72,7 +72,8 @@ over big animated bars. No chart-junk, no 3D, no gradient-under-line.
 - **Color scale:** `color: { domain: arms, range: arms.map(a => ARM_COLOR[a]) }` — categorical arm identity only; **never** a sequential/diverging ramp for status or quality.
 - **Y axis:** `{ grid: true, zero: true, nice: true, tickFormat: "~s" }` — **always from zero** (no truncated baselines).
 - **X / facets:** axis labels suppressed where redundant; facet header carries the honest per-rung `n` (`L4 · n=2`) so partial rungs self-report.
-- **Marks vocabulary:** `Plot.frame({ stroke: "#e3e1dc" })`; one `Plot.dot` per repo (`r: 3`, `fillOpacity: 0.85`, white hairline stroke); per-group median `Plot.tickY` (`strokeWidth: 2.5`); min–max `Plot.ruleX` whisker (`strokeOpacity: 0.35`) so no aggregate shows as a lone mark; DNF points as a hollow ring (`symbol: "times"`, `fill: none`) — never a clean dot.
+- **Theme-tracking strokes:** chart chrome reads CSS vars at render via `cssVar()` so it follows light/dark — `Plot.frame({ stroke: cssVar("--rule") })` and the dot hairline halo `stroke: cssVar("--paper")`. Never hardcode a hue here; it glares in the other mode (T3.2).
+- **Marks vocabulary:** `Plot.frame` (theme `--rule`); one `Plot.dot` per repo (`r: 3`, `fillOpacity: 0.85`, `--paper` hairline halo); per-group median `Plot.tickY` (`strokeWidth: 2.5`); min–max `Plot.ruleX` whisker (`strokeOpacity: 0.35`) so no aggregate shows as a lone mark; DNF points as a hollow ring (`symbol: "times"`, `fill: none`) — never a clean dot.
 - **Sparkline:** `width: 240, height: 62`; `areaY` `fillOpacity: 0.12` + `lineY` `strokeWidth: 1.4` in arm color; ticks minimal; y from zero, `~s`.
 
 ## Motion

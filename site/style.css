@@ -17,8 +17,15 @@
   --mono: ui-monospace, "IBM Plex Mono", "SF Mono", Menlo, monospace;
   --sans: system-ui, -apple-system, "IBM Plex Sans", Segoe UI, Roboto, sans-serif;
 }
+/* dark mode — truly neutral warm grey, NOT black (§9). Tokens shared between the
+   OS-auto path and the explicit toggle. Explicit data-theme always wins over the
+   media query so the in-page switch can override the OS preference (T3.2). */
+:root[data-theme="dark"] {
+  --ink:#e8e6e1; --ink-soft:#b3b0a8; --ink-faint:#8a877f; --rule:#34322d;
+  --rule-strong:#46443d; --paper:#1b1a17; --paper-2:#232220;
+}
 @media (prefers-color-scheme: dark) {
-  :root { --ink:#e8e6e1; --ink-soft:#b3b0a8; --ink-faint:#8a877f; --rule:#34322d;
+  :root:not([data-theme]) { --ink:#e8e6e1; --ink-soft:#b3b0a8; --ink-faint:#8a877f; --rule:#34322d;
           --rule-strong:#46443d; --paper:#1b1a17; --paper-2:#232220; }
 }
 
@@ -34,7 +41,13 @@ a:hover { border-bottom-color: var(--ink); }
 code, .mono { font-family: var(--mono); font-size: 0.86em; }
 
 .wrap { max-width: 1060px; margin: 0 auto; padding: 2.2rem 1.4rem 5rem; }
-header.masthead { border-bottom: 1px solid var(--rule-strong); padding-bottom: 1rem; margin-bottom: 1.4rem; }
+header.masthead { border-bottom: 1px solid var(--rule-strong); padding-bottom: 1rem; margin-bottom: 1.4rem; position: relative; }
+/* theme switch — top-right of the masthead, flat hairline buttons */
+.theme-switch { position: absolute; top: 0; right: 0; display: flex; gap: .15rem; }
+.theme-switch button { font-family: var(--sans); font-size: .72rem; background: none; border: 1px solid var(--rule-strong);
+                       color: var(--ink-faint); padding: .12rem .45rem; cursor: pointer; }
+.theme-switch button:hover { color: var(--ink-soft); }
+.theme-switch button[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
 .masthead h1 { font-size: 1.35rem; font-weight: 600; margin: 0 0 .2rem; letter-spacing: -0.01em; }
 .masthead .sub { color: var(--ink-soft); font-size: .92rem; max-width: 70ch; }
 .provenance { color: var(--ink-faint); font-size: .78rem; margin-top: .6rem; font-family: var(--mono); }

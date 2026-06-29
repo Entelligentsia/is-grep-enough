@@ -12,6 +12,9 @@ const el = (t, props = {}, kids = []) => {
   for (const k of [].concat(kids)) n.append(k);
   return n;
 };
+// read a CSS custom property off :root so charts track the active theme (light/
+// dark) instead of baking a hardcoded hue that glares in the other mode (T3.2).
+const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
 const ARM_COLOR = { baseline: "#0072B2", grove: "#E69F00", lsp: "#009E73" };
 const ARMS = ["baseline", "grove", "lsp"];
@@ -37,7 +40,27 @@ const isIncomplete = (c) => !c || c.status !== "harvested" || (c.flags ?? []).in
 let DATA;
 let REPO = {}; // id → {id, lang, sha, gh} for cite-link construction
 
+initTheme();
 init();
+
+// Theme: auto (follow OS) · light · dark. Dark is a truly neutral warm grey, not
+// black (§9). Persisted in localStorage; "auto" leaves the attribute off so the
+// prefers-color-scheme media query drives it. Charts re-read CSS vars on render,
+// so a theme change must re-render to recolor frames/halos (T3.2).
+function initTheme() {
+  const saved = (() => { try { return localStorage.getItem("theme"); } catch { return null; } })();
+  applyTheme(saved || "auto");
+}
+function applyTheme(mode) {
+  const root = document.documentElement;
+  if (mode === "auto") root.removeAttribute("data-theme");
+  else root.setAttribute("data-theme", mode);
+  try { localStorage.setItem("theme", mode); } catch { /* private mode */ }
+  const sw = $("#theme-switch");
+  if (sw) for (const b of sw.querySelectorAll("button"))
+    b.setAttribute("aria-pressed", b.dataset.themeSet === mode);
+}
+
 async function init() {
   const [meta, experiment, cells, judge] = await Promise.all(
     ["meta", "experiment", "cells", "judge"].map((f) => fetch(`data/${f}.json`).then((r) => r.json()))
@@ -77,6 +100,10 @@ async function init() {
   fillSelect($("#fc-a"), fcCells); fillSelect($("#fc-b"), fcCells);
   $("#fc-a").onchange = (e) => { state.fcA = e.target.value; renderFreeCompare(); syncURL(); };
   $("#fc-b").onchange = (e) => { state.fcB = e.target.value; renderFreeCompare(); syncURL(); };
+  // theme switch — re-render so charts re-read the active theme's CSS vars (T3.2)
+  for (const b of $("#theme-switch").querySelectorAll("button"))
+    b.onclick = () => { applyTheme(b.dataset.themeSet); render(); };
+
   $("#tx-close").onclick = () => $("#tx-overlay").classList.remove("open");
   $("#tx-overlay").onclick = (e) => { if (e.target.id === "tx-overlay") e.target.classList.remove("open"); };
 
@@ -249,7 +276,7 @@ function renderMetrics() {
         // facet header per rung carrying its honest n (partial rungs read smaller)
         Plot.axisFx({ anchor: "top", label: null, tickSize: 0, fontWeight: 600,
           tickFormat: (rg) => `${rg} · n=${nByRung[rg]?.size ?? 0}` }),
-        Plot.frame({ stroke: "#e3e1dc" }),
+        Plot.frame({ stroke: cssVar("--rule") }),
         // min–max whisker per (arm,rung) — the full spread, never a lone mean
         Plot.ruleX(rows, Plot.groupX({ y1: "min", y2: "max" },
           { fx: "rung", x: "arm", y1: "value", y2: "value", stroke: "arm", strokeOpacity: 0.35, strokeWidth: 1.2 })),
@@ -257,7 +284,7 @@ function renderMetrics() {
         Plot.tickY(rows, Plot.groupX({ y: "median" },
           { fx: "rung", x: "arm", y: "value", stroke: "arm", strokeWidth: 2.5 })),
         Plot.dot(rows.filter((r) => !r.flagged), {
-          fx: "rung", x: "arm", y: "value", fill: "arm", r: 3, fillOpacity: 0.85, stroke: "white", strokeWidth: 0.4,
+          fx: "rung", x: "arm", y: "value", fill: "arm", r: 3, fillOpacity: 0.85, stroke: cssVar("--paper"), strokeWidth: 0.4,
           tip: true, channels: { repo: "repo", rung: "rung", arm: "arm", value: { value: "value", label: m.label } },
         }),
         // DNF points kept but flagged: hollow ring + ✕ so a partial run never

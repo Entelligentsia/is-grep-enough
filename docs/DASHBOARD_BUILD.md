@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P3 / T3.2` — **P1 + P2 complete; T3.1 done** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P3 / T3.3` — **P1 + P2 complete; T3.1–T3.2 done** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -136,7 +136,17 @@ raw byte in ≤3 clicks.
   hollow-ring), motion, and a11y invariants. Verified truthful: all 17 light+dark
   hex tokens grep-match `style.css`, and the 6 cited chart defaults grep-match
   `app.mjs` (no drift).
-- [ ] **T3.2 Dark mode** — truly neutral grey, not black (§9).
+- [x] **T3.2 Dark mode** — truly neutral grey, not black (§9). An in-page
+  `#theme-switch` (auto / light / dark) now drives it, persisted in localStorage;
+  "auto" leaves the attribute off so `prefers-color-scheme` rules, while an
+  explicit `:root[data-theme=…]` always wins over the media query so the toggle can
+  override the OS. Dark paper is `#1b1a17` (warm neutral grey, not black). Fixed two
+  dark-mode warts: chart frame stroke and dot halo were hardcoded light hues
+  (`#e3e1dc` / `white`) — now read `cssVar("--rule")` / `cssVar("--paper")` so they
+  track theme (a theme change re-renders, re-reading the vars). Verified headless:
+  default=light tokens, dark click → paper `#1b1a17` + frame stroke `#34322d`
+  (recolored, not the old light value), persists across reload (dark button still
+  pressed), light click forces light; no page errors.
 - [ ] **T3.3 Methodology & provenance page** — genesis wall, blind judging,
   pricing table, data-sources panel (§10).
 - [ ] **T3.4 Reproduce-it box** — exact commands to rebuild the feed (§10.8).
