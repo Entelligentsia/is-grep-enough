@@ -1,197 +1,171 @@
 # transcript: I'm studying how Redis produces a point-in-time snapshot of the dataset to disk without blocking the server from serving clients. I need to understand how th...
 
 
-💬 I'll trace the full BGSAVE flow using the LSP tool, starting from the command entry point and following the chain.
+💬 I'll trace the full background-save pipeline using the LSP tool, starting from the launch function and following the chain.
   ▸ ToolSearch(select:LSP)
-  ▸ LSP(bgsaveCommand)
   ▸ LSP(rdbSaveBackground)
   ▸ LSP(backgroundSaveDoneHandler)
 
-💬 Let me read the key functions. I'll pull them in parallel.
+💬 LSP is still indexing for some symbols. Let me anchor using the known location of `backgroundSaveDoneHandler` and read around the key functions.
+  ▸ LSP(rdbSaveBackground)
+  ▸ LSP(checkChildrenDone)
+  ▸ Bash(grep -n "rdbSaveBackground\b" /home/bench/repos/redis/src/rdb.c | head -20)
+
+💬 Good. Now let me read all four key pieces in parallel.
   ▸ Read(/home/bench/repos/redis/src/rdb.c)
+  ▸ Read(/home/bench/repos/redis/src/server.c)
   ▸ Read(/home/bench/repos/redis/src/rdb.c)
 
-💬 Now let me find how `serverCron` reaps the child, and where `bgsaveCommand` is defined.
-  ▸ LSP(checkChildrenDone)
-  ▸ LSP(redisFork)
+💬 Now let me look at `serverCron` calling `checkChildrenDone`, the `redisFork` COW setup, the progress-reporting pipe (`sendChildCowInfo`/`receiveChildInfo`), ...
   ▸ LSP(sendChildCowInfo)
-  ▸ LSP({"operation":"findReferences","filePath":"/home/bench/repos/redis/src/server.h","line":3778,"character":6})
-  ▸ Read(/home/bench/repos/redis/src/server.c)
-  ▸ Read(/home/bench/repos/redis/src/server.c)
-
-💬 Now let me find `checkChildrenDone` implementation and `serverCron` reference to it.
-  ▸ LSP(checkChildrenDone)
-  ▸ LSP(openChildInfoPipe)
-  ▸ Read(/home/bench/repos/redis/src/server.c)
-  ▸ LSP(sendChildInfoGeneric)
-
-💬 Now let me look at how `serverCron` calls `checkChildrenDone`, and the child-info pipe for CoW reporting.
   ▸ LSP(receiveChildInfo)
-  ▸ Bash(grep -n "checkChildrenDone\|hasActiveChildProcess\|receiveChildInfo\|child_info_pipe\|serverCron" /home/bench/repos/redis/src/server.c | head -60)
-  ▸ Read(/home/bench/repos/redis/src/server.c)
-  ▸ LSP(receiveChildInfo sendChildInfoGeneric)
-
-💬 Now let me look at `receiveChildInfo` / `sendChildInfoGeneric` and `bgsaveCommand`.
-  ▸ Bash(grep -n "receiveChildInfo\|sendChildInfoGeneric\|child_info_pipe\|childInfo\|CHILD_INFO" /home/bench/repos/redis/src/server.c | head -40)
-  ▸ Bash(grep -rn "void receiveChildInfo\|void sendChildInfoGeneric\|bgsaveCommand" /home/bench/repos/redis/src/ | head -20)
-  ▸ Read(/home/bench/repos/redis/src/rdb.c)
-  ▸ Read(/home/bench/repos/redis/src/childinfo.c)
-  ▸ Read(/home/bench/repos/redis/src/childinfo.c)
-
-💬 Now let me look at what the child actually does in `rdbSave` — the write loop.
+  ▸ LSP(redisFork)
   ▸ LSP(rdbSave)
+  ▸ Bash(grep -n "checkChildrenDone" /home/bench/repos/redis/src/server.c | head -10)
   ▸ Read(/home/bench/repos/redis/src/rdb.c)
+  ▸ Read(/home/bench/repos/redis/src/server.c)
+  ▸ Read(/home/bench/repos/redis/src/childinfo.c)
+  ▸ Read(/home/bench/repos/redis/src/server.c)
 
-💬 Let me look at `rdbSaveInternal` to see the actual data serialization.
+💬 Now let me look at the progress-reporting mechanism (the child info pipe) and `rdbSaveInternal`.
+  ▸ Read(/home/bench/repos/redis/src/server.c)
   ▸ Read(/home/bench/repos/redis/src/rdb.c)
+  ▸ Read(/home/bench/repos/redis/src/childinfo.c)
 
-💬 Now I have everything I need to explain the full system. Here's how the pieces fit together:  ---  ## Redis BGSAVE: end-to-end flow  ### 1. Launching the bac...
+💬 Now let me read `rdbSaveRio` to see the structure of what the child writes, and also look at how `serverCron` triggers `saveparams` auto-saves.
+  ▸ Read(/home/bench/repos/redis/src/rdb.c)
+  ▸ Read(/home/bench/repos/redis/src/server.c)
 
-──────── RESULT (success, 151323ms, 29 turns) ────────
-Now I have everything I need to explain the full system. Here's how the pieces fit together:
+💬 I now have the complete picture. Here is how all four pieces fit together.  ---  ## Redis BGSAVE: How the cooperating pieces fit together  ### 1. Launching t...
+
+──────── RESULT (success, 129186ms, 24 turns) ────────
+I now have the complete picture. Here is how all four pieces fit together.
 
 ---
 
-## Redis BGSAVE: end-to-end flow
+## Redis BGSAVE: How the cooperating pieces fit together
 
 ### 1. Launching the background save
 
-**`bgsaveCommand` (`rdb.c:4833`)** is the entry point when a client sends `BGSAVE`. It handles three cases:
-- RDB child already running → error
-- Another child running (AOF, module) → either schedule with `server.rdb_bgsave_scheduled = 1` (if `SCHEDULE` flag given) or error out
-- Otherwise → calls `rdbSaveBackground`
+The trigger lives in `serverCron` (`server.c:1699`). Every pass of the cron loop, when no child is already running, it walks `server.saveparams` — the list of `save <seconds> <changes>` thresholds from redis.conf. If `server.dirty >= sp->changes` and enough time has elapsed since the last successful save, it calls:
 
-**`rdbSaveBackground` (`rdb.c:2070`)**:
-```c
-server.dirty_before_bgsave = server.dirty;   // snapshot dirty count at fork time
-server.lastbgsave_try = time(NULL);
-if ((childpid = redisFork(CHILD_TYPE_RDB)) == 0) {
-    /* child path */
-    rdbSave(req, filename, rsi, rdbflags);
-    sendChildCowInfo(CHILD_INFO_TYPE_RDB_COW_SIZE, "RDB");
-    exitFromChild(retval == C_OK ? 0 : 1, 0);
-} else {
-    /* parent records state and returns immediately */
-    server.rdb_save_time_start = time(NULL);
-    server.rdb_child_type = RDB_CHILD_TYPE_DISK;
-}
+```
+rdbSaveBackground(SLAVE_REQ_NONE, server.rdb_filename, rsiptr, RDBFLAGS_NONE)
+    src/rdb.c:2070
 ```
 
-**`redisFork` (`server.c:7428`)** does the real fork work:
-- Fires `REDISMODULE_EVENT_FORK_CHILD_PRE` so multi-threaded modules reach a fork-safe state (prevents deadlock from inherited locks)
-- Opens the child-info pipe (`server.child_info_pipe[0/1]`) before the fork so both sides inherit it
-- Calls `fork()`
-- **Child side:** closes the pipe's read end (`[0]`), sets up signal handlers, adjusts OOM score, calls `dismissMemoryInChild()` to advise the OS to drop buffers the child won't use (reduces CoW pressure)
-- **Parent side:** records fork latency, fires `FORK_CHILD_BORN`, stores `server.child_pid`
+`rdbSaveBackground` first guards against a double fork with `hasActiveChildProcess()`, snapshots `server.dirty_before_bgsave = server.dirty` (needed later to adjust the dirty counter), then calls `redisFork(CHILD_TYPE_RDB)` (`server.c:7428`).
+
+`redisFork` does several things before the actual `fork()`:
+- Fires `REDISMODULE_SUBEVENT_FORK_CHILD_PRE` so multi-threaded modules can reach a fork-safe point (a background thread holding the allocator lock at `fork()` time would deadlock the child).
+- Calls `openChildInfoPipe()` which creates a non-blocking Unix pipe (`server.child_info_pipe[0]` read end / `[1]` write end) — the progress channel used throughout the save.
+
+After `fork()` returns, the **parent** records `server.child_pid`, `server.child_type = CHILD_TYPE_RDB`, resets all the COW stats, snapshots `dbTotalServerKeyCount()` as the denominator for progress, and returns to the event loop without blocking. `server.rdb_child_type = RDB_CHILD_TYPE_DISK` is set back in `rdbSaveBackground`.
 
 ---
 
-### 2. Work division: CoW snapshot
+### 2. The division of work: Copy-on-Write
 
-After `fork()`, the OS copies the page table but not the pages — **copy-on-write (CoW)**. The child gets a frozen, consistent point-in-time view of the entire dataset without any locking or pausing of the parent.
+The key mechanism is the OS's copy-on-write fork semantics. At `fork()` time both parent and child share all memory pages. The child sees a **frozen point-in-time snapshot** of the dataset for free — no explicit copying is needed.
 
-As the parent serves clients and mutates data, the OS copies the affected pages on first write (the parent gets a new private copy; the child keeps reading the original). The child's snapshot never changes regardless of what clients do after the fork.
+The parent continues serving clients. When it modifies a memory page (a write to any key), the OS transparently copies that page for the parent. The child's view stays frozen at the fork instant. This is why BGSAVE doesn't block clients: clients are served by the parent, writes are absorbed by COW page faults, and the child walks the original data undisturbed.
 
-**Child's write path** (`rdbSave` → `rdbSaveInternal` → `rdbSaveRio`):
-- Writes to a temp file `temp-<pid>.rdb` (`rdb.c:2032`)
-- `rdbSaveInternal` (`rdb.c:1956`): opens file, initializes a `rio` (Redis I/O abstraction), optionally enables incremental fsync every `REDIS_AUTOSYNC_BYTES` to avoid I/O bursts
-- `rdbSaveRio` serializes all databases: aux fields, per-DB select opcodes, then every key-value pair via `rdbSaveKeyValuePair` (which handles expiry, LRU/LFU metadata, and type-specific encoding)
-- After `rdbSaveRio` returns: `fflush` → `fsync` → optional page-cache reclaim → `fclose`
-- Back in `rdbSave` (`rdb.c:2041`): **atomic rename** `temp-<pid>.rdb` → `dump.rdb`. The production file is never in a partial state — readers either see the old complete file or the new complete file.
-- Final fsync of the directory entry
-
----
-
-### 3. Progress communication: child-info pipe
-
-The child-info pipe (`childinfo.c`) carries `child_info_data` structs unidirectionally from child to parent:
-
-```c
-typedef struct {
-    size_t keys;           // keys processed
-    size_t cow;            // current CoW size (private dirty pages)
-    monotime cow_updated;
-    double progress;
-    childInfoType information_type;
-} child_info_data;
-```
-
-**Child side — `sendChildInfoGeneric` (`childinfo.c:49`)**: called periodically during save and once at the very end. Measures CoW size via `zmalloc_get_private_dirty(-1)`, which is expensive, so it's throttled: the next measurement is not taken until `cost × CHILD_COW_DUTY_CYCLE` microseconds have elapsed. Writes the struct to `child_info_pipe[1]`.
-
-**Parent side — `receiveChildInfo` (`childinfo.c:150`)**: drains the non-blocking read end (`child_info_pipe[0]`), calling `updateChildInfo` for each complete message. That updates `server.stat_current_cow_bytes`, `server.stat_current_cow_peak`, `server.stat_current_save_keys_processed`, etc. — the numbers surfaced by `INFO persistence`.
-
-`serverCron` calls this with `run_with_period(1000)` (once per second while a child is active).
+**Child's work** (`rdb.c:2082-2089`):
+1. Renames itself to `redis-rdb-bgsave` (visible in `ps`).
+2. Calls `rdbSave()` → `rdbSaveInternal()` → `rdbSaveRio()` writing to a temp file `temp-{pid}.rdb`.
+3. `rdbSaveRio` (`rdb.c:1880`) writes the file in a single sequential pass:
+   - 9-byte magic header `REDIS{version}`
+   - Aux fields (server version, replication id, etc.)
+   - Lua functions
+   - All databases in order via `rdbSaveDb()`, which iterates every key-value pair writing type byte, optional expiry, and the encoded value
+   - After each DB is written, calls `dismissKvstoreBucketsMemory()` to `MADV_DONTNEED` the hash-table bucket arrays — the child will never touch them again, and this gives those pages back to the OS, **reducing the amount of COW pressure on the parent**
+   - EOF opcode + CRC64 checksum
+4. After `rdbSaveRio` returns, `rdbSave` does `fsync`, then an **atomic `rename(tmpfile, filename)`** — the live RDB file is never partially-written from another process's perspective.
+5. On success, calls `sendChildCowInfo(CHILD_INFO_TYPE_RDB_COW_SIZE, "RDB")` to push a final progress message.
+6. Calls `exitFromChild(0, 0)`.
 
 ---
 
-### 4. Completion detection: `waitpid` in `serverCron`
+### 3. Progress and completion signalling: the child-info pipe
 
-Every `serverCron` tick (`server.c:1692`):
+**While running**, the child calls `sendChildInfoGeneric()` (`childinfo.c:49`) periodically. This function:
+- Reads the child's private dirty memory (`zmalloc_get_private_dirty(-1)`) — this is exactly the COW overhead: bytes copied from the original mapping into the child's private pages.
+- Throttles this expensive call via an adaptive duty-cycle (`CHILD_COW_DUTY_CYCLE`) so it doesn't slow down saving.
+- Writes a fixed-size `child_info_data` struct to `server.child_info_pipe[1]` containing `{keys, cow, cow_updated, progress, information_type}`.
 
+**The parent** polls the pipe in `serverCron` every 1000 ms (`server.c:1694`):
 ```c
-if (hasActiveChildProcess() || ldbPendingChildren()) {
-    run_with_period(1000) receiveChildInfo();   // drain pipe periodically
-    checkChildrenDone();                        // check for exit, every tick
-}
+run_with_period(1000) receiveChildInfo();
+checkChildrenDone();
 ```
 
-**`checkChildrenDone` (`server.c:1416`)**:
-```c
-pid = waitpid(-1, &statloc, WNOHANG);   // non-blocking
-if (pid == server.child_pid) {
-    if (server.child_type == CHILD_TYPE_RDB)
-        backgroundSaveDoneHandler(exitcode, bysignal);
-    if (!bysignal && exitcode == 0) receiveChildInfo();  // drain pipe one last time
-    resetChildState();   // clears child_pid, child_type, closes pipe
-}
-```
+`receiveChildInfo()` (`childinfo.c:150`) drains all available messages from the pipe and calls `updateChildInfo()` which updates `server.stat_current_cow_bytes`, `stat_current_save_keys_processed`, etc. These feed the `INFO persistence` and `INFO stats` output so operators can watch COW size grow in real time.
 
-`WNOHANG` is the key — the parent never blocks. If the child hasn't exited yet, `waitpid` returns 0 and `serverCron` moves on. The event loop remains fully available for clients.
+**Completion** is signalled purely by the child exiting. `checkChildrenDone()` (`server.c:1416`) calls:
+```c
+waitpid(-1, &statloc, WNOHANG)
+```
+`WNOHANG` makes this a non-blocking poll — if the child hasn't exited yet it returns immediately so the event loop isn't stalled. When the child has exited, `WEXITSTATUS(statloc)` gives exit code 0 (success) or 1 (error).
 
 ---
 
-### 5. Finalization
+### 4. Finalization in the parent
 
-**`backgroundSaveDoneHandler` (`rdb.c:4605`)** dispatches on `server.rdb_child_type`:
-
-**`backgroundSaveDoneHandlerDisk` (`rdb.c:4544`)** — for normal BGSAVE:
-- **Success**: `server.dirty -= server.dirty_before_bgsave` — subtracts only the dirty count that existed at fork time. Writes made *after* the fork are left in `server.dirty` so they'll be included in the next save trigger. Sets `server.lastsave`, `server.lastbgsave_status = C_OK`.
-- **Non-zero exit**: marks `server.lastbgsave_status = C_ERR`, increments `server.stat_rdb_consecutive_failures`.
-- **Killed by signal**: removes the temp file (unless SIGUSR1, which is the "abort cleanly" signal). `bgsave_aborted` flag turns a race-y success into a SIGUSR1 abort.
-
-After the type-specific handler, the dispatcher (`rdb.c:4622`):
-```c
-server.rdb_child_type = RDB_CHILD_TYPE_NONE;
-server.rdb_save_time_last = save_end - server.rdb_save_time_start;
-server.bgsave_aborted = 0;
-updateSlavesWaitingBgsave(ok ? C_OK : C_ERR, type);  // notify replicas
+`checkChildrenDone()` sees `server.child_type == CHILD_TYPE_RDB` and calls:
+```
+backgroundSaveDoneHandler(exitcode, bysignal)   src/rdb.c:4605
 ```
 
-`updateSlavesWaitingBgsave` unblocks replicas that were waiting for the RDB to start their initial sync (replication piggybacking on BGSAVE).
+This dispatches to `backgroundSaveDoneHandlerDisk()` (`rdb.c:4544`) which handles all three outcomes:
+
+| Outcome | What happens |
+|---|---|
+| Success (exitcode == 0) | `server.dirty -= dirty_before_bgsave` (only count mutations *after* fork), `server.lastsave = now`, `server.lastbgsave_status = C_OK`, reset consecutive-failure counter |
+| Error (exitcode != 0) | `server.lastbgsave_status = C_ERR`, increment `stat_rdb_consecutive_failures` |
+| Killed by signal | `rdbRemoveTempFile()` deletes the partial file; if the signal was `SIGUSR1` (the deliberate kill signal) it's not counted as an error |
+
+Back in `backgroundSaveDoneHandler`, after the disk-specific handler returns:
+- `server.rdb_child_type = RDB_CHILD_TYPE_NONE`
+- `server.rdb_save_time_last` is updated
+- `updateSlavesWaitingBgsave()` is called — any replicas that were waiting on this RDB (for the initial bulk sync) are now unblocked
+
+Back in `checkChildrenDone()`, after the handler returns:
+- `receiveChildInfo()` is called one final time to drain any last pipe message (the child's final COW report)
+- `resetChildState()` clears `server.child_pid / child_type`
+- `replicationStartPendingFork()` kicks off any replication fork that was queued while this save was running
 
 ---
 
-### The full sequence in one view
+### The full flow at a glance
 
 ```
-Client           Main process (event loop)              Child process
-  |                       |                                   |
-BGSAVE ─────────────────> bgsaveCommand
-                          rdbSaveBackground
-                          redisFork ──────────────────────── fork()
-                          [parent returns immediately]        |
-                          serverCron tick N                   rdbSave
-                            receiveChildInfo  <──── CoW info  rdbSaveInternal
-                          serverCron tick N+1                 rdbSaveRio
-                            receiveChildInfo  <──── CoW info  (serialize all keys)
-                          ...                                 fflush/fsync
-                          serverCron tick M                   rename temp→dump.rdb
-                            waitpid WNOHANG ─────────────── exit(0)
-                            backgroundSaveDoneHandler
-                              dirty -= dirty_before_bgsave
-                              lastsave = now
-                              updateSlavesWaitingBgsave
-                            resetChildState
+serverCron (every ~1ms)
+  └─ saveparams threshold met
+       └─ rdbSaveBackground()
+            ├─ redisFork()
+            │    ├─ openChildInfoPipe()     ← opens progress channel
+            │    └─ fork()
+            │
+            ├─ PARENT: returns to event loop, serves clients
+            │    serverCron (every 1s while child alive):
+            │      receiveChildInfo()       ← reads COW+progress from pipe
+            │      checkChildrenDone()      ← waitpid(WNOHANG)
+            │
+            └─ CHILD: rdbSave()
+                 └─ rdbSaveInternal()
+                      └─ rdbSaveRio()       ← walks all keys under COW snapshot
+                           sendChildCowInfo()  ← final pipe write
+                           exitFromChild(0)    ← triggers waitpid() to fire
+
+checkChildrenDone() sees child exited
+  └─ backgroundSaveDoneHandler()
+       └─ backgroundSaveDoneHandlerDisk()  ← adjusts dirty, lastsave, status
+       └─ updateSlavesWaitingBgsave()      ← unblocks waiting replicas
+       └─ receiveChildInfo()               ← drain final pipe message
+       └─ resetChildState()
 ```
 
-The design's key invariant: **the main event loop never yields or pauses**. The fork provides an instant, lock-free snapshot; the child-info pipe provides live telemetry without synchronization; and `WNOHANG waitpid` in the cron timer provides zero-cost completion polling.
+The three communication channels are:
+1. **COW + fork semantics** — the child reads the dataset; the parent mutates its own pages independently. No explicit synchronization needed.
+2. **The child-info pipe** — one-way write-only from child to parent; carries live COW byte count and key progress during the save.
+3. **`waitpid`** — the OS mechanism that delivers the exit code when the child terminates; polled non-blocking by `checkChildrenDone` on every cron tick.
