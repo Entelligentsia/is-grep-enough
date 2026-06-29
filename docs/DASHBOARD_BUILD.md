@@ -87,9 +87,14 @@ raw byte in ≤3 clicks.
 
 ## Cross-cutting (do when it unblocks a task above)
 
-- [ ] **TX.1 Feed schema to §3.3.** Emit `series/<cell>.json` and parsed
-  `transcripts/<cell>.json` as separate files; trim `series` out of `cells.json`
-  (already 302 KB). Do before T1.2 / T0.3.
+- [x] **TX.1 Feed schema to §3.3 (series split).** `build.mjs` now writes each
+  cell's per-turn context-growth curve to `site/data/series/<cell>.json`
+  (`{turn,ctx,in,cache_read,cache_create,out}`; no `cum_cost` — per-turn cost is
+  not billed, §13) and the cell carries only a `series_local` pointer +
+  `series_turns` count. Trimmed inline `series` out of `cells.json`: 400 KB →
+  233 KB. (Transcripts are already separate files — `data/transcripts/*.md`,
+  rendered by the working viewer — so the "parsed transcripts/<cell>.json" half
+  is deferred: it's an optimization that unblocks no pending task.)
 - [ ] **TX.2 Harvest wiring.** Confirm `/runarm` harvest calls
   `render-transcript.mjs` so new cells land viewer-ready.
 

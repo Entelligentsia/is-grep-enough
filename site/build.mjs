@@ -57,7 +57,12 @@ function readRun(rawPath) {
     const u = e.message?.usage;
     if (u && e.parent_tool_use_id == null) {
       turn++;
-      series.push({ turn, ctx: (u.input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0) + (u.cache_creation_input_tokens ?? 0) });
+      const cr = u.cache_read_input_tokens ?? 0, cc = u.cache_creation_input_tokens ?? 0, inp = u.input_tokens ?? 0;
+      // per-turn token components: ctx is the input side of this turn (fresh +
+      // cache); `out` is what the turn generated. cum_cost is intentionally NOT
+      // emitted — only the run's total is billed; per-turn cost would be a
+      // token-derived estimate, not a billed figure (§13, truthbound).
+      series.push({ turn, ctx: inp + cr + cc, in: inp, cache_read: cr, cache_create: cc, out: u.output_tokens ?? 0 });
     }
     for (const c of e.message?.content ?? []) {
       if (c.type !== "tool_use") continue;
@@ -91,6 +96,8 @@ const cells = [];
 let nHarvested = 0, nDnf = 0, nPending = 0;
 mkdirSync(join(OUT, "transcripts"), { recursive: true });
 mkdirSync(join(OUT, "raw"), { recursive: true });
+mkdirSync(join(OUT, "series"), { recursive: true });
+let nSeries = 0;
 
 for (const rung of RUNGS) {
   for (const repo of REPOS) {
@@ -151,6 +158,18 @@ for (const rung of RUNGS) {
         }
       }
 
+      // Per-turn context-growth series is emitted as its own file (§3.3) and
+      // kept OUT of cells.json — the curve is build-derived from the raw jsonl,
+      // and inlining 3k points bloated cells.json past 400 KB (TX.1). The cell
+      // carries only a pointer; the sparkline lazy-fetches it on drill.
+      let seriesLocal = null;
+      if (run?.series?.length) {
+        const dest = `series/${id}.json`;
+        writeFileSync(join(OUT, dest), JSON.stringify(run.series));
+        seriesLocal = `data/${dest}`;
+        nSeries++;
+      }
+
       const engageKey = ENGAGE_KEY[arm];
       const engageVal = run?.tools?.[engageKey] ?? null;
       const flags = [];
@@ -176,7 +195,8 @@ for (const rung of RUNGS) {
         },
         cost: run ? { usd: run.cost, ...run.cost_split } : null,
         tools: run?.tools ?? null,
-        series: run?.series ?? null,
+        series_local: seriesLocal, // pointer to series/<id>.json (per-turn ctx growth); curve provenance = raw file
+        series_turns: run?.series?.length ?? null,
         evidence: { raw: existsSync(rawPath) ? `evidence/nav3/${rung}/raw/${repo}-${rung}.claude.${arm}.jsonl` : null, raw_local: rawLocal, readable: transcript },
         subagents,
         dnf_reason: side?.note ?? side?.reason ?? null,
@@ -226,4 +246,4 @@ writeFileSync(join(OUT, "cells.json"), JSON.stringify(cells, null, 2));
 writeFileSync(join(OUT, "judge.json"), JSON.stringify(judge, null, 2));
 
 const nSub = cells.reduce((a, c) => a + c.subagents.length, 0);
-console.error(`feed → ${OUT}  | cells: ${cells.length} (${nHarvested} harvested, ${nDnf} dnf/blocked, ${nPending} pending) | judged: ${judge.length} | transcripts: ${readdirSync(join(OUT, "transcripts")).length} | raw: ${readdirSync(join(OUT, "raw")).length} | subagents: ${nSub}`);
+console.error(`feed → ${OUT}  | cells: ${cells.length} (${nHarvested} harvested, ${nDnf} dnf/blocked, ${nPending} pending) | judged: ${judge.length} | transcripts: ${readdirSync(join(OUT, "transcripts")).length} | raw: ${readdirSync(join(OUT, "raw")).length} | series: ${nSeries} | subagents: ${nSub}`);
