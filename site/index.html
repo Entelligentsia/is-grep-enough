@@ -45,11 +45,14 @@
 
   <section>
     <h2>Metrics</h2>
-    <div class="tabs" id="metric-tabs"></div>
-    <figure class="figure">
-      <div id="chart"></div>
-      <figcaption id="chart-cap">—</figcaption>
-    </figure>
+    <p class="note">Five metric families, each a row of small charts — one per rung, the three arms side by side within each. Small-multiples, not one busy chart: every panel keeps the same honest y-axis from zero, with one dot per repo and a tick at the per-rung median. Filter above to focus a rung or repo.</p>
+    <div class="legend metrics-legend">
+      <span><span class="swatch baseline"></span>baseline</span>
+      <span><span class="swatch grove"></span>grove</span>
+      <span><span class="swatch lsp"></span>lsp</span>
+      <span class="caveat">dot = one repo · tick = per-rung median · n=1 per cell</span>
+    </div>
+    <div id="metrics-grid"></div>
   </section>
 
   <section id="detail-section" hidden>

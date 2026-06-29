@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P1 / T1.1` — **P0 complete** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P1 / T1.2` — **T1.1 done** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -49,9 +49,13 @@ raw byte in ≤3 clicks.
 
 ## Phase 1 — Dashboard (metrics, filters, honesty)
 
-- [ ] **T1.1 Metric small-multiples.** Five families (context, turns, wall,
+- [x] **T1.1 Metric small-multiples.** Five families (context, turns, wall,
   cache, cost) as rows of small charts per rung, arms as series — not one tabbed
-  chart (§5.3).
+  chart (§5.3). Replaced the tabbed `#chart` + `#metric-tabs` with `#metrics-grid`:
+  one `Plot` figure per family, faceted by rung (`fx`), arms on `x`, one dot per
+  repo + a per-rung-per-arm median tick, y from zero (`~s` ticks). Removed metric
+  tab state/wiring. Partial rungs render with fewer dots (L4=2, L5=5); single-rung
+  filter narrows the facet row.
 - [ ] **T1.2 Context growth sparkline.** Per-turn curve from `series` on
   hover/drill; provenance points at raw file, not ledger (§3.1 truthbound note).
 - [ ] **T1.3 Honest aggregation.** Min–max whisker / dot spread + printed `n`

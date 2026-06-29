@@ -24,7 +24,10 @@ const METRICS = {
   cost: { label: "Cost (billed USD)", get: (c) => c.cost?.usd, fmt: (v) => v != null ? "$" + v.toFixed(3) : "—" },
 };
 
-const state = { rung: "", repo: "", metric: "cost", cell: null, showJudged: false };
+// metric families rendered as small-multiple rows (§5.3), in this order
+const METRIC_FAMILIES = ["context", "turns", "wall", "cache", "cost"];
+
+const state = { rung: "", repo: "", cell: null, showJudged: false };
 let DATA;
 let REPO = {}; // id → {id, lang, sha, gh} for cite-link construction
 
@@ -50,11 +53,6 @@ async function init() {
   $("#f-rung").onchange = (e) => { state.rung = e.target.value; render(); };
   $("#f-repo").onchange = (e) => { state.repo = e.target.value; render(); };
 
-  // metric tabs
-  for (const [k, m] of Object.entries(METRICS)) {
-    const b = el("button", { textContent: m.label, onclick: () => { state.metric = k; render(); } });
-    b.dataset.k = k; $("#metric-tabs").append(b);
-  }
   $("#t-judged").onchange = (e) => { state.showJudged = e.target.checked; renderCoverage(); };
   $("#tx-close").onclick = () => $("#tx-overlay").classList.remove("open");
   $("#tx-overlay").onclick = (e) => { if (e.target.id === "tx-overlay") e.target.classList.remove("open"); };
@@ -69,11 +67,10 @@ function filtered() {
 }
 
 function render() {
-  for (const b of $("#metric-tabs").children) b.setAttribute("aria-pressed", b.dataset.k === state.metric);
   const cov = DATA.meta.coverage;
   $("#coverage-tally").textContent = `${cov.harvested} harvested · ${cov.pending} pending · ${cov.blocked_dnf} dnf/blocked of ${cov.total}`;
   renderCoverage();
-  renderChart();
+  renderMetrics();
   if (state.cell) renderDetail(state.cell);
 }
 
@@ -124,34 +121,60 @@ function renderCoverage() {
   const host = $("#coverage"); host.replaceChildren(table);
 }
 
-function renderChart() {
-  const m = METRICS[state.metric];
-  const rows = filtered()
-    .filter((c) => c.status === "harvested" && m.get(c) != null)
-    .map((c) => ({ rung: c.rung, arm: c.arm, repo: c.repo, value: m.get(c), id: `${c.rung}-${c.repo}` }));
+// Metric small-multiples (§5.3): five metric families stacked as rows, each a
+// row of small charts faceted by rung, the three arms as the series within each
+// panel. One dot per repo, a tick at the per-rung-per-arm median; y-axis always
+// from zero. Replaces the single tabbed chart — small-multiples over one busy
+// chart keeps it legible and neutral.
+function renderMetrics() {
+  const host = $("#metrics-grid"); host.replaceChildren();
+  const rungsShown = DATA.experiment.rungs.filter((r) => !state.rung || r === state.rung);
+  const base = filtered().filter((c) => c.status === "harvested");
 
-  const fig = Plot.plot({
-    width: 980, height: 280, marginLeft: 64, marginBottom: 34,
-    style: { fontFamily: "system-ui, sans-serif", fontSize: "11px", background: "transparent" },
-    x: { label: "rung", domain: DATA.experiment.rungs.filter((r) => !state.rung || r === state.rung) },
-    y: { label: m.label, grid: true, zero: true, nice: true },
-    fx: { label: null },
-    color: { domain: ARMS, range: ARMS.map((a) => ARM_COLOR[a]) },
-    marks: [
-      Plot.frame({ stroke: "#e3e1dc" }),
-      // per-(arm,rung) median bar — central tendency alongside the raw spread
-      Plot.barY(rows, Plot.groupX({ y: "median" }, { fx: "arm", x: "rung", y: "value", fill: "arm", fillOpacity: 0.14 })),
-      Plot.dot(rows, {
-        fx: "arm", x: "rung", y: "value", fill: "arm", r: 3.2, fillOpacity: 0.9,
-        tip: true, channels: { repo: "repo", value: "value" },
-      }),
-    ],
-  });
-  $("#chart").replaceChildren(fig);
-  const n = new Set(rows.map((r) => r.id)).size;
-  $("#chart-cap").textContent =
-    `${m.label} — one dot per repo (n=${n} task${n === 1 ? "" : "s"} shown), faceted by arm. ` +
-    `Axis starts at zero; tick = per-rung median. n=1 per cell — a direction, not a measurement.`;
+  for (const key of METRIC_FAMILIES) {
+    const m = METRICS[key];
+    const rows = base
+      .filter((c) => m.get(c) != null)
+      .map((c) => ({ rung: c.rung, arm: c.arm, repo: c.repo, value: m.get(c), id: `${c.rung}-${c.repo}` }));
+
+    const fig = el("figure", { className: "figure metric-family" });
+    fig.append(el("figcaption", { className: "mf-label", textContent: m.label }));
+
+    if (!rows.length) {
+      fig.append(el("p", { className: "caveat", textContent: "no harvested data for this metric in the current filter." }));
+      host.append(fig);
+      continue;
+    }
+
+    // one small chart per rung; arms (x) side by side within each.
+    const nFacets = rungsShown.length;
+    const width = Math.min(980, Math.max(360, nFacets * 200));
+    const plot = Plot.plot({
+      width, height: 200, marginLeft: 58, marginBottom: 36, marginTop: 8,
+      style: { fontFamily: "system-ui, sans-serif", fontSize: "11px", background: "transparent" },
+      fx: { label: null, domain: rungsShown },
+      x: { label: null, domain: ARMS, tickRotate: 0 },
+      y: { label: null, grid: true, zero: true, nice: true, tickFormat: "~s" },
+      color: { domain: ARMS, range: ARMS.map((a) => ARM_COLOR[a]) },
+      marks: [
+        Plot.frame({ stroke: "#e3e1dc" }),
+        // per-(arm,rung) median tick — central tendency beside the raw spread
+        Plot.tickY(rows, Plot.groupX({ y: "median" },
+          { fx: "rung", x: "arm", y: "value", stroke: "arm", strokeWidth: 2.5 })),
+        Plot.dot(rows, {
+          fx: "rung", x: "arm", y: "value", fill: "arm", r: 3, fillOpacity: 0.85, stroke: "white", strokeWidth: 0.4,
+          tip: true, channels: { repo: "repo", rung: "rung", arm: "arm", value: { value: "value", label: m.label } },
+        }),
+      ],
+    });
+    fig.append(plot);
+
+    const n = new Set(rows.map((r) => r.id)).size;
+    fig.append(el("figcaption", { className: "mf-cap" },
+      `${m.label} — one dot per repo across ${rungsShown.length} rung${rungsShown.length === 1 ? "" : "s"} ` +
+      `(n=${n} task${n === 1 ? "" : "s"} shown); tick = per-rung-per-arm median. Axis from zero. n=1 per cell — a direction, not a measurement.`));
+    host.append(fig);
+  }
 }
 
 function renderDetail(cid) {
