@@ -32,11 +32,11 @@
     },
     "L1-lsp-redis": {
       "status": "harvested",
-      "run_wall_s": 70,
-      "context": 192777,
+      "run_wall_s": 78,
+      "context": 379118,
       "engaged": true,
       "evidence": "evidence/nav3/L1/raw/redis-L1.claude.lsp.jsonl",
-      "ts": "2026-06-27T10:08:14.256Z"
+      "ts": "2026-06-29T05:33:26.088Z"
     },
     "L2-baseline-redis": {
       "status": "harvested",

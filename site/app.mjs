@@ -217,6 +217,9 @@ function renderDetail(cid) {
       if (axis && lowest(c, axis)) { valSpan.classList.add("low"); valSpan.append(el("span", { className: "lowtag", textContent: " lowest" })); }
       col.append(el("div", { className: "metricrow" }, [el("span", { className: "k", textContent: k }), valSpan]));
     }
+    // per-turn context-growth sparkline (§5.3) — drilled here, lazy-fetched from
+    // series/<cell>.json; provenance is the raw file, not the ledger scalar.
+    renderSparkline(col, c);
     // engagement / tool-usage table — the "did it do it the hard way?" evidence
     if (c.tools) {
       const tb = el("div", { className: "tools" });
@@ -259,6 +262,48 @@ function renderDetail(cid) {
   for (const kr of jr?.key_revisions ?? [])
     host.append(el("div", { className: "keyrev" }, `Reference key corrected (${kr.level}): ${kr.reason}  [${kr.cite}]`));
   renderCoverage();
+}
+
+// Context-growth sparkline (§5.3): the per-turn input-context curve for one arm
+// run, lazy-fetched from series/<cell>.json. Truthbound provenance — the curve
+// is build-derived from the run's raw stream-json, NOT the ledger (whose
+// `context` is a single peak scalar, not the growth, §3.1). Axis from zero.
+const sparkCache = {};
+function renderSparkline(host, c) {
+  if (!c.series_local) return;
+  const box = el("div", { className: "spark" });
+  box.append(el("div", { className: "spark-h" },
+    [el("span", { className: "k", textContent: "context growth" }),
+     el("span", { className: "spark-turns", textContent: `${c.series_turns ?? "?"} turns` })]));
+  const slot = el("div", { className: "spark-plot" }, el("span", { className: "caveat", textContent: "loading…" }));
+  box.append(slot);
+  const prov = el("div", { className: "spark-prov" });
+  prov.append(document.createTextNode("curve from "), el("code", {}, c.evidence?.raw ?? "raw jsonl"),
+    document.createTextNode(" — build-derived, not the ledger scalar"));
+  box.append(prov);
+  host.append(box);
+
+  const draw = (series) => {
+    if (!series?.length) { slot.replaceChildren(el("span", { className: "caveat", textContent: "no per-turn series" })); return; }
+    const fig = Plot.plot({
+      width: 240, height: 62, marginLeft: 36, marginBottom: 14, marginTop: 6, marginRight: 6,
+      style: { fontFamily: "system-ui, sans-serif", fontSize: "9px", background: "transparent" },
+      x: { label: null, ticks: [] },
+      y: { label: null, zero: true, nice: true, ticks: 2, tickFormat: "~s" },
+      marks: [
+        Plot.areaY(series, { x: "turn", y: "ctx", fill: ARM_COLOR[c.arm], fillOpacity: 0.12 }),
+        Plot.lineY(series, { x: "turn", y: "ctx", stroke: ARM_COLOR[c.arm], strokeWidth: 1.4 }),
+        Plot.dot(series, { x: "turn", y: "ctx", r: 1.3, fill: ARM_COLOR[c.arm],
+          tip: true, channels: { turn: "turn", "context tokens": "ctx" } }),
+      ],
+    });
+    slot.replaceChildren(fig);
+  };
+
+  if (sparkCache[c.id]) { draw(sparkCache[c.id]); return; }
+  fetch(c.series_local).then((r) => r.json())
+    .then((series) => { sparkCache[c.id] = series; draw(series); })
+    .catch(() => slot.replaceChildren(el("span", { className: "caveat", textContent: "series unavailable" })));
 }
 
 // transcript modal: readable trail (marked) ↔ raw stream-json. The raw view
