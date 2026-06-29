@@ -1,329 +1,409 @@
 # transcript: I'm planning a change to how a property set as an environment variable ends up bound into a @ConfigurationProperties bean, so I need the full journey of one ...
 
 
-💬 I'll trace this end-to-end through the source using the LSP tool, exploring each stage of the pipeline.
+💬 I'll trace this end-to-end through the source. Let me load the LSP tool and start resolving the key types in sequence.
   ▸ ToolSearch(select:LSP)
 
-💬 Now let me look up the key classes in the binding pipeline in parallel.
+💬 Now let me locate the key types in parallel — binder, configuration property sources adapter, name mapping, and the post-processor entry point.
   ▸ LSP(ConfigurationPropertiesBindingPostProcessor)
   ▸ LSP(ConfigurationPropertiesBinder)
   ▸ LSP(ConfigurationPropertySources)
-  ▸ Bash(find /home/bench/repos/spring-boot/spring-boot-project/spring-boot/src -name "*.java" | head -5)
-  ▸ Bash(find /home/bench/repos/spring-boot -name "*.java" -path "*/context/properties/*" | head -10)
-  ▸ Bash(find /home/bench/repos/spring-boot -name "ConfigurationPropertiesBindingPostProcessor.java" -o -name "ConfigurationPropertiesBinder.java" -o -name "Binder.ja...)
+  ▸ LSP(Binder)
 
-💬 Found the source layout. Let me read these core files in parallel.
+💬 Need real file paths first. Let me locate the key files with `find`.
+  ▸ Bash(find /home/bench/repos/spring-boot/spring-boot-project -type f -name "*.java" | grep -E "(ConfigurationPropertiesBindingPostProcessor|ConfigurationProperties...)
+  ▸ Bash(find /home/bench/repos/spring-boot/spring-boot-project -type f -name "*.java" | grep -E "(ConfigurationPropertyName|SystemEnvironmentPropertySource|Environme...)
+  ▸ Bash(ls /home/bench/repos/spring-boot/)
+  ▸ Bash(find /home/bench/repos/spring-boot -type f -name "*.java" | grep -E "(ConfigurationPropertiesBindingPostProcessor|ConfigurationPropertiesBinder\.java|Binder\...)
+  ▸ Bash(find /home/bench/repos/spring-boot -type f -name "*.java" | grep -E "(ConfigurationPropertyName\.java|SystemEnvironment|SpringEnvironmentConfigurationPropert...)
+
+💬 Good. Now I'll read the key files in parallel — the post-processor, the binder orchestrator, the source adapter, the env-var name mapper, and the core `Binde...
   ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/ConfigurationPropertiesBindingPostProcessor.java)
   ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/ConfigurationPropertiesBinder.java)
-
-💬 Now let me read the `Binder` and `ConfigurationPropertySources` files.
-  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/bind/Binder.java)
   ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/ConfigurationPropertySources.java)
-
-💬 Now let me dig into the adaptation layer — `SpringConfigurationPropertySources`, `SpringConfigurationPropertySource`, and the env-var mapper.
-  ▸ Bash(find /home/bench/repos/spring-boot/core/spring-boot/src/main/java -name "SpringConfigurationPropertySources.java" -o -name "SpringConfigurationPropertySource...)
-  ▸ Bash(find /home/bench/repos/spring-boot/core/spring-boot/src/main/java -path "*/source/*.java" | grep -v test | sort)
-  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/SpringConfigurationPropertySource.java)
   ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/SystemEnvironmentPropertyMapper.java)
 
-💬 Now let me get the `ConfigurationPropertyName` ToStringFormat details and `DefaultPropertyMapper`.
-  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/DefaultPropertyMapper.java)
-  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/ConfigurationPropertyName.java)
+💬 Now let me read the core `Binder`, the `SpringConfigurationPropertySource` adapter, and `ConfigurationPropertyName` (its `adapt` and `ToStringFormat` sections).
+  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/bind/Binder.java)
+  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/SpringConfigurationPropertySource.java)
+  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/SpringConfigurationPropertySources.java)
 
-💬 Let me find the `ToStringFormat` enum in `ConfigurationPropertyName` and the `BindConverter` class.
-  ▸ Bash(grep -n "ToStringFormat\|SYSTEM_ENVIRONMENT\|LEGACY_SYSTEM_ENVIRONMENT\|toString\|enum ToStringFormat" /home/bench/repos/spring-boot/core/spring-boot/src/mai...)
-  ▸ Bash(find /home/bench/repos/spring-boot/core/spring-boot/src/main/java -name "BindConverter.java" -o -name "BindHandler.java" -o -name "SpringConfigurationPropert...)
+💬 Now let me read `ConfigurationPropertyName` (focusing on `adapt` and `ToStringFormat`), `BindConverter`, `BindResult`, and the handler implementations.
+  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/ConfigurationPropertyName.java)
+  ▸ Bash(grep -n "ToStringFormat\|adapt\|SYSTEM_ENVIRONMENT\|LEGACY\|DASHED\|UNIFORM\|class ConfigurationPropertyName" /home/bench/repos/spring-boot/core/spring-boot/...)
+  ▸ Bash(find /home/bench/repos/spring-boot -name "BindConverter.java" -o -name "BindResult.java" -o -name "BindHandler.java" -o -name "DefaultPropertyMapper.java" | ...)
+
+💬 Now let me read the `adapt` and `toString(format)` methods in `ConfigurationPropertyName`, then `BindConverter`, `BindResult`, `BindHandler`, and `DefaultPro...
+  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/ConfigurationPropertyName.java)
+  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/ConfigurationPropertyName.java)
   ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/ConfigurationPropertyName.java)
   ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/bind/BindConverter.java)
+  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/bind/BindResult.java)
   ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/bind/BindHandler.java)
+  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/DefaultPropertyMapper.java)
 
-💬 Let me check `SpringConfigurationPropertySources` and `SpringIterableConfigurationPropertySource` for the full picture.
-  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/SpringConfigurationPropertySources.java)
+💬 Let me also look at `SpringIterableConfigurationPropertySource` (the full-enumerable variant used for env-vars) and the key handler implementations.
+  ▸ Bash(find /home/bench/repos/spring-boot -name "SpringIterableConfigurationPropertySource.java" -o -name "IgnoreTopLevelConverterNotFoundBindHandler.java" -o -name...)
   ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/source/SpringIterableConfigurationPropertySource.java)
+  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/PropertySourcesDeducer.java)
+  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/bind/BoundPropertiesTrackingBindHandler.java)
+  ▸ Read(/home/bench/repos/spring-boot/core/spring-boot/src/main/java/org/springframework/boot/context/properties/bind/handler/IgnoreTopLevelConverterNotFoundBindHand...)
 
-💬 I now have everything I need to give a complete, source-grounded walkthrough. Here it is.  ---  ## The full journey: env var → `@ConfigurationProperties` bea...
+💬 I now have everything I need. Here is the complete walk-through.  ---  ## Full journey of an environment-variable property through Spring Boot's binding mach...
 
-──────── RESULT (success, 184394ms, 25 turns) ────────
-I now have everything I need to give a complete, source-grounded walkthrough. Here it is.
-
----
-
-## The full journey: env var → `@ConfigurationProperties` bean
-
-The example throughout: env var `SERVER_PORT=8080` being bound into a `ServerProperties` bean with `@ConfigurationProperties("server")`.
+──────── RESULT (success, 236471ms, 33 turns) ────────
+I now have everything I need. Here is the complete walk-through.
 
 ---
 
-### Stage 1: The raw property source in the Environment
+## Full journey of an environment-variable property through Spring Boot's binding machinery
 
-`StandardEnvironment` holds a `MutablePropertySources` list. One entry is a `SystemEnvironmentPropertySource` named `"systemEnvironment"` backed by a `Map<String, Object>` from `System.getenv()`. Nothing Spring-Boot-specific has happened yet; this is plain Spring Framework.
+The running example throughout: env-var `SERVER_PORT=8080` being bound into `ServerProperties` annotated `@ConfigurationProperties(prefix="server")` with a `port` field.
 
 ---
 
-### Stage 2: Attaching the adapter to the Environment
+### Stage 1 — Entry point: `ConfigurationPropertiesBindingPostProcessor`
 
-Early in context refresh, `ConfigurationPropertySources.attach(environment)` is called
-(`ConfigurationPropertySources.java:89`). It creates a `ConfigurationPropertySourcesPropertySource` named `"configurationProperties"` whose source is a `SpringConfigurationPropertySources` instance, then inserts it as the **first** entry in the environment's `MutablePropertySources`:
+**File:** `core/spring-boot/src/main/java/org/springframework/boot/context/properties/ConfigurationPropertiesBindingPostProcessor.java:82`
+
+This `BeanPostProcessor` runs at `HIGHEST_PRECEDENCE + 1`, so it fires before the bean is initialized. For every bean it:
+
+1. Skips any bean whose `BeanDefinition` carries `BindMethodAttribute = VALUE_OBJECT` (those were already bound via constructor binding during context refresh).
+2. Calls `ConfigurationPropertiesBean.get(applicationContext, bean, beanName)` to check whether the bean has a `@ConfigurationProperties` annotation and wrap it in a `ConfigurationPropertiesBean` descriptor.
+3. Delegates to `ConfigurationPropertiesBinder.bind(bean)`.
+
+---
+
+### Stage 2 — Handler chain and Binder construction: `ConfigurationPropertiesBinder`
+
+**File:** `ConfigurationPropertiesBinder.java:92`
 
 ```
-"configurationProperties"  ← new adapter head
-"systemEnvironment"        ← raw env vars
-"systemProperties"         ← Java system properties
-... application.properties, etc.
-```
-
-`SpringConfigurationPropertySources` (`SpringConfigurationPropertySources.java:43`) holds a reference to the live `MutablePropertySources` and lazily wraps each entry via `SpringConfigurationPropertySource.from(source)` on demand, caching the result (`SpringConfigurationPropertySources.java:65`).
-
----
-
-### Stage 3: Adapting the `SystemEnvironmentPropertySource`
-
-When `SpringConfigurationPropertySource.from(source)` is called on the `"systemEnvironment"` source (`SpringConfigurationPropertySource.java:171`), two decisions are made:
-
-**1. Is it a system environment source?**
-```java
-private static boolean isSystemEnvironmentPropertySource(PropertySource<?> source) {
-    String name = source.getName();
-    return (source instanceof SystemEnvironmentPropertySource)
-            && (StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME.equals(name)
-                    || name.endsWith("-" + ...));
+bind(ConfigurationPropertiesBean) {
+    target      = propertiesBean.asBindTarget()          // Bindable wrapping the existing instance
+    annotation  = propertiesBean.getAnnotation()         // @ConfigurationProperties
+    bindHandler = getBindHandler(target, annotation)     // builds the decorator chain
+    return getBinder().bind(annotation.prefix(), target, bindHandler)
 }
 ```
-Yes — so `systemEnvironmentSource = true` and the mapper array is:
-```java
-SYSTEM_ENVIRONMENT_MAPPERS = { SystemEnvironmentPropertyMapper.INSTANCE, DefaultPropertyMapper.INSTANCE }
-```
 
-**2. Is it fully enumerable?**
-`SystemEnvironmentPropertySource` extends `EnumerablePropertySource` and its underlying map is not security-restricted, so `isFullEnumerable` returns true. The factory therefore creates a `SpringIterableConfigurationPropertySource` (`SpringConfigurationPropertySource.java:176`), not the base class.
+**Handler chain built by `getBindHandler`** (innermost wraps outermost, so the chain runs outside-in on the way in and inside-out on callbacks):
 
-`SpringIterableConfigurationPropertySource` builds a `Cache.Data` record (`SpringIterableConfigurationPropertySource.java:258`) the first time it is queried. The cache pre-processes **all** raw property names by running each through each mapper's reverse direction `map(String)`, producing a pair of maps:
+| Layer | Class | Purpose |
+|-------|-------|---------|
+| Innermost | `IgnoreTopLevelConverterNotFoundBindHandler` | Swallows `ConverterNotFoundException` only at depth 0, so a missing converter for the root type doesn't crash startup |
+| ↑ | `BoundPropertiesTrackingBindHandler` | Present when `BoundConfigurationProperties` bean exists; records each `ConfigurationProperty` that was actually resolved, for actuator `/configprops` |
+| ↑ | `ConfigurationPropertiesBindHandler` | Adds `BindRestriction.NO_DIRECT_PROPERTY` on `onStart` for the root target — prevents the whole bean from being bound as a scalar |
+| ↑ (conditional) | `IgnoreErrorsBindHandler` | If `ignoreInvalidFields=true`, swallows bind errors on individual properties |
+| ↑ (conditional) | `NoUnboundElementsBindHandler` | If `ignoreUnknownFields=false`, fails on any property under this prefix that no field consumed |
+| ↑ (conditional) | `ValidationBindHandler` | Runs JSR-303 and `Validator` beans on `onFinish` |
+| ↑ (conditional) | Advisor-applied handlers | Any `ConfigurationPropertiesBindHandlerAdvisor` beans, applied in order |
 
-- `mappings`: `ConfigurationPropertyName → Set<String>` (canonical name → which raw keys produce it)
-- `reverseMappings`: `String → ConfigurationPropertyName` (raw key → canonical name)
-- `descendants`: ancestor names for fast `containsDescendantOf` calls
-- `systemEnvironmentCopy`: a snapshot `HashMap` of the env var map (to avoid race conditions)
+**`getBinder()` constructs:**
 
-For `SERVER_PORT`, `SystemEnvironmentPropertyMapper.map("SERVER_PORT")` (`SystemEnvironmentPropertyMapper.java:63`) calls:
-```java
-ConfigurationPropertyName.adapt("SERVER_PORT", '_', this::processElementValue)
-```
-where `processElementValue` lowercases each segment and wraps numeric-only segments in `[...]`. Split on `_`: `["SERVER", "PORT"]` → lowercase → `["server", "port"]` → joined as `server.port`. So the cache entry is `ConfigurationPropertyName("server.port") ↔ "SERVER_PORT"`.
-
----
-
-### Stage 4: `ConfigurationPropertiesBindingPostProcessor` fires
-
-`ConfigurationPropertiesBindingPostProcessor.postProcessBeforeInitialization` (`ConfigurationPropertiesBindingPostProcessor.java:82`) is called for every bean. For beans annotated with `@ConfigurationProperties` it calls:
-```java
-this.binder.bind(bean);   // ConfigurationPropertiesBinder
-```
-
----
-
-### Stage 5: Building the handler chain
-
-Inside `ConfigurationPropertiesBinder.bind` (`ConfigurationPropertiesBinder.java:92`), the annotation's prefix (`"server"`) and the `Bindable` (wrapping the bean instance with its type information) are extracted. Then `getBindHandler` (`ConfigurationPropertiesBinder.java:113`) assembles a chain of `BindHandler` decorators, innermost first:
-
-1. `IgnoreTopLevelConverterNotFoundBindHandler` (always) — swallows `ConverterNotFoundException` at the top level only, so missing converters don't crash bootstrap.
-2. `BoundPropertiesTrackingBindHandler` (when `BoundConfigurationProperties` is present) — records every successfully bound property.
-3. `ConfigurationPropertiesBindHandler` (always) — on `onStart`, adds `BindRestriction.NO_DIRECT_PROPERTY` to the top-level target if it is itself a `@ConfigurationProperties` type, preventing the binder from trying to resolve the entire bean as a scalar string.
-4. `IgnoreErrorsBindHandler` (if `ignoreInvalidFields = true`) — swallows per-field bind failures.
-5. `NoUnboundElementsBindHandler` (if `ignoreUnknownFields = false`) — detects properties under the prefix that were never consumed.
-6. `ValidationBindHandler` (if validators present) — runs JSR-303 / self-validation in `onFinish`.
-7. Any `ConfigurationPropertiesBindHandlerAdvisor` beans (advisor pattern for extensibility).
-
----
-
-### Stage 6: The Binder is created (lazily, once)
-
-`ConfigurationPropertiesBinder.getBinder()` (`ConfigurationPropertiesBinder.java:185`) creates the `Binder` once:
 ```java
 new Binder(
-    getConfigurationPropertySources(),        // SpringConfigurationPropertySources
-    getPropertySourcesPlaceholdersResolver(), // ${...} expansion
-    getConversionServices(),                  // List<ConversionService> from context
-    getPropertyEditorInitializer(),           // BeanFactory::copyRegisteredEditorsTo
+    ConfigurationPropertySources.from(propertySources),  // see Stage 3
+    new PropertySourcesPlaceholdersResolver(propertySources),
+    getConversionServices(),
+    beanFactory::copyRegisteredEditorsTo,
     null, null
 )
 ```
 
-Inside `Binder`'s constructor (`Binder.java:201`), a `BindConverter` is built (`BindConverter.java:64`) with:
-1. `TypeConverterConversionService` — backed by a `SimpleTypeConverter` so Spring's classic `PropertyEditor`s work.
-2. Each `ConversionService` from the context (typically `ApplicationConversionService`).
-3. `ApplicationConversionService.getSharedInstance()` as final fallback.
-
-Two `DataObjectBinder` strategies are registered (`Binder.java:218`):
-- `ValueObjectBinder` — constructor injection (for `@ConstructorBinding` / records)
-- `JavaBeanBinder` — setter injection (the default for regular classes)
-
 ---
 
-### Stage 7: `Binder.bind` enters and calls `onStart`
+### Stage 3 — Property source adaptation: `ConfigurationPropertySources` → `SpringConfigurationPropertySources`
 
-`Binder.bind("server", target, handler)` (`Binder.java:248`) parses the prefix string into a `ConfigurationPropertyName` and calls the internal `bind` overload (`Binder.java:365`):
+**Files:** `ConfigurationPropertySources.java:156`, `SpringConfigurationPropertySources.java`, `SpringConfigurationPropertySource.java:171`
 
-```java
-Bindable<T> replacementTarget = handler.onStart(name, target, context);
-```
-
-The handler chain fires `onStart` outermost-first. `ConfigurationPropertiesBindHandler.onStart` (`ConfigurationPropertiesBinder.java:239`) detects that the target is itself a `@ConfigurationProperties` class and returns the `Bindable` decorated with `BindRestriction.NO_DIRECT_PROPERTY`. This is what prevents the binder from treating `ServerProperties` as a scalar value to be looked up directly as `"server"`.
-
----
-
-### Stage 8: `bindObject` — scanning for a leaf property
-
-`bindObject(name, target, handler, context, false)` (`Binder.java:423`) first tries:
-```java
-ConfigurationProperty property = findProperty(name, target, context);
-```
-
-`findProperty` (`Binder.java:476`) is skipped entirely because `NO_DIRECT_PROPERTY` is set. It then checks if the target type is an aggregate (Map/Collection/array) — not for our bean. So it falls through to `bindDataObject` which recurses into the bean's properties.
-
-`bindDataObject` (`Binder.java:498`) picks the right `DataObjectBinder` (e.g., `JavaBeanBinder`), which discovers the settable properties of the class and for each one issues a recursive bind call:
-```java
-DataObjectPropertyBinder propertyBinder = (propertyName, propertyTarget) ->
-    bind(name.append(propertyName), propertyTarget, handler, context, false, false);
-```
-
-For the `port` property this becomes `bind("server.port", Bindable<Integer>, handler, context, ...)`.
-
----
-
-### Stage 9: Name resolution — forward mapping
-
-Inside the recursive call for `"server.port"`, `bindObject` again calls `findProperty("server.port", ...)`. This time the `Bindable` is a plain `Integer` with no `NO_DIRECT_PROPERTY` restriction, so the loop runs:
+`ConfigurationPropertySources.from(propertySources)` returns a `SpringConfigurationPropertySources`, which is a lazy-adapting `Iterable`. When the binder iterates it for each lookup, each raw Spring `PropertySource` is wrapped on first use (with a soft-reference cache so the wrapper is reused):
 
 ```java
-for (ConfigurationPropertySource source : context.getSources()) {
-    ConfigurationProperty property = source.getConfigurationProperty(name);
-    if (property != null) return property;
+// SpringConfigurationPropertySources.java:64
+private ConfigurationPropertySource adapt(PropertySource<?> source) {
+    result = this.cache.get(source);
+    if (result != null && result.getUnderlyingSource() == source) return result;
+    result = SpringConfigurationPropertySource.from(source);
+    ...
 }
 ```
 
-`SpringIterableConfigurationPropertySource.getConfigurationProperty(name)` (`SpringIterableConfigurationPropertySource.java:105`):
+`SpringConfigurationPropertySource.from(source)` makes two decisions:
 
-1. Delegates to parent `SpringConfigurationPropertySource.getConfigurationProperty(name)` (`SpringConfigurationPropertySource.java:85`), which iterates the mapper array:
-
-   **`SystemEnvironmentPropertyMapper.map(ConfigurationPropertyName)`** (`SystemEnvironmentPropertyMapper.java:47`) generates up to 4 candidate strings:
-   ```java
-   configurationPropertyName.toString(ToStringFormat.SYSTEM_ENVIRONMENT, true)     // "SERVER_PORT"
-   configurationPropertyName.toString(ToStringFormat.LEGACY_SYSTEM_ENVIRONMENT, true) // "SERVER_PORT" (same if no dashes)
-   configurationPropertyName.toString(ToStringFormat.SYSTEM_ENVIRONMENT, false)    // "server_port"
-   configurationPropertyName.toString(ToStringFormat.LEGACY_SYSTEM_ENVIRONMENT, false) // "server_port"
-   ```
-   The `ToStringFormat` determines how elements are joined (`_` for env-var formats) and whether dashes in element names are kept or replaced (`LEGACY_SYSTEM_ENVIRONMENT` replaces `-` with `_`).
-
-   For each candidate, `getPropertySourceProperty(candidate)` (`SpringConfigurationPropertySource.java:106`) directly hits the `systemEnvironmentCopy` map in the cache, bypassing `SystemEnvironmentPropertySource.resolvePropertyName()` (which would do its own case-folding search). `"SERVER_PORT"` hits immediately.
-
-2. If the forward scan had missed (unusual), it falls through to the cache's reverse mapping: `getCache().getMapped(name)` returns the pre-built `Set<String>` from `mappings`, which contains `"SERVER_PORT"` (built during Stage 3). Then tries each in the same `getPropertySourceProperty` path.
-
-Either way the result is a `ConfigurationProperty.of(source, name, "8080", origin)` where the origin is a `PropertySourceOrigin` recording the source name and raw key.
-
----
-
-### Stage 10: `bindProperty` — placeholder resolution and conversion
-
-Back in `Binder.bindObject` the property is found, so:
+**Decision 1 — which mapper set to install:**
 ```java
-return bindProperty(target, context, property);   // Binder.java:490
+boolean systemEnvironmentSource = isSystemEnvironmentPropertySource(source);
+// true if source instanceof SystemEnvironmentPropertySource
+// AND name is "systemEnvironment" or ends with "-systemEnvironment"
+
+PropertyMapper[] mappers = systemEnvironmentSource
+    ? SYSTEM_ENVIRONMENT_MAPPERS   // [SystemEnvironmentPropertyMapper, DefaultPropertyMapper]
+    : DEFAULT_MAPPERS;             // [DefaultPropertyMapper]
 ```
 
+**Decision 2 — which class to instantiate:**
 ```java
-context.setConfigurationProperty(property);       // records for error messages
-Object result = property.getValue();              // "8080" (String)
-result = this.placeholdersResolver.resolvePlaceholders(result);   // expand ${...} if any
-result = context.getConverter().convert(result, target);          // String → Integer
+return isFullEnumerable(source)
+    ? new SpringIterableConfigurationPropertySource((EnumerablePropertySource<?>) source, systemEnvironmentSource, mappers)
+    : new SpringConfigurationPropertySource(source, systemEnvironmentSource, mappers);
 ```
 
-`BindConverter.convert` (`BindConverter.java:95`) tries each delegate `ConversionService` in order until one handles `String → Integer`. `ApplicationConversionService` includes the standard Spring `StringToNumberConverterFactory`, so `"8080"` → `Integer(8080)` succeeds.
+The standard OS environment is a `SystemEnvironmentPropertySource` (which is an `EnumerablePropertySource`) and its underlying `Map` allows `.size()`, so it gets `SpringIterableConfigurationPropertySource`. A security-restricted environment falls back to the non-enumerable base class.
 
 ---
 
-### Stage 11: `handleBindResult` — handler callbacks and final conversion
+### Stage 4 — Name representation: `ConfigurationPropertyName`
 
-```java
-private <T> T handleBindResult(...) {
-    if (result != null) {
-        result = handler.onSuccess(name, target, context, result);   // all handlers fire
-        result = context.getConverter().convert(result, target);     // re-coerce if changed
-    }
-    // ... (onCreate path for create=true)
-    handler.onFinish(name, target, context, result);                 // all handlers fire
-    return context.getConverter().convert(result, target);           // final coerce
-}
-```
+**File:** `ConfigurationPropertyName.java`
 
-`handler.onSuccess` fires the chain outermost-first. `BoundPropertiesTrackingBindHandler.onSuccess` records `("server.port", ConfigurationProperty)` into `BoundConfigurationProperties`. Other handlers pass through.
+This is the canonical name type. A name like `server.port` is parsed into elements `["server", "port"]`, each stored with a type tag:
 
-`handler.onFinish` fires — `ValidationBindHandler.onFinish` is where JSR-303 constraints on the bean are evaluated (after all properties have been bound).
+| `ElementType` | Description |
+|---|---|
+| `UNIFORM` | all lower-case alphanumeric — allows fast equality shortcuts |
+| `DASHED` | lower-case with dashes (`my-property`) |
+| `NON_UNIFORM` | mixed-case or underscores — produced by `adapt()` from env-var or legacy names |
 
-The result — `Integer(8080)` — is returned up the recursion stack. `JavaBeanBinder` calls `port.setter(instance, 8080)`. The bean is now populated.
+Three rendering forms via `Form` enum:
 
----
-
-### Stage 12: `BindResult` and return
-
-The top-level `bind` call returns `BindResult.of(instance)` (`Binder.java:289`). `ConfigurationPropertiesBinder.bind` discards the `BindResult` wrapper (the bean was mutated in-place for `JAVA_BEAN` binding; for `VALUE_OBJECT` binding the `BindResult` is used to retrieve the newly constructed instance). `ConfigurationPropertiesBindingPostProcessor` returns the bean unchanged to the container.
-
----
-
-### How the stages connect — a concise map
-
-```
-MutablePropertySources (raw Spring env)
-        │
-        │  ConfigurationPropertySources.attach()
-        ▼
-SpringConfigurationPropertySources  ←── live view over MutablePropertySources
-        │  .from(SystemEnvironmentPropertySource)
-        ▼
-SpringIterableConfigurationPropertySource
-    mappers: [SystemEnvironmentPropertyMapper, DefaultPropertyMapper]
-    cache:   SERVER_PORT ↔ server.port  (pre-built bidirectional)
-        │
-        │  ConfigurationPropertiesBindingPostProcessor.postProcessBeforeInitialization
-        ▼
-ConfigurationPropertiesBinder.bind(bean)
-    Builds handler chain (onStart / onSuccess / onFinish / onFailure callbacks)
-        │
-        ▼
-Binder.bind("server", ServerProperties, handler)
-    handler.onStart → adds NO_DIRECT_PROPERTY to top-level target
-    bindDataObject  → JavaBeanBinder/ValueObjectBinder discovers properties
-        │  recursive bind for each property
-        ▼
-Binder.bind("server.port", Integer, handler)
-    findProperty("server.port"):
-        SystemEnvironmentPropertyMapper.map(name) → ["SERVER_PORT","SERVER_PORT","server_port","server_port"]
-        hits cache.systemEnvironmentCopy["SERVER_PORT"] = "8080"
-        → ConfigurationProperty("server.port", "8080", origin=systemEnvironment/SERVER_PORT)
-    bindProperty:
-        resolvePlaceholders("8080") → "8080"
-        BindConverter.convert("8080", Integer) → 8080
-    handleBindResult:
-        handler.onSuccess  → BoundPropertiesTrackingBindHandler records it
-        handler.onFinish   → ValidationBindHandler validates
-        → Integer(8080)
-        │
-        ▼
-JavaBeanBinder calls setPort(8080) on the bean instance
-        │
-        ▼
-BindResult.of(serverProperties)   returned to post-processor
-```
-
----
-
-### The two env-var name formats
-
-`ToStringFormat` in `ConfigurationPropertyName` has three values. For a name like `spring.datasource.hikari.connection-timeout`, the mapper generates these candidates in order:
-
-| Format | Result | Note |
+| `Form` | Behaviour | Example (`my-server.port`) |
 |---|---|---|
-| `SYSTEM_ENVIRONMENT` upper | `SPRING_DATASOURCE_HIKARI_CONNECTIONTIMEOUT` | uniform form (no dashes), uppercased |
-| `LEGACY_SYSTEM_ENVIRONMENT` upper | `SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT` | original form with `-` → `_`, uppercased |
-| `SYSTEM_ENVIRONMENT` lower | `spring_datasource_hikari_connectiontimeout` | lowercase variant |
-| `LEGACY_SYSTEM_ENVIRONMENT` lower | `spring_datasource_hikari_connection_timeout` | lowercase variant |
+| `ORIGINAL` | Raw as adapted | `my-server.port` |
+| `DASHED` | lower-case, dashes kept, underscores/capitals stripped | `my-server.port` |
+| `UNIFORM` | lower-case, dashes AND underscores stripped | `myserver.port` |
 
-The first hit wins. This is why both `SPRING_DATASOURCE_HIKARI_CONNECTIONTIMEOUT` and `SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT` work as env var names for the same property.
+Three `toString` formats for forward-mapping (canonical → source key):
+
+| `ToStringFormat` | Separator | Element form | Use |
+|---|---|---|---|
+| `DEFAULT` | `.` | `DASHED` | Standard property files |
+| `SYSTEM_ENVIRONMENT` | `_` | `UNIFORM` | `MY_SERVER_PORT` |
+| `LEGACY_SYSTEM_ENVIRONMENT` | `_` | `ORIGINAL` with `-` → `_` | `MY-SERVER_PORT` style env-vars |
+
+---
+
+### Stage 5 — Name translation in both directions: `SystemEnvironmentPropertyMapper`
+
+**File:** `SystemEnvironmentPropertyMapper.java`
+
+**Forward direction** (canonical → candidate raw keys, used when looking up a specific property):
+
+```java
+map(ConfigurationPropertyName name) {
+    addIfMissing(mapped, name.toString(SYSTEM_ENVIRONMENT, true));          // SERVER_PORT
+    addIfMissing(mapped, name.toString(LEGACY_SYSTEM_ENVIRONMENT, true));   // SERVER_PORT (or MY_DATASOURCE_URL vs MY-DATASOURCE_URL)
+    addIfMissing(mapped, name.toString(SYSTEM_ENVIRONMENT, false));         // server_port
+    addIfMissing(mapped, name.toString(LEGACY_SYSTEM_ENVIRONMENT, false));  // server_port
+}
+```
+
+Returns up to 4 candidates (deduped). For `server.port` all four happen to be the same, but for a hyphenated prefix like `my-app.server-port` the uniform form `MY_APP_SERVERPORT` differs from the legacy form `MY_APP_SERVER_PORT`.
+
+**Reverse direction** (raw env-var key → canonical, used when building the cache):
+
+```java
+map(String propertySourceName) {
+    return ConfigurationPropertyName.adapt(propertySourceName, '_', this::processElementValue);
+}
+
+processElementValue(CharSequence value) {
+    String result = value.toString().toLowerCase(Locale.ENGLISH);
+    return isNumber(result) ? "[" + result + "]" : result;  // HOST_0 → host[0]
+}
+```
+
+`adapt("SERVER_PORT", '_', ...)` splits on `_`, lowercases each segment, and produces `ConfigurationPropertyName` with elements `["server", "port"]` typed as `NON_UNIFORM`. This name compares equal to the canonical `server.port` because equality is done in `UNIFORM` form (stripping all separators).
+
+The `ancestorOfCheck` for the system environment mapper also handles the legacy case where a hyphenated name like `my-app` could match `MY_APP_*` env-vars via `isLegacyAncestorOf`.
+
+---
+
+### Stage 6 — The cache in `SpringIterableConfigurationPropertySource`
+
+**File:** `SpringIterableConfigurationPropertySource.java:258`
+
+On first use (or after the property names array changes for mutable sources), the `Cache` builds two maps by iterating **all** property names in the source through each mapper:
+
+```
+for each mapper in [SystemEnvironmentPropertyMapper, DefaultPropertyMapper]:
+    for each propertyName in source.getPropertyNames():   // e.g. "SERVER_PORT", "PATH", ...
+        configName = mapper.map(propertyName)              // "SERVER_PORT" → server.port
+        mappings.put(configName, propertyName)             // canonical → raw keys
+        reverseMappings.put(propertyName, configName)      // raw key → canonical
+```
+
+It also builds:
+- `descendants`: set of all *ancestor* canonical names (e.g., `server` is added because `server.port` exists), for fast `containsDescendantOf` checks
+- `systemEnvironmentCopy`: a `HashMap` snapshot of the live env-var map, so lookups during a bind don't race against OS changes
+
+---
+
+### Stage 7 — The `Binder` loop
+
+**File:** `Binder.java:365`
+
+`Binder.bind("server", serverPropertiesTarget, handler)` calls `ConfigurationPropertyName.of("server")` then enters:
+
+```java
+bind(name, target, handler, context, allowRecursive=false, create=false) {
+    cacheOverride = configurationPropertyCaching.override()  // enables per-bind caching
+    replacementTarget = handler.onStart(name, target, context)
+    // ConfigurationPropertiesBindHandler adds NO_DIRECT_PROPERTY here (depth=0)
+    bound = bindObject(name, replacementTarget, handler, context, false)
+    return handleBindResult(name, target, handler, context, bound, false)
+}
+```
+
+**`bindObject` at depth 0 for the root `server` prefix:**
+
+```java
+property = findProperty("server", target, context)
+// Returns null because NO_DIRECT_PROPERTY restriction; and there's no scalar "server" anyway
+
+aggregateBinder = getAggregateBinder(target, context)
+// ServerProperties is not Map/Collection/array → null
+
+// Falls through to:
+bindDataObject("server", target, handler, context, false, false)
+```
+
+**`bindDataObject`** detects `BindMethod.JAVA_BEAN` (because the existing bean instance is provided via `Bindable.withExistingValue`) and delegates to `JavaBeanBinder`. That binder uses `BeanUtils` to discover all writable properties of `ServerProperties`, then for each property (e.g., `port` of type `int`) recursively calls:
+
+```java
+bind(name.append("port"), portBindable, handler, context, false, false)
+// name = "server.port"
+```
+
+**`bindObject` at depth 1 for `server.port`:**
+
+```java
+property = findProperty("server.port", portBindable, context)
+```
+
+Inside `findProperty`, for the `SpringIterableConfigurationPropertySource` wrapping the system environment:
+
+1. Calls `super.getConfigurationProperty("server.port")` — the `SpringConfigurationPropertySource` path:
+   - Iterates `SYSTEM_ENVIRONMENT_MAPPERS`
+   - `SystemEnvironmentPropertyMapper.map("server.port")` → `["SERVER_PORT", "server_port"]`
+   - For each candidate, calls `getPropertySourceProperty("SERVER_PORT")`
+   - Because `systemEnvironmentSource=true`, bypasses `SystemEnvironmentPropertySource.resolvePropertyName()` and directly hits the `systemEnvironmentCopy` map: `systemEnvironmentCopy.get("SERVER_PORT")` → `"8080"` ✓
+   - Returns `ConfigurationProperty.of(source, "server.port", "8080", PropertySourceOrigin("systemEnvironment", "SERVER_PORT"))`
+
+2. If the super call returns null (env-var not in the forward candidates), the `SpringIterableConfigurationPropertySource.getConfigurationProperty` override also checks `getCache().getMapped("server.port")` — looking up in the cache-built `mappings` map for any raw key that was reverse-mapped to `server.port`.
+
+`findProperty` returns the `ConfigurationProperty("server.port" → "8080")`.
+
+Since `property != null` and this is not an aggregate type, calls `bindProperty`:
+
+```java
+bindProperty(portBindable, context, property) {
+    context.setConfigurationProperty(property)
+    result = property.getValue()                          // "8080" (String)
+    result = placeholdersResolver.resolvePlaceholders(result)  // "8080" (no placeholders)
+    result = context.getConverter().convert(result, portBindable)  // 8080 (int)
+    return result
+}
+```
+
+---
+
+### Stage 8 — Conversion: `BindConverter`
+
+**File:** `BindConverter.java:100`
+
+`BindConverter` holds an ordered list of `ConversionService` delegates:
+
+1. `TypeConverterConversionService` — wraps `SimpleTypeConverter` (Spring's `PropertyEditor`-based converter). Handles `String → URL`, `String → File`, and any custom `PropertyEditor` registered on the bean factory. However, it explicitly excludes `CustomNumberEditor` to avoid collisions with the next delegate.
+
+2. Application-registered `ConversionService`(s) — whatever the app registered.
+
+3. `ApplicationConversionService.getSharedInstance()` — the always-present fallback. This extends `DefaultFormattingConversionService` and adds converters for `Duration` (ISO-8601 and simple suffixes like `10s`), `DataSize` (`512MB`), `Period`, `InetAddress`, `Charset`, etc., plus the standard Spring converters.
+
+For `"8080"` → `int`: the `ApplicationConversionService` (via its `DefaultConversionService` base) has `StringToNumberConverterFactory` → `String → Integer` → widens to `int` via auto-unboxing.
+
+---
+
+### Stage 9 — Handler callbacks complete the round-trip
+
+Back in `handleBindResult` (`Binder.java:384`):
+
+```java
+if (result != null) {
+    result = handler.onSuccess(name, target, context, result)
+    // BoundPropertiesTrackingBindHandler: records ConfigurationProperty in BoundConfigurationProperties
+    // ValidationBindHandler: no-op on leaf properties
+    result = context.getConverter().convert(result, target)  // final type coercion
+}
+handler.onFinish(name, target, context, result)
+// ValidationBindHandler: runs Bean Validation on the root object at depth 0
+```
+
+`JavaBeanBinder` then writes the converted value (int `8080`) into the `ServerProperties` instance via the `port` setter.
+
+---
+
+### Stage 10 — The result: `BindResult<T>`
+
+**File:** `BindResult.java:151`
+
+```java
+return BindResult.of(bound);
+// If bound != null → new BindResult<>(bound)
+// If bound == null → the UNBOUND singleton
+```
+
+`BindResult` is an `Optional`-like container. For `@ConfigurationProperties` beans, `ConfigurationPropertiesBinder.bind()` discards it — the side-effect of mutating the bean is what matters. For programmatic use (`Binder.get(environment).bind("server.port", int.class)`), callers use `.get()`, `.orElse(default)`, `.map(...)`, etc.
+
+---
+
+## End-to-end summary
+
+```
+@ConfigurationProperties bean instantiated by Spring
+  ↓
+ConfigurationPropertiesBindingPostProcessor.postProcessBeforeInitialization
+  ↓
+ConfigurationPropertiesBinder.bind(bean)
+  ├─ PropertySourcesDeducer → gets MutablePropertySources from Environment
+  ├─ ConfigurationPropertySources.from(sources) → SpringConfigurationPropertySources
+  │     └─ SpringConfigurationPropertySource.from(SystemEnvironmentPropertySource)
+  │           → SpringIterableConfigurationPropertySource
+  │                 mappers: [SystemEnvironmentPropertyMapper, DefaultPropertyMapper]
+  ├─ Build handler chain: IgnoreTopLevel ← BoundTracking ← CPBindHandler ← [optional]
+  └─ Binder.bind("server", serverPropertiesBindable, handlerChain)
+        ↓
+      handler.onStart → adds NO_DIRECT_PROPERTY at depth 0
+        ↓
+      bindObject → no scalar property for "server" → bindDataObject
+        ↓
+      JavaBeanBinder discovers "port" setter
+        ↓
+      Binder.bind("server.port", intBindable, ...)
+          ↓
+        findProperty("server.port")
+            ↓
+          SpringConfigurationPropertySource.getConfigurationProperty("server.port")
+              ↓
+            SystemEnvironmentPropertyMapper.map("server.port")
+            → ["SERVER_PORT", "server_port", ...]
+              ↓
+            getSystemEnvironmentProperty(systemEnvironmentCopy, "SERVER_PORT")
+            → "8080" ✓
+              ↓
+            ConfigurationProperty("server.port", "8080", origin=systemEnvironment/SERVER_PORT)
+          ↓
+        bindProperty:
+          "8080" → placeholdersResolver (no-op) → BindConverter → int 8080
+          ↓
+        handler.onSuccess → BoundPropertiesTrackingBindHandler records it
+        handler.onFinish → ValidationBindHandler (if present)
+          ↓
+        JavaBeanBinder calls serverProperties.setPort(8080)
+        ↓
+      BindResult.of(8080) returned (and discarded by the post-processor)
+```
+
+The two key design tensions the machinery resolves:
+- **Forward vs. reverse mapping**: The binder always works with canonical names; mappers provide candidate raw keys for forward lookups and build a reverse index for descendant presence checks.
+- **Non-enumerable fallback**: The four-candidate forward-map strategy means env-var lookup works even when the source can't be enumerated (e.g., security-restricted), because no scanning is needed — only direct map lookups for known candidate names.

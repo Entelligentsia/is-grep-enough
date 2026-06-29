@@ -738,11 +738,11 @@
     },
     "L5-lsp-spring-boot": {
       "status": "harvested",
-      "run_wall_s": 184.394,
-      "context": 558939,
+      "run_wall_s": 236,
+      "context": 505271,
       "engaged": true,
       "evidence": "evidence/nav3/L5/raw/spring-boot-L5.claude.lsp.jsonl",
-      "ts": "2026-06-28T03:51:23.232Z"
+      "ts": "2026-06-29T05:56:12.172Z"
     },
     "L1-baseline-tokio": {
       "status": "pending"
