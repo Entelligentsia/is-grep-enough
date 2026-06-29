@@ -955,7 +955,12 @@
       "status": "pending"
     },
     "L4-grove-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 231,
+      "context": 378952,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/tokio-L4.claude.grove.jsonl",
+      "ts": "2026-06-29T17:37:59.696Z"
     },
     "L4-lsp-tokio": {
       "status": "pending"
@@ -1060,7 +1065,12 @@
       "status": "pending"
     },
     "L4-grove-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 144,
+      "context": 295388,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/hugo-L4.claude.grove.jsonl",
+      "ts": "2026-06-29T17:41:27.948Z"
     },
     "L4-lsp-hugo": {
       "status": "pending"
