@@ -352,7 +352,67 @@ function renderDetail(cid) {
   if (jr?.verdict) host.append(el("p", { className: "note", style: "margin-top:1rem", textContent: "Judge synthesis: " + jr.verdict }));
   for (const kr of jr?.key_revisions ?? [])
     host.append(el("div", { className: "keyrev" }, `Reference key corrected (${kr.level}): ${kr.reason}  [${kr.cite}]`));
+  // side-by-side compare (§8, T2.1): the three readable trails in parallel panes
+  renderCompareTranscripts(host, arms);
   renderCoverage();
+}
+
+// Side-by-side arms compare (§8): the same locked cell's transcripts shown in
+// parallel scrolling panes, one per visible arm with a readable trail. Lazy —
+// the (up to ~120 KB) markdown is fetched + parsed only when the reader opens
+// the strip (§11 perf budget). Synchronized scroll is offered but OFF by
+// default: the trails diverge in length, so locked scroll mostly misaligns.
+function renderCompareTranscripts(host, arms) {
+  const withTrail = arms.filter((c) => c.evidence?.readable);
+  if (withTrail.length < 2) return; // nothing to compare against
+  const wrap = el("section", { className: "compare" });
+  const bar = el("div", { className: "compare-bar" });
+  const btn = el("button", { className: "compare-toggle", type: "button",
+    textContent: `compare ${withTrail.length} transcripts side by side ▸` });
+  const sync = el("label", { className: "toggle compare-sync", hidden: true },
+    [el("input", { type: "checkbox" }), document.createTextNode(" sync scroll")]);
+  bar.append(btn, sync);
+  wrap.append(bar);
+  const panes = el("div", { className: "compare-panes", hidden: true });
+  panes.style.gridTemplateColumns = `repeat(${withTrail.length}, 1fr)`;
+  wrap.append(panes);
+  host.append(wrap);
+
+  let built = false;
+  btn.onclick = () => {
+    const open = panes.hidden;
+    panes.hidden = !open; sync.hidden = !open;
+    btn.textContent = `compare ${withTrail.length} transcripts side by side ${open ? "▾" : "▸"}`;
+    if (open && !built) { built = true; buildPanes(withTrail, panes, sync.querySelector("input")); }
+  };
+}
+
+function buildPanes(arms, panes, syncBox) {
+  const scrollers = [];
+  for (const c of arms) {
+    const pane = el("div", { className: "cmp-pane" });
+    pane.append(el("div", { className: "cmp-head" },
+      [el("span", { className: "bar", style: `background:${ARM_COLOR[c.arm]}` }),
+       document.createTextNode(c.arm),
+       ...(c.metrics?.turns != null ? [el("span", { className: "cmp-turns", textContent: `${c.metrics.turns} turns` })] : [])]));
+    const scroll = el("div", { className: "cmp-scroll" }, el("p", { className: "caveat", textContent: "loading…" }));
+    pane.append(scroll);
+    panes.append(pane);
+    scrollers.push(scroll);
+    fetch(c.evidence.readable).then((r) => r.text())
+      .then((md) => { scroll.innerHTML = marked.parse(md); linkifyCites(scroll, REPO[c.repo]?.gh, c.sha); })
+      .catch(() => scroll.replaceChildren(el("p", { className: "caveat", textContent: `could not load ${c.evidence.readable}` })));
+  }
+  // optional synchronized scroll — proportional (trails differ in length), with a
+  // reentrancy guard so echoed scroll events don't fight. Off unless box checked.
+  let locked = false;
+  for (const s of scrollers) s.addEventListener("scroll", () => {
+    if (!syncBox.checked || locked) return;
+    locked = true;
+    const frac = s.scrollTop / Math.max(1, s.scrollHeight - s.clientHeight);
+    for (const o of scrollers) if (o !== s) o.scrollTop = frac * (o.scrollHeight - o.clientHeight);
+    requestAnimationFrame(() => { locked = false; });
+  });
 }
 
 // Context-growth sparkline (§5.3): the per-turn input-context curve for one arm

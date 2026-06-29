@@ -129,6 +129,25 @@ td.repo:hover { color: var(--ink); }
 .keyrev { font-size: .78rem; color: var(--ink); background: var(--paper-2); border-left: 2px solid var(--ink-faint); padding: .4rem .6rem; margin-top: .5rem; }
 .flag { font-family: var(--mono); font-size: .7rem; color: var(--ink-faint); border: 1px solid var(--rule-strong); padding: 0 .3rem; margin-left: .3rem; }
 
+/* side-by-side compare (§8): parallel transcript panes for one locked cell */
+.compare { margin-top: 1.4rem; border-top: 1px solid var(--rule-strong); padding-top: .8rem; }
+.compare-bar { display: flex; align-items: center; gap: 1.2rem; }
+.compare-toggle { font-family: var(--sans); font-size: .82rem; background: none; border: 1px solid var(--rule-strong);
+                  color: var(--ink-soft); padding: .25rem .7rem; cursor: pointer; }
+.compare-toggle:hover { color: var(--ink); border-color: var(--ink); }
+.compare-sync { margin: 0; }
+.compare-panes { display: grid; gap: .8rem; margin-top: .8rem; }
+.cmp-pane { border: 1px solid var(--rule); background: var(--paper); display: flex; flex-direction: column; min-width: 0; }
+.cmp-head { font-size: .85rem; font-weight: 600; display: flex; align-items: center; gap: .4rem;
+            border-bottom: 1px solid var(--rule); padding: .4rem .6rem; position: sticky; top: 0; background: var(--paper); }
+.cmp-head .bar { width: .6rem; height: .6rem; display: inline-block; }
+.cmp-head .cmp-turns { margin-left: auto; font-family: var(--mono); font-size: .72rem; color: var(--ink-faint); font-weight: 400; }
+.cmp-scroll { max-height: 60vh; overflow: auto; padding: .6rem .8rem; font-size: .82rem; line-height: 1.45; word-break: break-word; }
+.cmp-scroll pre { white-space: pre-wrap; word-break: break-word; font-family: var(--mono); font-size: .76rem; background: var(--paper-2); padding: .5rem .6rem; }
+.cmp-scroll table { border-collapse: collapse; }
+.cmp-scroll td, .cmp-scroll th { border: 1px solid var(--rule); padding: .15rem .4rem; font-size: .78rem; }
+.cmp-scroll h1, .cmp-scroll h2, .cmp-scroll h3 { font-size: .9rem; text-transform: none; letter-spacing: 0; border: 0; color: var(--ink); }
+
 /* transcript modal */
 .tx-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: none; }
 .tx-overlay.open { display: block; }

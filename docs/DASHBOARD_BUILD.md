@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P2 / T2.1` — **P1 complete (T1.1–T1.6, TX.1)** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P2 / T2.2` — **P1 complete (T1.1–T1.6, TX.1); T2.1 done** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -91,8 +91,15 @@ raw byte in ≤3 clicks.
 
 ## Phase 2 — Compare view
 
-- [ ] **T2.1 Side-by-side arms.** Three columns for a locked cell: aligned metric
-  strip + three transcripts in parallel (§8).
+- [x] **T2.1 Side-by-side arms.** Three columns for a locked cell: aligned metric
+  strip + three transcripts in parallel (§8). The cell detail already supplies the
+  aligned metric strip (per-arm columns); this adds a `renderCompareTranscripts`
+  strip below it — a lazy "compare N transcripts side by side" toggle that builds
+  one scrollable pane per visible arm with a readable trail, marked-rendered and
+  cite-linked. Synchronized scroll is offered (proportional, reentrancy-guarded)
+  but **off by default** per §8 (trails diverge in length). Verified headless
+  (Playwright/Chrome) on L1-redis (3 panes, 11/1/10 cites) and L5-spring-boot;
+  sync control present + unchecked by default; no data 404s.
 - [ ] **T2.2 Spine-coverage strip.** Per-arm Full/Partial/Miss against the
   reference key's required spine; if not machine-parseable, render judge per-arm
   verdicts side by side — never fabricate (§8, §13.5).
