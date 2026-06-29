@@ -128,11 +128,11 @@
     },
     "L5-lsp-redis": {
       "status": "harvested",
-      "run_wall_s": 128,
-      "context": 398131,
+      "run_wall_s": 172,
+      "context": 753330,
       "engaged": true,
       "evidence": "evidence/nav3/L5/raw/redis-L5.claude.lsp.jsonl",
-      "ts": "2026-06-27T11:21:52.434Z"
+      "ts": "2026-06-29T05:51:45.287Z"
     },
     "L1-baseline-django": {
       "status": "harvested",

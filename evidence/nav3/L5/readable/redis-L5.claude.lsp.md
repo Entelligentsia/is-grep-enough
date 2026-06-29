@@ -1,184 +1,203 @@
 # transcript: I'm planning a change to how a write performed on a primary becomes visible on its replicas, so I need to understand the full journey of a write command's ef...
 
-
-💬 I'll trace this end-to-end using the LSP. Let me load it and start from the key symbols simultaneously.
   ▸ ToolSearch(select:LSP)
-  ▸ LSP(call)
+
+💬 I'll trace the full replication journey by hitting the key function symbols in order. Let me look up the core players in parallel.
   ▸ LSP(propagate)
-  ▸ LSP(replicationFeedReplicas)
+  ▸ LSP(replicationFeedSlaves)
+  ▸ LSP(call)
 
-💬 Good. Let me now look at the key functions in parallel — `call()` and the propagation chain in `server.c`, plus the replication feed side.
+💬 Good. Now let me read `call` in server.c and look up the propagation functions simultaneously.
   ▸ Read(/home/bench/repos/redis/src/server.c)
-  ▸ LSP(replicationFeed)
+  ▸ LSP(propagate)
+  ▸ LSP(alsoPropagate)
 
-💬 Good. Now I'll read `call()`, `postExecutionUnitOperations()`, and `replicationFeedSlaves()` in parallel.
-  ▸ LSP(processCommand)
+💬 Now let me read the rest of `call()` to see the dirty-detection and propagation trigger, plus the key propagation functions.
   ▸ Read(/home/bench/repos/redis/src/server.c)
-  ▸ Read(/home/bench/repos/redis/src/replication.c)
-
-💬 Now let me read `call()` itself and `feedReplicationBuffer()`.
   ▸ Read(/home/bench/repos/redis/src/server.c)
-  ▸ LSP(feedReplicationBuffer)
 
-💬 Let me continue reading `call()` for the propagation decision logic, and read `feedReplicationBuffer()` in parallel.
+💬 Now let me read the rest of `propagatePendingCommands` and `replicationFeedSlaves`.
   ▸ Read(/home/bench/repos/redis/src/server.c)
   ▸ Read(/home/bench/repos/redis/src/replication.c)
 
-💬 Good, I have a solid picture now. Let me get two more pieces: `replBufWriterBegin`/`Append` to complete the buffer mechanics, and `afterCommand`/`exitExecuti...
-  ▸ LSP(replBufWriterBegin)
-  ▸ LSP(afterCommand)
+💬 Now let me look at `exitExecutionUnit` (the flush trigger), `feedReplicationBuffer`, and `processCommand`'s call to `call()`.
   ▸ LSP(exitExecutionUnit)
-  ▸ Read(/home/bench/repos/redis/src/replication.c)
-  ▸ Read(/home/bench/repos/redis/src/server.c)
-  ▸ Read(/home/bench/repos/redis/src/server.c)
-
-💬 Let me get one final piece — `prepareReplicasToWrite` — to understand how replica clients are wired up to actually send the bytes.
+  ▸ LSP(feedReplicationBuffer)
   ▸ LSP(prepareReplicasToWrite)
+  ▸ Read(/home/bench/repos/redis/src/server.c)
+  ▸ Read(/home/bench/repos/redis/src/replication.c)
   ▸ Read(/home/bench/repos/redis/src/replication.c)
 
-💬 I have everything I need. Here's the complete flow:  ---  ## Stage 1 — Command execution and write detection (`call()`, server.c:3949)  Before the command ha...
+💬 Let me look at the `replBufWriter` internals and how replicas read from the shared buffer to their socket.
+  ▸ LSP(replBufWriterBegin)
+  ▸ LSP(writeToReplicas)
+  ▸ Read(/home/bench/repos/redis/src/replication.c)
 
-──────── RESULT (success, 127022ms, 22 turns) ────────
-I have everything I need. Here's the complete flow:
+💬 Now let me look at how replica clients drain the shared buffer to their socket.
+  ▸ LSP(writeReplicaOutputBuffer)
+  ▸ LSP(canFeedReplicaReplBuffer)
+  ▸ Read(/home/bench/repos/redis/src/replication.c)
+  ▸ LSP(sendReplyToClient)
+  ▸ Read(/home/bench/repos/redis/src/networking.c)
+  ▸ LSP(writeToClient)
+  ▸ Read(/home/bench/repos/redis/src/networking.c)
+  ▸ Read(/home/bench/repos/redis/src/networking.c)
+
+💬 Let me check where `postExecutionUnitOperations` is called from to confirm the flush trigger.
+  ▸ LSP({"operation":"findReferences","filePath":"/home/bench/repos/redis/src/server.c","line":3867,"character":6})
+  ▸ Read(/home/bench/repos/redis/src/server.c)
+  ▸ LSP({"operation":"findReferences","filePath":"/home/bench/repos/redis/src/server.c","line":4271,"character":6})
+  ▸ Read(/home/bench/repos/redis/src/server.c)
+
+💬 I now have the full picture. Here is the complete journey:  ---  ## Stage 1 — Command execution and dirty detection  **`call()` — `server.c:3949`**  Just bef...
+
+──────── RESULT (success, 171928ms, 33 turns) ────────
+I now have the full picture. Here is the complete journey:
 
 ---
 
-## Stage 1 — Command execution and write detection (`call()`, server.c:3949)
+## Stage 1 — Command execution and dirty detection
 
-Before the command handler runs, `call()` snapshots the global dirty counter:
+**`call()` — `server.c:3949`**
 
-```c
-dirty = server.dirty;  // line 3978
-```
-
-`server.dirty` is a monotonically-increasing integer that every write path increments (via `dbAdd`, `dbOverwrite`, `dbDelete`, etc.). It is the single source of truth for "did the dataset change."
-
-The handler is then invoked synchronously:
-
-```c
-c->cmd->proc(c);  // line 4015  e.g. setCommand, lpushCommand, …
-```
-
-After it returns (line 4032):
+Just before invoking `c->cmd->proc(c)` at line 4015, `call()` snapshots the current value of `server.dirty` (line 3978). Every write operation inside a command handler increments that counter (via `dbAdd`, `dbOverwrite`, `dbDelete`, etc.). When the handler returns, `call()` computes the delta at line 4032:
 
 ```c
 dirty = server.dirty - dirty;
 if (dirty < 0) dirty = 0;
 ```
 
-This difference is the **write-detection signal**. A non-zero `dirty` means the command mutated state. Commands can also bypass this by calling `forceCommandPropagation()` (sets `CLIENT_FORCE_REPL`/`CLIENT_FORCE_AOF` on the client), and can opt out with `preventCommandPropagation()` (sets `CLIENT_PREVENT_PROP`).
+A non-zero delta is the signal that the command actually mutated data.
 
 ---
 
-## Stage 2 — Queueing as a pending operation (`alsoPropagate()`, server.c:3732)
+## Stage 2 — Queuing the modification for propagation
 
-Once the write-detection result is known, `call()` builds a flags word (lines 4127–4153) and calls `alsoPropagate()`:
+**Still inside `call()` — lines 4118–4153**
+
+Immediately after the handler returns, `call()` determines `propagate_flags`:
+
+- If `dirty > 0`, sets `PROPAGATE_AOF | PROPAGATE_REPL` (line 4131).
+- `CLIENT_FORCE_REPL` / `CLIENT_FORCE_AOF` on the client can add replication even when dirty is 0 (e.g., `EXPIREAT` after a timeout resolution).
+- `CLIENT_PREVENT_REPL_PROP` / `CLIENT_PREVENT_AOF_PROP` can suppress specific channels.
+
+If anything needs to be propagated, it calls:
 
 ```c
-if (dirty) propagate_flags |= (PROPAGATE_AOF | PROPAGATE_REPL);
-if (c->flags & CLIENT_FORCE_REPL) propagate_flags |= PROPAGATE_REPL;
-// … strip flags if CLIENT_PREVENT_REPL_PROP etc. …
-if (propagate_flags != PROPAGATE_NONE)
-    alsoPropagate(c->db->id, c->argv, c->argc, propagate_flags);
+alsoPropagate(c->db->id, c->argv, c->argc, propagate_flags);  // line 4153
 ```
 
-`alsoPropagate()` does **not** propagate immediately. It copies the argv (incrementing refcounts so the objects survive) and appends a `redisOp` entry to the `server.also_propagate` array. This is intentional: nested calls (MULTI/EXEC, Lua, module `RM_Call`) all accumulate operations in the same queue, so the outermost frame can decide how to flush them as an atomic unit.
+**`alsoPropagate()` — `server.c:3732`**
+
+Makes a copy of the `argv` array, increments the ref count on each `robj`, and appends an entry (`redisOp`) to `server.also_propagate` (a `redisOpArray`). This is purely accumulation — nothing is sent yet.
 
 ---
 
-## Stage 3 — Flushing the queue (`propagatePendingCommands()`, server.c:3811)
+## Stage 3 — Flushing once the outermost command finishes
 
-At the end of `call()`, `afterCommand(c)` is called (line 4189), which chains:
+**`afterCommand()` — `server.c:4271`, called at line 4189**
+
+After `call()` returns up to `processCommand()`, the call chain is:
 
 ```
-afterCommand(c)
-  → postExecutionUnitOperations()   [server.c:3867]
-      → propagatePendingCommands()  [server.c:3811]  (only when execution_nesting == 0)
+processCommand → call → (handler) → afterCommand → postExecutionUnitOperations → propagatePendingCommands
 ```
 
-The nesting guard (`server.execution_nesting`, managed by `enterExecutionUnit`/`exitExecutionUnit`) ensures propagation only fires at the **outermost** level — recursive calls (e.g. a module calling `RM_Call` inside a timer callback) do not flush prematurely.
+**`postExecutionUnitOperations()` — `server.c:3867`**
 
-`propagatePendingCommands()` (server.c:3811):
+Guards on `server.execution_nesting == 0`. Nested invocations (scripts, MULTI/EXEC frames, module `RM_Call`) just accumulate more ops into `server.also_propagate` and return — only the outermost exit fires propagation. Then it calls `propagatePendingCommands()`.
 
-1. If more than one op accumulated, wraps them in `MULTI`/`EXEC` (so the replica applies them atomically).
-2. Iterates `server.also_propagate.ops[]` and calls `propagateNow()` for each.
-3. Frees the array.
+**`propagatePendingCommands()` — `server.c:3811`**
 
-`propagateNow()` (server.c:3704) is the split point between the two sinks:
+Drains `server.also_propagate`:
 
-```c
-if (server.aof_state != AOF_OFF && target & PROPAGATE_AOF)
-    feedAppendOnlyFile(dbid, argv, argc);
-if (target & PROPAGATE_REPL)
-    replicationFeedSlaves(server.slaves, dbid, argv, argc);
-```
+1. If more than one op was queued (and the command doesn't touch arbitrary keys), wraps the whole batch in a `MULTI`…`EXEC` on the wire, so replicas see an atomic unit.
+2. Iterates `server.also_propagate.ops`, calling `propagateNow()` for each.
+3. Frees the `redisOpArray`.
 
 ---
 
-## Stage 4 — Encoding into the shared replication buffer (`replicationFeedSlaves()`, replication.c:631)
+## Stage 4 — Serializing the write into the replication stream
 
-`replicationFeedSlaves()` first applies two guards:
+**`propagateNow()` — `server.c:3704`**
 
-- Returns immediately if `server.masterhost != NULL` (this node is itself a replica; it proxies via `replicationFeedStreamFromMasterStream()` instead, preserving the identical byte stream).
-- Returns if the incoming client is a `CLIENT_MASTER` (data arrived from upstream, not from a local write).
-
-Then it does two things:
-
-**SELECT injection** (lines 672–699): if the DB being written differs from `server.slaveseldb`, it serialises a `SELECT <dbid>` command and sends it first via `feedReplicationBuffer()`. This keeps replicas in sync with the primary's current database without requiring every command to carry a DB identifier.
-
-**RESP encoding** (lines 702–724): it opens a `replBufWriter`, then writes a RESP inline array directly into the global buffer:
+Gates on `shouldPropagate()` (checks that AOF is not OFF / that we are a master with replicas or a backlog), then calls:
 
 ```c
-replBufWriterBegin(&wr);
-replBufWriterAppendBulkLen(&wr, '*', argc);   // *N\r\n
-for (j = 0; j < argc; j++) {
-    replBufWriterAppendBulkLen(&wr, '$', objlen);  // $len\r\n
-    replBufWriterAppend(&wr, argv[j]->ptr, objlen);
-    replBufWriterAppend(&wr, "\r\n", 2);
+feedAppendOnlyFile(dbid, argv, argc);          // AOF path
+replicationFeedSlaves(server.slaves, dbid, argv, argc);  // replication path
+```
+
+**`replicationFeedSlaves()` — `replication.c:631`**
+
+Early exits if this node is itself a replica (`server.masterhost != NULL`) or if the current client is a master proxy — in those cases the incoming stream from the upstream master is forwarded verbatim instead.
+
+If we are the top-level master:
+
+1. **Prepare replica write handlers** (line 669): `prepareReplicasToWrite()` calls `prepareClientToWrite()` on every eligible replica client, which installs a writable event so the event loop will flush their outgoing data.
+
+2. **Database context** (lines 672–698): if `server.slaveseldb != dictid`, serializes a `SELECT <dictid>` command directly via `feedReplicationBuffer()` first.
+
+3. **Serialize the write command in RESP** (lines 702–724) using the `replBufWriter` batching API:
+   - `replBufWriterBegin()` — snapshots the tail position of the global `server.repl_buffer_blocks` list.
+   - `replBufWriterAppendBulkLen(&wr, '*', argc)` — writes the multi-bulk header.
+   - For each argument: `$<len>\r\n` header then the raw bytes via `replBufWriterAppend()`.
+   - `replBufWriterEnd()` — finalizes everything.
+
+**`replBufWriterEnd()` — `replication.c:565`**
+
+This is where the commit happens:
+
+- Advances `server.master_repl_offset` by the total bytes written.
+- Advances `server.repl_backlog->histlen`.
+- Iterates `server.slaves`: for each eligible replica whose `ref_repl_buf_node` is still `NULL` (nothing pending), pins it to `wr.start_node` / `wr.start_pos` and increments that block's `refcount`.
+- If new blocks were allocated, calls `incrementalTrimReplicationBacklog()` to drop old blocks no replica or the backlog still references.
+
+**The shared buffer model**
+
+`server.repl_buffer_blocks` is a global linked list of `replBufBlock` chunks. Data is written once. Each connected replica holds a cursor `(ref_repl_buf_node, ref_block_pos)` pointing to where it has read up to. Blocks are ref-counted: the backlog holds one ref, each replica that has not yet consumed past a block holds one ref; a block is freed only when both let go.
+
+---
+
+## Stage 5 — Draining the buffer to each replica's socket
+
+The writable event fires in the event loop:
+
+```
+sendReplyToClient()  (networking.c:2888)
+  → writeToClient()  (networking.c:2786)
+    → _writeToClientSlave()  (networking.c:2734)
+```
+
+**`_writeToClientSlave()`** (the main-thread path at line 2757):
+
+```c
+replBufBlock *o = listNodeValue(c->ref_repl_buf_node);
+// send from c->ref_block_pos up to o->used
+*nwritten = connWrite(c->conn, o->buf + c->ref_block_pos, o->used - c->ref_block_pos);
+c->ref_block_pos += *nwritten;
+
+// when block exhausted, advance cursor and release the old block
+if (next && c->ref_block_pos == o->used) {
+    o->refcount--;
+    ((replBufBlock *)listNodeValue(next))->refcount++;
+    c->ref_repl_buf_node = next;
+    c->ref_block_pos = 0;
+    incrementalTrimReplicationBacklog(...);
 }
-replBufWriterEnd(&wr);
 ```
+
+`writeToClient()` for replicas (line 2794) keeps looping on `_writeToClientSlave` until all pending data is drained, unlike normal clients which are capped at `NET_MAX_WRITES_PER_EVENT`, because stalling a replica indefinitely would grow the buffer without bound.
 
 ---
 
-## Stage 5 — The shared buffer and per-replica delivery
+## How the stages connect — the key invariants
 
-The global replication buffer (`server.repl_buffer_blocks`) is a linked list of `replBufBlock` nodes allocated with `zmalloc`. Every replica shares the same underlying memory — there is no per-replica copy.
+| Handoff point | What crosses |
+|---|---|
+| `call()` → `alsoPropagate()` | A ref-counted copy of `argv` + flags, queued in `server.also_propagate` |
+| `propagatePendingCommands()` → `propagateNow()` | One `redisOp` at a time, possibly wrapped in MULTI/EXEC |
+| `replicationFeedSlaves()` → `replBufWriterEnd()` | RESP-encoded bytes land in `server.repl_buffer_blocks`; each replica's cursor is advanced to the start of the new data |
+| `replBufWriterEnd()` → event loop | Writable handlers installed by `prepareReplicasToWrite()`; replicas drain their cursor position to the socket |
 
-`replBufWriterBegin()` (replication.c:466) records the **current tail position** at the start of the write. `replBufWriterEnd()` (replication.c:565) commits it:
-
-1. Advances `server.master_repl_offset += wr->total_len` — this is the replication offset that replicas track for partial resync.
-2. Advances `server.repl_backlog->histlen`.
-3. For each replica client, if `slave->ref_repl_buf_node == NULL` (it hasn't been pointed at any data yet this round), sets it to `wr->start_node` and increments that block's refcount. This is how a replica gets associated with the start of fresh data.
-4. Triggers `closeClientOnOutputBufferLimitReached()` if new blocks pushed the replica over its output buffer limit.
-
-Before all of this, `prepareReplicasToWrite()` (replication.c:363) is called at the top of `replicationFeedSlaves`. It calls `prepareClientToWrite(slave)` for each eligible replica, which installs a **writable event** on the replica's socket fd in the event loop. On the next event loop iteration the write handler fires, reads from `slave->ref_repl_buf_node` starting at `slave->ref_block_pos`, and drains bytes to the socket until blocked. When a block is fully consumed by all replicas (refcount drops to zero) it is freed; `incrementalTrimReplicationBacklog()` handles trimming from the head.
-
----
-
-## How the stages connect — summary
-
-```
-c->cmd->proc(c)               ← command handler runs, server.dirty increments
-  └─ server.dirty delta > 0
-        └─ alsoPropagate()    ← copies argv, appends to server.also_propagate[]
-              (deferred)
-
-call() returns
-  └─ afterCommand()
-        └─ postExecutionUnitOperations()  [only at nesting depth 0]
-              └─ propagatePendingCommands()
-                    └─ propagateNow()     [per queued op; wraps >1 ops in MULTI/EXEC]
-                          ├─ feedAppendOnlyFile()         → AOF
-                          └─ replicationFeedSlaves()      → replication
-                                └─ replBufWriter*()
-                                      ├─ RESP-encodes command into repl_buffer_blocks
-                                      ├─ advances master_repl_offset
-                                      └─ sets slave->ref_repl_buf_node per replica
-
-next event loop iteration
-  └─ write handler per replica socket
-        └─ reads from ref_repl_buf_node, sends to network
-```
-
-The key design point: `alsoPropagate()` intentionally defers so that nested execution units accumulate under a single MULTI/EXEC wrapper, and the actual byte-writing into the shared buffer happens only once per outermost command completion. The shared buffer with per-replica reference nodes means the RESP-encoded bytes are produced once regardless of how many replicas are connected.
+The deferred-queue design (accumulate in `also_propagate`, flush at execution-unit exit) is what lets MULTI/EXEC, scripts, and module calls accumulate multiple writes and emit them as a single MULTI/EXEC block on the replication stream, preserving atomicity as seen by replicas.
