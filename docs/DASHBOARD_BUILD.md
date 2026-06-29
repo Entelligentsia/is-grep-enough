@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P1 / T1.6` — **T1.1, TX.1, T1.2–T1.5 done** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P2 / T2.1` — **P1 complete (T1.1–T1.6, TX.1)** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -81,8 +81,13 @@ raw byte in ≤3 clicks.
   ✕ ring (never a clean dot) with the count called out in the caption. No
   harvested-DNF data exists yet, so the ring path is forward-looking; the coverage
   collapse is verified against the 64 real incomplete cells.
-- [ ] **T1.6 URL-encoded filter state.** rung·repo·arm·cell encoded in the URL so
-  any view is a shareable link (§4) — essential for "look at *this* cell".
+- [x] **T1.6 URL-encoded filter state.** rung·repo·arm·cell (+ judged/incomplete
+  toggles) encoded in `?query` (§4). `applyURL`+`syncControls` read the link on
+  load and reflect it into every control; `syncURL` (replaceState, non-default
+  keys only) keeps the URL current on each change; `popstate` restores on
+  back/forward. Validated: deep-link `?rung=L3&repo=redis&arms=baseline,grove&
+  cell=L3-redis&incomplete=0` restores filters, arm checkboxes, the locked cell
+  detail, and the toggles. Changing rung clears a now-invalid locked cell.
 
 ## Phase 2 — Compare view
 

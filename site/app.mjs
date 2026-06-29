@@ -55,26 +55,67 @@ async function init() {
   // filters
   fillSelect($("#f-rung"), experiment.rungs);
   fillSelect($("#f-repo"), experiment.repos.map((r) => r.id));
-  $("#f-rung").onchange = (e) => { state.rung = e.target.value; render(); };
-  $("#f-repo").onchange = (e) => { state.repo = e.target.value; render(); };
+  $("#f-rung").onchange = (e) => { state.rung = e.target.value; state.cell = null; render(); };
+  $("#f-repo").onchange = (e) => { state.repo = e.target.value; state.cell = null; render(); };
 
   // arm-visibility toggle — global across coverage grid, metrics, and detail (§4)
   for (const a of ARMS) {
     const cb = el("input", { type: "checkbox", checked: true });
+    cb.dataset.arm = a;
     cb.onchange = () => { state.arms[a] = cb.checked; render(); };
     $("#f-arms").append(el("label", { className: "armchk" },
       [cb, el("span", { className: `swatch ${a}` }), document.createTextNode(a)]));
   }
 
-  $("#t-judged").onchange = (e) => { state.showJudged = e.target.checked; renderCoverage(); };
+  $("#t-judged").onchange = (e) => { state.showJudged = e.target.checked; renderCoverage(); syncURL(); };
   $("#t-incomplete").onchange = (e) => { state.showIncomplete = e.target.checked; render(); };
   $("#tx-close").onclick = () => $("#tx-overlay").classList.remove("open");
   $("#tx-overlay").onclick = (e) => { if (e.target.id === "tx-overlay") e.target.classList.remove("open"); };
 
+  // URL-encoded filter state (§4, T1.6): any view is a shareable link. Read the
+  // URL first, reflect it into the controls, then keep the URL in sync on change
+  // and respond to back/forward.
+  applyURL(); syncControls();
+  window.addEventListener("popstate", () => { applyURL(); syncControls(); render(); });
   render();
 }
 
 function fillSelect(sel, vals) { for (const v of vals) sel.append(el("option", { value: v, textContent: v })); }
+
+// ---- URL <-> state (shareable filter/cell links) ----------------------------
+function applyURL() {
+  const p = new URLSearchParams(location.search);
+  const rung = p.get("rung"); state.rung = DATA.experiment.rungs.includes(rung) ? rung : "";
+  const repo = p.get("repo"); state.repo = DATA.experiment.repos.some((r) => r.id === repo) ? repo : "";
+  const cell = p.get("cell"); state.cell = cell && DATA.cells.some((c) => `${c.rung}-${c.repo}` === cell) ? cell : null;
+  if (p.has("arms")) { const vis = new Set(p.get("arms").split(",").filter(Boolean)); for (const a of ARMS) state.arms[a] = vis.has(a); }
+  else for (const a of ARMS) state.arms[a] = true;
+  state.showJudged = p.get("judged") === "1";
+  state.showIncomplete = p.get("incomplete") !== "0";
+}
+
+// reflect current state into the form controls (after URL load / popstate)
+function syncControls() {
+  $("#f-rung").value = state.rung;
+  $("#f-repo").value = state.repo;
+  for (const cb of $("#f-arms").querySelectorAll("input")) cb.checked = state.arms[cb.dataset.arm];
+  $("#t-judged").checked = state.showJudged;
+  $("#t-incomplete").checked = state.showIncomplete;
+}
+
+// serialize state into the query string; only non-default keys are written so a
+// pristine view stays a clean URL. replaceState — filtering shouldn't spam history.
+function syncURL() {
+  const p = new URLSearchParams();
+  if (state.rung) p.set("rung", state.rung);
+  if (state.repo) p.set("repo", state.repo);
+  if (state.cell) p.set("cell", state.cell);
+  if (visibleArms().length !== ARMS.length) p.set("arms", visibleArms().join(","));
+  if (state.showJudged) p.set("judged", "1");
+  if (!state.showIncomplete) p.set("incomplete", "0");
+  const qs = p.toString();
+  history.replaceState(null, "", qs ? `${location.pathname}?${qs}` : location.pathname);
+}
 
 function filtered() {
   return DATA.cells.filter((c) => (!state.rung || c.rung === state.rung) && (!state.repo || c.repo === state.repo));
@@ -86,6 +127,7 @@ function render() {
   renderCoverage();
   renderMetrics();
   if (state.cell) renderDetail(state.cell);
+  syncURL();
 }
 
 function renderCoverage() {
@@ -130,7 +172,7 @@ function renderCoverage() {
           title: omitted ? `${rg} · ${arm} · ${repo}: hidden (incomplete/DNF)` : `${rg} · ${arm} · ${repo}: ${c?.status ?? "pending"}${flagstr}${reason}`,
         }));
       }
-      mark.onclick = () => { state.cell = cid; renderDetail(cid); $("#detail-section").scrollIntoView({ behavior: "smooth" }); renderCoverage(); };
+      mark.onclick = () => { state.cell = cid; renderDetail(cid); $("#detail-section").scrollIntoView({ behavior: "smooth" }); renderCoverage(); syncURL(); };
       td.append(mark); tr.append(td);
     }
     table.append(tr);
