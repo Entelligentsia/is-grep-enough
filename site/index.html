@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>nav-3way — results</title>
+<meta name="description" content="Explore and validate the nav-3way code-navigation experiment: baseline vs grove vs lsp.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1>nav-3way — code-navigation, measured</h1>
+    <p class="sub" id="purpose">Loading…</p>
+    <div class="legend">
+      <span><span class="swatch baseline"></span>baseline · text</span>
+      <span><span class="swatch grove"></span>grove · structural</span>
+      <span><span class="swatch lsp"></span>lsp · semantic</span>
+      <span class="caveat">color = arm identity, never quality. n=1 per cell.</span>
+    </div>
+    <p class="provenance" id="provenance">—</p>
+  </header>
+
+  <section id="finding">
+    <h2>What this shows</h2>
+    <p class="note" id="finding-text">—</p>
+  </section>
+
+  <section>
+    <h2>Filter</h2>
+    <div class="filters">
+      <span><label>rung</label><select id="f-rung"><option value="">all</option></select></span>
+      <span><label>repo</label><select id="f-repo"><option value="">all</option></select></span>
+      <span class="caveat" id="coverage-tally">—</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Coverage &amp; integrity</h2>
+    <p class="note">Run status per cell — three segments are baseline · grove · lsp. Filled = harvested, empty = pending, hatched = blocked/DNF. Click a cell to inspect; click a repo or rung to filter. This is the honest state of completeness, shown before any chart.</p>
+    <div id="coverage"></div>
+  </section>
+
+  <section>
+    <h2>Metrics</h2>
+    <div class="tabs" id="metric-tabs"></div>
+    <figure class="figure">
+      <div id="chart"></div>
+      <figcaption id="chart-cap">—</figcaption>
+    </figure>
+  </section>
+
+  <section id="detail-section" hidden>
+    <h2>Cell detail <span class="caveat" id="detail-id"></span></h2>
+    <div class="detail" id="detail"></div>
+  </section>
+
+  <section>
+    <h2>How to trust this</h2>
+    <ul class="note">
+      <li>Every number is recomputed from a run's own stream-json; click any transcript to read the full reasoning trail and the raw evidence path.</li>
+      <li>The <b>engagement</b> line per arm proves it used its capability (<code>bash/grove/lsp &gt; 0</code>) — a fairness gate, not an assertion.</li>
+      <li>Answer quality was <b>blind-judged</b> (A/B/C, mapping withheld); where the reference key was wrong it is corrected in-place (<i>key revisions</i>), shown in the cell detail.</li>
+      <li id="caveats"></li>
+    </ul>
+  </section>
+</div>
+
+<div class="tx-overlay" id="tx-overlay">
+  <div class="tx-panel"><span class="close" id="tx-close">close ✕</span><div id="tx-body"></div></div>
+</div>
+
+<script type="module" src="app.mjs"></script>
+</body>
+</html>

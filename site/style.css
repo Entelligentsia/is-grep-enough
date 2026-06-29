@@ -1,0 +1,107 @@
+/* nav-3way dashboard — neutral, document-grade.
+   Near-monochrome canvas; color encodes ARM IDENTITY only (never quality).
+   One text face + one mono. No cards/shadows/gradients/pills. */
+
+:root {
+  --ink: #1a1a1a;
+  --ink-soft: #555;
+  --ink-faint: #888;
+  --rule: #e3e1dc;
+  --rule-strong: #cfccc4;
+  --paper: #fbfaf7;
+  --paper-2: #f3f1ec;
+  /* arm identity — Okabe–Ito, colorblind-safe, NOT traffic-light */
+  --baseline: #0072b2;
+  --grove: #e69f00;
+  --lsp: #009e73;
+  --mono: ui-monospace, "IBM Plex Mono", "SF Mono", Menlo, monospace;
+  --sans: system-ui, -apple-system, "IBM Plex Sans", Segoe UI, Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e6e1; --ink-soft:#b3b0a8; --ink-faint:#8a877f; --rule:#34322d;
+          --rule-strong:#46443d; --paper:#1b1a17; --paper-2:#232220; }
+}
+
+* { box-sizing: border-box; }
+html { font-size: 15px; }
+body {
+  margin: 0; color: var(--ink); background: var(--paper);
+  font-family: var(--sans); line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--rule-strong); }
+a:hover { border-bottom-color: var(--ink); }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+
+.wrap { max-width: 1060px; margin: 0 auto; padding: 2.2rem 1.4rem 5rem; }
+header.masthead { border-bottom: 1px solid var(--rule-strong); padding-bottom: 1rem; margin-bottom: 1.4rem; }
+.masthead h1 { font-size: 1.35rem; font-weight: 600; margin: 0 0 .2rem; letter-spacing: -0.01em; }
+.masthead .sub { color: var(--ink-soft); font-size: .92rem; max-width: 70ch; }
+.provenance { color: var(--ink-faint); font-size: .78rem; margin-top: .6rem; font-family: var(--mono); }
+
+section { margin: 2.2rem 0; }
+h2 { font-size: .82rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+     color: var(--ink-soft); border-bottom: 1px solid var(--rule); padding-bottom: .35rem; margin: 0 0 1rem; }
+.note { color: var(--ink-soft); font-size: .85rem; max-width: 74ch; }
+.caveat { color: var(--ink-faint); font-size: .8rem; font-style: italic; }
+
+/* arm legend */
+.legend { display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: .85rem; margin: .4rem 0 0; }
+.legend .swatch { display: inline-block; width: .7rem; height: .7rem; margin-right: .35rem; vertical-align: baseline; }
+.swatch.baseline { background: var(--baseline); } .swatch.grove { background: var(--grove); } .swatch.lsp { background: var(--lsp); }
+
+/* filter bar */
+.filters { display: flex; gap: 1.4rem; flex-wrap: wrap; align-items: center; font-size: .85rem; }
+.filters label { color: var(--ink-faint); margin-right: .4rem; }
+.filters select { font-family: var(--sans); font-size: .85rem; padding: .2rem .4rem; background: var(--paper); color: var(--ink); border: 1px solid var(--rule-strong); }
+
+/* coverage grid */
+table.coverage { border-collapse: collapse; font-size: .82rem; }
+table.coverage th { font-weight: 500; color: var(--ink-soft); text-align: left; padding: .25rem .5rem; }
+table.coverage th.rung { text-align: center; cursor: pointer; }
+table.coverage td { padding: .18rem .4rem; border-top: 1px solid var(--rule); }
+td.repo { color: var(--ink-soft); cursor: pointer; white-space: nowrap; }
+td.repo:hover { color: var(--ink); }
+.cellmark { display: inline-flex; gap: 2px; cursor: pointer; padding: 2px; }
+.seg { width: 11px; height: 11px; display: inline-block; border: 1px solid var(--rule-strong); }
+.seg.harvested.baseline { background: var(--baseline); border-color: var(--baseline); }
+.seg.harvested.grove { background: var(--grove); border-color: var(--grove); }
+.seg.harvested.lsp { background: var(--lsp); border-color: var(--lsp); }
+.seg.pending { background: var(--paper-2); }
+.seg.blocked { background: repeating-linear-gradient(45deg, var(--paper-2), var(--paper-2) 2px, var(--ink-faint) 2px, var(--ink-faint) 3px); }
+.cellmark.active { outline: 2px solid var(--ink); outline-offset: 1px; }
+
+/* chart */
+.figure { border: 1px solid var(--rule); padding: .8rem 1rem 1.2rem; background: var(--paper); }
+.figure figcaption { font-size: .78rem; color: var(--ink-faint); margin-top: .5rem; }
+.tabs { display: flex; gap: .2rem; margin-bottom: .6rem; }
+.tabs button { font-family: var(--sans); font-size: .8rem; background: none; border: 1px solid var(--rule-strong);
+               color: var(--ink-soft); padding: .25rem .6rem; cursor: pointer; }
+.tabs button[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
+
+/* detail / compare */
+.detail { border: 1px solid var(--rule-strong); padding: 1.1rem 1.2rem; background: var(--paper); }
+.detail .prompt { font-size: .9rem; color: var(--ink-soft); border-left: 2px solid var(--rule-strong); padding-left: .8rem; margin: .6rem 0 1rem; }
+.armcols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.armcol h4 { margin: 0 0 .4rem; font-size: .9rem; display: flex; align-items: center; gap: .4rem; }
+.armcol .bar { width: .6rem; height: .6rem; display: inline-block; }
+.metricrow { display: flex; justify-content: space-between; font-size: .82rem; border-top: 1px solid var(--rule); padding: .2rem 0; }
+.metricrow .k { color: var(--ink-faint); }
+.metricrow .v { font-family: var(--mono); }
+.judge { font-size: .82rem; margin-top: .5rem; }
+.judge .score { font-family: var(--mono); }
+.verdict { font-size: .8rem; color: var(--ink-soft); margin-top: .3rem; max-height: 7.5rem; overflow: auto; }
+.keyrev { font-size: .78rem; color: var(--ink); background: var(--paper-2); border-left: 2px solid var(--ink-faint); padding: .4rem .6rem; margin-top: .5rem; }
+.flag { font-family: var(--mono); font-size: .7rem; color: var(--ink-faint); border: 1px solid var(--rule-strong); padding: 0 .3rem; margin-left: .3rem; }
+
+/* transcript modal */
+.tx-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: none; }
+.tx-overlay.open { display: block; }
+.tx-panel { position: fixed; inset: 3vh 4vw; background: var(--paper); border: 1px solid var(--rule-strong);
+            overflow: auto; padding: 1.6rem 2rem; }
+.tx-panel .close { float: right; cursor: pointer; border: 1px solid var(--rule-strong); padding: .1rem .5rem; }
+.tx-panel { font-size: .9rem; }
+.tx-panel pre { white-space: pre-wrap; word-break: break-word; font-family: var(--mono); font-size: .82rem; }
+.tx-panel table { border-collapse: collapse; }
+.tx-panel td, .tx-panel th { border: 1px solid var(--rule); padding: .2rem .5rem; font-size: .82rem; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

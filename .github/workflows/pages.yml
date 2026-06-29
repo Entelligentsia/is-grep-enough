@@ -1,0 +1,40 @@
+# Build the dashboard feed from committed experiment artifacts and publish the
+# self-contained site/ to GitHub Pages.
+#
+# Gated on a GitHub remote existing with Pages enabled (Settings → Pages →
+# Source: GitHub Actions). Until this repo is pushed to GitHub, this workflow is
+# committed-and-ready but does not run.
+name: pages
+
+on:
+  push:
+    branches: [master, main]
+    paths: ["site/**", "experiment/state.json", "experiment/spine.json", "evidence/**", "repos.manifest"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: Synthesize data feed from evidence
+        run: node site/build.mjs --sha "${GITHUB_SHA::9}" --at "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: site }
+      - id: deploy
+        uses: actions/deploy-pages@v4
