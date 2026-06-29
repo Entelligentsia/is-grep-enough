@@ -1,6 +1,8 @@
 # Build the dashboard feed from committed experiment artifacts and publish the
 # self-contained site/ to GitHub Pages.
 #
+# Target: Entelligentsia/is-grep-enough → https://entelligentsia.github.io/is-grep-enough/
+#
 # Gated on a GitHub remote existing with Pages enabled (Settings → Pages →
 # Source: GitHub Actions). Until this repo is pushed to GitHub, this workflow is
 # committed-and-ready but does not run.

@@ -39,7 +39,7 @@ async function init() {
     `generated ${meta.generated_at} · ${meta.git_sha} · model ${meta.model} · ` +
     `${meta.coverage.harvested}/${meta.coverage.total} cells harvested · ${Object.keys(DATA.judge).length} judged`;
   $("#finding-text").textContent =
-    "Three navigation regimes over a complexity ladder. Where rungs are fully run and judged, answer quality is a near-tie — the arms separate on cost and route, not correctness. Everything below links to the raw run that produced it.";
+    "The same exploration task, given to an agent with three rungs of navigation power: plain text search (baseline), fast-light structural (grove/tree-sitter), and authoritative semantic (lsp/LSP) — across a task-complexity ladder. The question is where on that ladder the extra power stops paying for itself. Where rungs are fully run and judged, answer quality is a near-tie; the arms separate on cost and route, not correctness. Everything below links to the raw run that produced it — check it.";
   $("#caveats").innerHTML = "<b>Caveats:</b> " + meta.caveats.join(" ");
 
   // filters

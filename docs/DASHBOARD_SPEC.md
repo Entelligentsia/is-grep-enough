@@ -1,9 +1,19 @@
-# nav-3way results dashboard — specification
+# is-grep-enough — results dashboard specification
 
-A static, GitHub Pages–hosted UX for **exploring and validating** the
-`nav-3way` experiment: a fair comparison of three code-navigation regimes —
-**baseline** (text), **grove** (structural), **lsp** (semantic) — across a
-task-complexity ladder (L1–L5) over 10 pinned real-world repos.
+Public name / repo: **`is-grep-enough`** (org `Entelligentsia`); Pages URL
+`https://entelligentsia.github.io/is-grep-enough/`. The experiment's internal id
+stays **`nav-3way`** (wired through `state.json`/`spine.json`/evidence paths and
+owned by `statectl`) — `is-grep-enough` is the public/product identity, `nav-3way`
+is the experiment id.
+
+A static, GitHub Pages–hosted UX for **exploring and validating** the question:
+*when a coding agent explores a large, unfamiliar codebase, is basic text search
+enough — or does it need fast-light structural navigation (tree-sitter / grove) or
+authoritative semantic navigation (LSP)?* The experiment answers it as a fair
+comparison of three navigation regimes — **baseline** (text), **grove**
+(structural), **lsp** (semantic) — across a task-complexity ladder (L1–L5) over 10
+pinned real-world repos, looking for where on the ladder the added power stops
+paying for itself.
 
 This document is the build contract for that UX. It is written to one standard:
 a skeptical engineer who has never seen the project should be able to land on the
@@ -386,8 +396,10 @@ nice-to-haves.
 
 ## 11. Tech & deployment
 
-- **Hosting:** GitHub Pages, project page under `/<repo>/` — all asset paths must
-  be base-path-relative (no leading `/`). A committed GitHub Action builds the
+- **Hosting:** GitHub Pages project page at `/is-grep-enough/`
+  (`entelligentsia.github.io/is-grep-enough/`) — all asset paths must be
+  base-path-relative (no leading `/`; the spike already uses `data/…`,
+  `style.css`, so it is base-path-agnostic). A committed GitHub Action builds the
   feed and publishes `site/`.
 - **Stack (chosen):** vanilla HTML + ES modules, no SPA framework, no bundler —
   `Observable Plot` and `marked` are loaded directly from `esm.sh` at runtime.
@@ -450,9 +462,11 @@ already trusts the project more than one shown only a winner's bar chart.
 ### Still open / iterative
 
 - **GitHub remote + Pages activation.** This repo currently has **no git
-  remote**, so Pages cannot deploy yet. The site and the `pages.yml` workflow are
-  committed ready; activation needs the repo pushed to GitHub with Pages set to
-  "GitHub Actions". Until then the site runs locally (`node site/build.mjs` then
+  remote**, so Pages cannot deploy yet. Target remote: `Entelligentsia/is-grep-enough`.
+  To activate: create the repo, `git remote add origin
+  git@github.com:Entelligentsia/is-grep-enough.git`, push, then Settings → Pages →
+  Source → "GitHub Actions". The site and `pages.yml` are committed ready; until
+  then the site runs locally (`node site/build.mjs` then
   serve `site/`).
 - Spine-coverage checklist parseability (per #5).
 - Per-turn cost series (only total cost is recorded per run; per-turn is
