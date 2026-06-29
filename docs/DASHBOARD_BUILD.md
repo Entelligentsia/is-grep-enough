@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P3 / T3.1` — **P1 complete; P2 complete (T2.1–T2.3)** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P3 / T3.2` — **P1 + P2 complete; T3.1 done** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -125,8 +125,17 @@ raw byte in ≤3 clicks.
 
 ## Phase 3 — Polish & trust toolkit
 
-- [ ] **T3.1 `STYLE.md` tokens** (palette, type scale, spacing, chart defaults)
-  to prevent drift to template defaults (§9).
+- [x] **T3.1 `STYLE.md` tokens** (palette, type scale, spacing, chart defaults)
+  to prevent drift to template defaults (§9). `site/STYLE.md` codifies the shipped
+  system **descriptively** — every value is the one actually in `style.css`
+  (`:root`, light + dark) and `app.mjs` (Plot defaults), with a "change both in the
+  same commit" rule. Covers palette (Okabe–Ito arm triad, color = arm identity
+  only), type (one sans + one mono, tabular figures, the full size table), spacing/
+  layout (1060px column, ~70–74ch measure, hairlines-not-boxes), Plot chart
+  defaults (zero-baseline `~s`, dot/median-tick/min–max-whisker vocabulary, DNF
+  hollow-ring), motion, and a11y invariants. Verified truthful: all 17 light+dark
+  hex tokens grep-match `style.css`, and the 6 cited chart defaults grep-match
+  `app.mjs` (no drift).
 - [ ] **T3.2 Dark mode** — truly neutral grey, not black (§9).
 - [ ] **T3.3 Methodology & provenance page** — genesis wall, blind judging,
   pricing table, data-sources panel (§10).
