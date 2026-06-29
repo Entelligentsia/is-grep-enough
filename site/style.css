@@ -84,6 +84,8 @@ td.repo:hover { color: var(--ink); }
 .seg.dnf { background: repeating-linear-gradient(45deg, transparent, transparent 2px, var(--ink-faint) 2px, var(--ink-faint) 3px); }
 /* judged overlay: a small ink tick at the segment's foot */
 .seg.judged { box-shadow: inset 0 -3px 0 -1px var(--ink); }
+/* DNF/incomplete toggle off: hold the slot but blank the status mark */
+.seg.omitted { background: none; border-style: dotted; border-color: var(--rule); box-shadow: none; }
 .cellmark.active { outline: 2px solid var(--ink); outline-offset: 1px; }
 
 /* chart */

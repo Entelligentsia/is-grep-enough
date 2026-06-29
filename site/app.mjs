@@ -27,9 +27,12 @@ const METRICS = {
 // metric families rendered as small-multiple rows (§5.3), in this order
 const METRIC_FAMILIES = ["context", "turns", "wall", "cache", "cost"];
 
-const state = { rung: "", repo: "", cell: null, showJudged: false,
+const state = { rung: "", repo: "", cell: null, showJudged: false, showIncomplete: true,
   arms: { baseline: true, grove: true, lsp: true } };
 const visibleArms = () => ARMS.filter((a) => state.arms[a]);
+// a cell counts as incomplete/DNF if it never reached harvested OR a harvested
+// run carries the dnf flag (had no clean result / errored) — §5.3 toggle target.
+const isIncomplete = (c) => !c || c.status !== "harvested" || (c.flags ?? []).includes("dnf");
 let DATA;
 let REPO = {}; // id → {id, lang, sha, gh} for cite-link construction
 
@@ -64,6 +67,7 @@ async function init() {
   }
 
   $("#t-judged").onchange = (e) => { state.showJudged = e.target.checked; renderCoverage(); };
+  $("#t-incomplete").onchange = (e) => { state.showIncomplete = e.target.checked; render(); };
   $("#tx-close").onclick = () => $("#tx-overlay").classList.remove("open");
   $("#tx-overlay").onclick = (e) => { if (e.target.id === "tx-overlay") e.target.classList.remove("open"); };
 
@@ -118,9 +122,12 @@ function renderCoverage() {
         const judged = state.showJudged && DATA.judge[`${rg}-${repo}`]?.scores?.[arm] ? " judged" : "";
         const reason = c?.dnf_reason ? ` — ${c.dnf_reason}` : "";
         const flagstr = c?.flags?.length ? ` [${c.flags.join(",")}]` : "";
+        // DNF/incomplete toggle (§5.3): default shows them flagged; when off, the
+        // segment is held as a blank placeholder so only completed runs read.
+        const omitted = !state.showIncomplete && isIncomplete(c) ? " omitted" : "";
         mark.append(el("span", {
-          className: `seg ${st} ${arm}${judged}`,
-          title: `${rg} · ${arm} · ${repo}: ${c?.status ?? "pending"}${flagstr}${reason}`,
+          className: `seg ${st} ${arm}${judged}${omitted}`,
+          title: omitted ? `${rg} · ${arm} · ${repo}: hidden (incomplete/DNF)` : `${rg} · ${arm} · ${repo}: ${c?.status ?? "pending"}${flagstr}${reason}`,
         }));
       }
       mark.onclick = () => { state.cell = cid; renderDetail(cid); $("#detail-section").scrollIntoView({ behavior: "smooth" }); renderCoverage(); };
@@ -151,7 +158,9 @@ function renderMetrics() {
     const m = METRICS[key];
     const rows = base
       .filter((c) => m.get(c) != null)
-      .map((c) => ({ rung: c.rung, arm: c.arm, repo: c.repo, value: m.get(c), id: `${c.rung}-${c.repo}` }));
+      // DNF toggle (§5.3): drop harvested-but-DNF points when off; keep+flag when on
+      .filter((c) => state.showIncomplete || !(c.flags ?? []).includes("dnf"))
+      .map((c) => ({ rung: c.rung, arm: c.arm, repo: c.repo, value: m.get(c), id: `${c.rung}-${c.repo}`, flagged: (c.flags ?? []).includes("dnf") }));
 
     const fig = el("figure", { className: "figure metric-family" });
     fig.append(el("figcaption", { className: "mf-label", textContent: m.label }));
@@ -190,18 +199,26 @@ function renderMetrics() {
         // per-(arm,rung) median tick — central tendency beside the raw spread
         Plot.tickY(rows, Plot.groupX({ y: "median" },
           { fx: "rung", x: "arm", y: "value", stroke: "arm", strokeWidth: 2.5 })),
-        Plot.dot(rows, {
+        Plot.dot(rows.filter((r) => !r.flagged), {
           fx: "rung", x: "arm", y: "value", fill: "arm", r: 3, fillOpacity: 0.85, stroke: "white", strokeWidth: 0.4,
           tip: true, channels: { repo: "repo", rung: "rung", arm: "arm", value: { value: "value", label: m.label } },
+        }),
+        // DNF points kept but flagged: hollow ring + ✕ so a partial run never
+        // passes as a clean measurement (§5.3, truthbound).
+        Plot.dot(rows.filter((r) => r.flagged), {
+          fx: "rung", x: "arm", y: "value", r: 4.5, fill: "none", stroke: "arm", strokeWidth: 1.4, symbol: "times",
+          tip: true, channels: { repo: "repo", rung: "rung", arm: "arm", value: { value: "value", label: m.label }, flag: { value: () => "DNF", label: "flag" } },
         }),
       ],
     });
     fig.append(plot);
 
+    const nFlagged = rows.filter((r) => r.flagged).length;
     const n = new Set(rows.map((r) => r.id)).size;
     fig.append(el("figcaption", { className: "mf-cap" },
       `${m.label} — one dot per repo; whisker = min–max, tick = median (per rung × arm). ` +
-      `Per-rung n is on the axis (partial rungs self-report a smaller n); ${n} task${n === 1 ? "" : "s"} shown total. ` +
+      `Per-rung n is on the axis (partial rungs self-report a smaller n); ${n} task${n === 1 ? "" : "s"} shown total` +
+      `${nFlagged ? `, incl. ${nFlagged} DNF point${nFlagged === 1 ? "" : "s"} ringed (✕)` : ""}. ` +
       `Axis from zero. n=1 per cell — a direction, not a measurement.`));
     host.append(fig);
   }
