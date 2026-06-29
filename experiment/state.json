@@ -63,13 +63,28 @@
       "ts": "2026-06-28T15:28:58.324Z"
     },
     "L3-baseline-redis": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 65,
+      "context": 185683,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/redis-L3.claude.baseline.jsonl",
+      "ts": "2026-06-28T17:22:22.851Z"
     },
     "L3-grove-redis": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 113,
+      "context": 410390,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/redis-L3.claude.grove.jsonl",
+      "ts": "2026-06-28T17:50:15.743Z"
     },
     "L3-lsp-redis": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 131,
+      "context": 317807,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/redis-L3.claude.lsp.jsonl",
+      "ts": "2026-06-28T18:19:49.223Z"
     },
     "L4-baseline-redis": {
       "status": "harvested",
@@ -168,13 +183,28 @@
       "ts": "2026-06-28T15:18:08.362Z"
     },
     "L3-baseline-django": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 70,
+      "context": 152532,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/django-L3.claude.baseline.jsonl",
+      "ts": "2026-06-29T00:43:12.264Z"
     },
     "L3-grove-django": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 115,
+      "context": 337011,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/django-L3.claude.grove.jsonl",
+      "ts": "2026-06-28T17:38:16.115Z"
     },
     "L3-lsp-django": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 107,
+      "context": 353694,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/django-L3.claude.lsp.jsonl",
+      "ts": "2026-06-28T18:06:15.792Z"
     },
     "L4-baseline-django": {
       "status": "pending"
@@ -243,13 +273,28 @@
       "ts": "2026-06-28T15:16:15.589Z"
     },
     "L3-baseline-bitcoin": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 215,
+      "context": 1148937,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/bitcoin-L3.claude.baseline.jsonl",
+      "ts": "2026-06-28T17:06:45.725Z"
     },
     "L3-grove-bitcoin": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 190,
+      "context": 432586,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/bitcoin-L3.claude.grove.jsonl",
+      "ts": "2026-06-28T17:36:10.586Z"
     },
     "L3-lsp-bitcoin": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 151,
+      "context": 453228,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/bitcoin-L3.claude.lsp.jsonl",
+      "ts": "2026-06-28T18:04:18.313Z"
     },
     "L4-baseline-bitcoin": {
       "status": "pending"
@@ -318,13 +363,28 @@
       "ts": "2026-06-28T15:22:47.781Z"
     },
     "L3-baseline-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 127,
+      "context": 534746,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/laravel-L3.claude.baseline.jsonl",
+      "ts": "2026-06-28T17:16:45.683Z"
     },
     "L3-grove-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 145,
+      "context": 357837,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/laravel-L3.claude.grove.jsonl",
+      "ts": "2026-06-28T17:44:04.110Z"
     },
     "L3-lsp-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 181,
+      "context": 1040304,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/laravel-L3.claude.lsp.jsonl",
+      "ts": "2026-06-28T18:13:08.892Z"
     },
     "L4-baseline-laravel": {
       "status": "pending"
@@ -370,17 +430,36 @@
       "ts": "2026-06-28T16:03:44.267Z"
     },
     "L2-lsp-rails": {
-      "status": "running",
-      "ts": "2026-06-28T17:00:02.972Z"
+      "status": "harvested",
+      "run_wall_s": 135,
+      "context": 479999,
+      "engaged": true,
+      "evidence": "evidence/nav3/L2/raw/rails-L2.claude.lsp.jsonl",
+      "ts": "2026-06-28T17:02:20.608Z"
     },
     "L3-baseline-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 250,
+      "context": 2499017,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/rails-L3.claude.baseline.jsonl",
+      "ts": "2026-06-28T17:21:07.489Z"
     },
     "L3-grove-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 237,
+      "context": 623726,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/rails-L3.claude.grove.jsonl",
+      "ts": "2026-06-28T17:48:12.545Z"
     },
     "L3-lsp-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 246,
+      "context": 1079969,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/rails-L3.claude.lsp.jsonl",
+      "ts": "2026-06-28T18:17:28.149Z"
     },
     "L4-baseline-rails": {
       "status": "pending"
@@ -434,13 +513,28 @@
       "ts": "2026-06-28T15:43:33.625Z"
     },
     "L3-baseline-typescript": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 136,
+      "context": 433045,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/typescript-L3.claude.baseline.jsonl",
+      "ts": "2026-06-28T17:29:10.402Z"
     },
     "L3-grove-typescript": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 193,
+      "context": 673663,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/typescript-L3.claude.grove.jsonl",
+      "ts": "2026-06-28T17:58:45.826Z"
     },
     "L3-lsp-typescript": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 203,
+      "context": 658015,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/typescript-L3.claude.lsp.jsonl",
+      "ts": "2026-06-28T18:29:39.231Z"
     },
     "L4-baseline-typescript": {
       "status": "pending"
@@ -509,13 +603,28 @@
       "ts": "2026-06-28T15:46:49.537Z"
     },
     "L3-baseline-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 197,
+      "context": 977175,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/webpack-L3.claude.baseline.jsonl",
+      "ts": "2026-06-28T17:32:37.716Z"
     },
     "L3-grove-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 152,
+      "context": 439120,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/webpack-L3.claude.grove.jsonl",
+      "ts": "2026-06-28T18:01:30.281Z"
     },
     "L3-lsp-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 188,
+      "context": 734752,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/webpack-L3.claude.lsp.jsonl",
+      "ts": "2026-06-28T18:32:57.659Z"
     },
     "L4-baseline-webpack": {
       "status": "pending"
@@ -569,13 +678,28 @@
       "ts": "2026-06-28T15:30:58.155Z"
     },
     "L3-baseline-spring-boot": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 138,
+      "context": 254437,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/spring-boot-L3.claude.baseline.jsonl",
+      "ts": "2026-06-28T17:24:51.946Z"
     },
     "L3-grove-spring-boot": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 156,
+      "context": 385525,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/spring-boot-L3.claude.grove.jsonl",
+      "ts": "2026-06-28T17:53:02.151Z"
     },
     "L3-lsp-spring-boot": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 160,
+      "context": 523467,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/spring-boot-L3.claude.lsp.jsonl",
+      "ts": "2026-06-28T18:22:41.070Z"
     },
     "L4-baseline-spring-boot": {
       "status": "harvested",
@@ -654,13 +778,28 @@
       "ts": "2026-06-28T15:34:17.516Z"
     },
     "L3-baseline-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 100,
+      "context": 526078,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/tokio-L3.claude.baseline.jsonl",
+      "ts": "2026-06-28T17:26:44.636Z"
     },
     "L3-grove-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 128,
+      "context": 665971,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/tokio-L3.claude.grove.jsonl",
+      "ts": "2026-06-28T17:55:21.268Z"
     },
     "L3-lsp-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 193,
+      "context": 924777,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/tokio-L3.claude.lsp.jsonl",
+      "ts": "2026-06-28T18:26:05.629Z"
     },
     "L4-baseline-tokio": {
       "status": "pending"
@@ -714,13 +853,28 @@
       "ts": "2026-06-28T15:20:28.957Z"
     },
     "L3-baseline-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 218,
+      "context": 3004664,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/hugo-L3.claude.baseline.jsonl",
+      "ts": "2026-06-28T17:14:28.443Z"
     },
     "L3-grove-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 181,
+      "context": 918099,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/hugo-L3.claude.grove.jsonl",
+      "ts": "2026-06-28T17:41:28.333Z"
     },
     "L3-lsp-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 203,
+      "context": 1004200,
+      "engaged": true,
+      "evidence": "evidence/nav3/L3/raw/hugo-L3.claude.lsp.jsonl",
+      "ts": "2026-06-28T18:09:51.373Z"
     },
     "L4-baseline-hugo": {
       "status": "pending"
@@ -995,6 +1149,467 @@
       ],
       "verdict": "All three arms Full with line-exact grounding (baseline accurate-but-line-light). The cell inverts the usual cost story: baseline is CHEAPEST (397k vs grove 877k vs lsp 559k) and uniquely called out the attach()-vs-from() nuance, while grove went deepest (42 structural calls, found the cache reverse-lookup) and lsp was the most line-precise (11 stages, every cite exact, incl. NO_DIRECT_PROPERTY + forward/reverse cache). The lsp value is a RE-RUN: its first run DNF'd mid-synthesis on a transient 'Connection closed mid-response' API error that the original gate missed (has_result was true despite is_error=true, subtype:success); side-metrics.sh + the runarm gate now reject is_error==true. Note: the pinned repo was restructured to core/spring-boot/ vs the key's legacy spring-boot-project/ paths (see key_revisions); all arms navigated the actual tree, verified line-exact.",
       "ts": "2026-06-28T03:52:46.066Z"
+    },
+    "L2-bitcoin": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Identifies CheckTransaction (consensus/tx_check.cpp:11) with all checks and the TX_CONSENSUS/state contract, and both callers with distinct consequences: mempool PreChecks (validation.cpp:786, call :802) -> Failure, tx never added; block CheckBlock (validation.cpp:3925, loop :3966-3974, call :3968) -> BLOCK_CONSENSUS rejection of the whole block. Cleanly maps failure propagation through AcceptSingleTransactionInternal (:1331), the package path (:1455-1459, matches source verbatim), and CheckBlock's callers AcceptBlock (:4357, InvalidBlockFound) and ConnectBlock (:2326, BLOCK_MUTATED->FatalError). Every load-bearing cite resolves line-exact, including the quoted excerpts. Cost/process (post-unblind): 305878 ctx tokens, 17 turns, 6 shell calls."
+        },
+        "grove": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Identifies the context-free routine CheckTransaction(tx, state) (consensus/tx_check.cpp:11), enumerates all six structural checks with their exact reject reasons and the TX_CONSENSUS contract, and covers both production callers with distinct consequences: mempool via MemPoolAccept::PreChecks (validation.cpp:786, call at :802) returning a single loose-tx Failure, and block via CheckBlock (validation.cpp:3925, loop :3966, call at :3968) mapping to BLOCK_CONSENSUS rejection of the whole block. Goes beyond the spine with a correct three-site analysis of CheckBlock's own callers (ProcessNewBlock :4423, AcceptBlock :4357, ConnectBlock :2326) and the fChecked fast-path (:3929) — all verified exact. Every load-bearing cite resolves line-exact. Cost/process (post-unblind): 280271 ctx tokens, 15 turns, 6 grove calls, no shell."
+        },
+        "lsp": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Names CheckTransaction (consensus/tx_check.cpp:11, decl tx_check.h:18), lists the six checks and uniform TX_CONSENSUS tagging, and covers both callers with differing consequences: PreChecks (validation.cpp:786, call :802) yielding MempoolAcceptResult::Failure, and CheckBlock (validation.cpp:3925, loop :3966-3974, call :3968) translating to BLOCK_CONSENSUS block rejection. Adds the same correct CheckBlock-caller triad plus the CVE-2012-2459 comment (:4418-4422) and mempool propagation through AcceptSingleTransactionInternal (:1331) and the package path. Core cites resolve line-exact; slightly looser only on a couple of non-spine labels (package loop labeled AcceptMultipleTransactionsInternal). Cost/process (post-unblind): 549819 ctx tokens, 28 turns, 7 native-LSP calls, 2 shell."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0) on the full spine — the context-free CheckTransaction (consensus/tx_check.cpp:11) with its TX_CONSENSUS/TxValidationState contract, and BOTH production callers with their distinct unit-of-rejection: MemPoolAccept::PreChecks (validation.cpp:802) drops one loose tx, while CheckBlock (validation.cpp:3968) rejects the whole block as BLOCK_CONSENSUS. Grounding is a near-tie (0.97-0.98); every sampled load-bearing cite from all three resolves line-exact, and all three volunteered the same correct CheckBlock-caller triad (ProcessNewBlock/AcceptBlock/ConnectBlock) as extra. The differentiator is COST: grove reached Full cheapest on context (280k, pure-structural: 6 grove calls, zero shell), baseline was fastest in wall-time and mid-context (306k/17 turns/6 shell), and the native-LSP arm paid the most to reach the same answer (550k context, ~2x grove, 28 turns). On this small, well-bounded 2-file subsystem (tx_check.cpp + validation.cpp) all three regimes are fully correct; structural navigation was the leanest route to it.",
+      "ts": "2026-06-28T18:40:23.673Z"
+    },
+    "L2-django": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. Opens with the marking convention (safestring.py:13-22 SafeData.__html__→self, SafeString, mark_safe), then conditional_escape as the gatekeeper (utils/html.py:120-132) with the Promise coercion, __html__ pass-through, and escape fallback, correctly contrasting escape's unconditional behavior. Hits all three required callers with roles: render_value_in_context (template/base.py:1140-1153) as the autoescape boundary plus VariableNode.render (1165), format_html/format_html_join (html.py:135-171) per-arg escaping, and SimpleNode.render (library.py:347-348). Adds an accurate extra — FilterExpression.resolve's is_safe/needs_autoescape propagation (base.py:821-838), verified line-exact. Grounding is strong but two cites point at decorator lines rather than the def: escape labeled 'line 52' (def at 53) and mark_safe 'line 64' (def at 65) — both off by one in the loose direction; everything else resolves exact. Cost/process (post-unblind): 154778 ctx tokens, 9 turns, 2 shell calls, 6 reads."
+        },
+        "grove": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Leads with the __html__ convention (safestring.py: SafeData→self, SafeString, __add__ safety loss, mark_safe short-circuit) then conditional_escape (utils/html.py:120) with the Promise/__html__/escape branches and the escape-always-returns-SafeString fallback (line 53). Covers all three required callers with how each depends on the result: render_value_in_context as the template variable gate (base.py:1151 — the conditional_escape call line, def at 1140, acceptable), format_html (135) per-arg escaping then mark_safe, and format_html_join (148) escaping the separator. Accurate extras — URLNode/StaticNode.render (defaulttags.py:521, static.py:118), escape_filter/escapeseq/join filters (461/471/616), admin label_tag/contents (helpers.py:180,301) — all verified line-exact at their conditional_escape call sites. The data-flow diagram and __add__ note are correct. Grounding tight; only the 1151-vs-1140 label is a call-site rather than def, which is fine. Cost/process (post-unblind): 195528 ctx tokens, 15 turns, 13 grove calls, no shell."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Identifies the decision routine conditional_escape (utils/html.py:120) with its two-branch __html__ logic and Promise coercion, the escape fallback (html.py:53, the def line; correctly flagged as always-escaping), and the safe-string convention — SafeData.__html__→self (safestring.py:13/16-22), SafeString (25), mark_safe (65) including its __html__ short-circuit and the __add__ safety-preservation extra (33). Names ≥2 callers with their roles: format_html/format_html_join (html.py:135,148) doing per-arg conditional_escape before interpolation, and render_value_in_context (template/base.py:1140) as the autoescape boundary, each correctly explained. Adds accurate extras — SimpleNode.render (library.py:347-348), URLNode.render (defaulttags.py:521), the escape/escapeseq/join/unordered_list filters (defaultfilters.py:461/471/616/717), force_escape (476), and admin helpers (helpers.py:180,301) — all of which resolve to the cited conditional_escape call sites line-exact. Grounding is tight; cites land on call lines or defs as labeled. Cost/process (post-unblind): 254550 ctx tokens, 19 turns, 7 native-LSP calls, 10 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.96-0.98 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was baseline (154778 tokens), most expensive was lsp (254550 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:45:35.635Z"
+    },
+    "L2-hugo": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. Covers the whole spine with exact reproduction of the helper at site.go:1771-1785, the wrapper at 1763-1769 with the IsKindEnabled short-circuit, caller A at :276 (always Build.Disable, keep Home/Section/Taxonomy, queue everything else to droppedPages), and caller B at :1088 (treePages.Delete + treeTaxonomyEntries.DeletePrefix for KindTerm). Correctly names both enclosing functions (doCreatePages, applyAggregatesToTaxonomiesAndTerms) and correctly identifies the deferred flush in createAllPages lines 104-107 with treePages.Delete — all verified line-exact. Articulates the two-phase pattern and its implication for the planned change. Cleanest-grounded of the three; every sampled cite resolves. Cost/process (post-unblind): 974891 ctx tokens, 6 turns, 25 shell calls, 22 reads."
+        },
+        "grove": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Hits the entire required spine: focal (s *Site) shouldBuild (site.go:1763) with the inner IsKindEnabled kind gate, the pure helper shouldBuild (site.go:1771) with all three draft/future/expired rules correctly stated, caller A at content_map_page_assembler.go:276 (Build.Disable then keep-structure-for Home/Section/Taxonomy vs drop into droppedPages), and caller B at :1088 (treePages.Delete + treeTaxonomyEntries.DeletePrefix for failing KindTerm). Correctly distinguishes the two callers' divergent reactions. Grounding is tight: both enclosing function names (doCreatePages, applyAggregatesToTaxonomiesAndTerms) are accurate, all sampled cites resolve line-exact, and the acceptable extras (list-command path through commands/list.go, resources/resource/dates.go IsFuture/IsExpired) verify against source. Near-perfect; only docked a hair for unsampled list-path detail not line-pinned. Cost/process (post-unblind): 232433 ctx tokens, 15 turns, 9 grove calls, 2 shell, 2 reads."
+        },
+        "lsp": {
+          "grounding": 0.9,
+          "completeness": 1,
+          "verdict": "Full. Reaches every spine element: focal at site.go:1763 with the two-layer kind+date gate, the package-level helper at 1771 with all three rules, caller A at :276 (Build.Disable, keep Home/Section/Taxonomy as skeleton vs append to droppedPages), and caller B at :1088 (immediate treePages.Delete + treeTaxonomyEntries.DeletePrefix, with date-event suppression for the failing term). Adds correct extras: the createAllPages():104 deferred flush with resourceTrees.DeletePrefix and the deprecated Site.BuildDrafts at site.go:729 (v0.156.0, exact). The line:file cites all resolve, but two enclosing-function names are wrong — call site 1 is in doCreatePages (not doTransformPages → handlePageMetaSource) and call site 2 is in applyAggregatesToTaxonomiesAndTerms (not handlePlural); the configlanguage.go:261-267 accessor range is also slightly loose (BuildExpired begins at 257). The descriptions of the surrounding code are otherwise accurate, so the flow is right even though the function labels are invented — docked for the two structural mislabels. Cost/process (post-unblind): 507493 ctx tokens, 26 turns, 10 native-LSP calls, 4 shell, 10 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.9-0.99 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was grove (232433 tokens), most expensive was baseline (974891 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:45:36.350Z"
+    },
+    "L2-laravel": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. A nails the focal spine: raw() (Gate.php:434) as the single evaluation routine (resolveUser → before → callAuthCallback → after → GateEvaluated event), inspect() (:408) as the normalizing adapter that always returns a Response (truthy→Response::allow(), falsy→defaultDenialResponse/deny(), Response as-is, caught AuthorizationException→toResponse()), and a caller table that correctly distinguishes what each does with the verdict: check() (:356) reduces inspect(...)->allowed() with every (AND), allows (:332) aliases check, denies (:344) negates, any (:370) uses contains(check), none (:382) negates any, and authorize() (:396) calls inspect(...)->authorize() with Response::authorize() (Response.php:148) as the single throw site. Adds acceptable extras (allowIf/denyIf :146/:161 via authorizeOnDemand :177, the AuthorizesRequests and Authorizable traits as request-reach entry points). Grounding: every sampled cite resolves line-exact, including the boolean-wrapper lines and the Response throw site; its none:382 is in fact tighter than the key's :380. No wrong turns. Cost/process (post-unblind): 252541 ctx tokens, 6 turns, 4 shell calls, 12 reads."
+        },
+        "grove": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. C frames raw() (Gate.php:434) as the single engine and lays out the same three faces with quoted source: inspect() (:408) normalizing to Response and never throwing, check() (:356) iterating inspect(...)->allowed() with the wrapper table (allows=check, denies=!allows, any=check+contains, none=!any), and authorize() (:396)→Response::authorize() (Response.php:148) as the throw site, with the exception-carrying-Response detail. Adds request-reach extras: Authorize middleware (:55), AuthorizesRequests::authorize (cited :25 — the loose spot; the method is defined at :21, :25 is the inner return), FormRequest::passesAuthorization (:317), and allowIf/denyIf (:146/:161). Two minor grounding nicks: the AuthorizesRequests :25 cite is a line or two loose, and it states the FormRequest path 'raises an HttpResponseException with a 403' whereas failedAuthorization (:335) throws an AuthorizationException (the 403 mapping happens later in the handler). Core spine cites all resolve exact; the slips are in the extra-credit reach, so grounding stays high. Cost/process (post-unblind): 227600 ctx tokens, 19 turns, 17 grove calls, no shell."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. B identifies raw() (Gate.php:434, body 434–458) as the engine and walks the before→callAuthCallback→after→GateEvaluated sequence, then covers the three faces: inspect() (:408) normalizing to a Response and never throwing, authorize() (:396) routing through Response::authorize() (Response.php:148) as the throw point, check() (:356) reducing inspect(...)->allowed() to a bool, and allows/denies (:332/:344) as wrappers. Heavy on acceptable-extra request-reach detail — Authorize middleware handle (:55), AuthorizesRequests::authorize (:21), Authorizable::can (:16), FormRequest::passesAuthorization (:317)/failedAuthorization (:335), plus callback resolution (resolveAuthCallback :627, canBeCalledWithUser :469) — all of which is credited, not required. Grounding: every load-bearing cite I sampled resolves line-exact; a few deep policy lines (callPolicyBefore/Method, Handler::prepareException) were not individually re-verified but are consistent with the structure. Slightly blurs the any/none wrappers (mentions them only in passing) but the required distinction is clear. Cost/process (post-unblind): 534269 ctx tokens, 21 turns, 7 native-LSP calls, 2 shell, 10 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.97-0.99 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was grove (227600 tokens), most expensive was lsp (534269 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:45:37.087Z"
+    },
+    "L2-rails": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. Names the focal pair and both families: load (relation.rb:1165) as the gateway with its !loaded?||scheduled? guard returning self, loaded? via @loaded, exec_queries (:1385)/exec_main_query (:1405) with the @none/contradiction short-circuits; the materializers records (:335) and to_ary/to_a (:330) plus the full delegation list (delegation.rb:98-101) of array methods that unconditionally hit records; and the short-circuiters size (:346 count(:all)), empty? (:355 !exists?), none?/any? (:371/:384), one?/many? (:397/:406), include? (finder_methods.rb:389), last (finder_methods.rb:202), all branching on loaded? — plus the always-SQL family and the never-loads set (to_sql :1196, scope builders). Covers reset (:1180) and reload=reset+load, load_async (:1134)/scheduled? (:1155). Grounding is high: load 1165, records 335, to_ary 330, size 346, empty? 355, none? 371, any? 384, one? 397, many? 406, include? 389, last 202, find_nth_with_limit 603, find_nth_from_last 622, find_take 582/590, delegation 98-101, reset 1180, to_sql 1196 all resolve line-exact; only the calculations cites are loose — pluck cited calculations.rb:296 (def at 287, though 296 is inside its loaded-branch) and pick :349 (def at 348, off by one). Cost/process (post-unblind): 1839631 ctx tokens, 10 turns, 18 shell calls, 23 reads."
+        },
+        "grove": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. Covers the whole spine: load the single gatekeeper (relation.rb:1165, !loaded?||scheduled? guard, returns self), loaded? (alias relation.rb:74) and scheduled? (relation.rb:1155), the materializing family via records (relation.rb:335) and to_ary/to_a (:330-333) plus the explicit delegation list (delegation.rb:98-101) and the Enumerable include (relation.rb:67), versus the short-circuiting family size/empty?/any?/none?/one?/many?/include?/last/inspect branching on loaded? with targeted COUNT/EXISTS when cold, and the always-SQL family (count/pluck/exists?). Names reload=reset+load and reset (relation.rb:1180), plus correct extras: the load_async async path (:1134), exec_queries (:1385)/exec_main_query (:1405) @none/contradiction short-circuits, the spawn/initialize_copy chaining-resets-to-cold detail (spawn_methods.rb:9, initialize_copy relation.rb:90), and load_records (:1313) as the preload bypass. Grounding strong and verified: load 1165, records 335, delegation 98-101, load_async 1134, scheduled? 1155, reset 1180, reload 1175, load_records 1313, destroy_all 982, Enumerable 67, initialize_copy 90, spawn 9 all exact; the == is cited at relation.rb:1239 but the def is at 1243 (off by ~4), the only loose cite. Cost/process (post-unblind): 1047014 ctx tokens, 64 turns, 48 grove calls, 11 shell, 3 reads."
+        },
+        "lsp": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Hits the entire required spine and more: the focal materializer load (relation.rb:1165, body if !loaded?||scheduled? -> exec_queries -> @records, returns self), the loaded? state guard (attr_reader :loaded line 71, alias line 74), both families cleanly distinguished — materializers records (:335) and to_ary/to_a (:330) that force load via delegation, versus short-circuiters size (:346, count(:all) when cold), empty? (:355, !exists?), inspect/pretty_print (:1272/:1250, annotate placeholder), all branching on loaded?; and reload=reset+load with reset (:1180) clearing @loaded as the invalidate path. Adds correct acceptable extras (one?/many?, load_async/scheduled? async, exec_queries/exec_main_query @none/contradiction short-circuits, the always-SQL family count/pluck/exists?, finder_methods include?/last/find_nth/find_take). Grounding is excellent and dense: load 1165, records 335, to_ary 330, size 346, empty? 355, delegation.rb:98-101, load_async 1134, scheduled? 1155, reset 1180, exec_queries 1385, exec_main_query 1405, update_all 581, delete_all 1004, find_take 582, find_nth_with_limit 603, include? 389 all resolve line-exact; only last (cited finder_methods.rb:203, actual 202) is off by one. The inspect/pretty_print nuance (unloaded path runs a bounded SELECT on the annotated relation, not a full load) is correct. Cost/process (post-unblind): 479999 ctx tokens, 16 turns, 5 native-LSP calls, 2 shell, 7 reads."
+        }
+      },
+      "key_revisions": [
+        {
+          "level": "L2",
+          "reason": "The reference key's line numbers are systematically stale relative to the currently pinned rails source (v7.2.2) — every load-bearing cite is shifted. Verified in activerecord/lib/active_record/relation.rb: load is at :1165 (key says :1205); alias :loaded? :loaded at :74 (key :75); records at :335 (key :353); to_ary at :330 (key :348); size at :346 (key :364); empty? at :355 (key :373); none?/any?/one?/many? at :371/:384/:397/:406 (key :383/:401/:417/:433); inspect at :1272 (key :1316); pretty_print at :1250 (key :1291); reload at :1175 (key :1215); reset at :1180 (key :1220, @loaded cleared at :1184 not :1226); load_async at :1134 (key :1164). All three answers used the correct pinned-source line numbers and were not docked.",
+          "cite": "activerecord/lib/active_record/relation.rb:1165 (load), :335 (records), :330 (to_ary), :346 (size), :355 (empty?), :1180 (reset); delegation.rb:98-101",
+          "ts": "2026-06-29"
+        }
+      ],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.96-0.97 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was lsp (479999 tokens), most expensive was baseline (1839631 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:45:37.806Z"
+    },
+    "L2-redis": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Names expireIfNeeded (db.c:2935) as the single on-access routine, lists the four keyStatus values, and gives the decision tree: trim (2942), keyIsExpired (2952), replica guard (2974), config guard (2981), pause guard (2992), delete (2995). Covers the return contract, the keyIsExpired/commandTimeSnapshot test, the replica-defers-to-master guard, and the deletion branch with propagation to AOF/replicas. All four callers present with outcome handling: lookupKey (db.c:279, miss at 302-306), dbRandomKey (db.c:834, escape hatch at 823), delGenericCommand (db.c:1419, KEY_DELETED->continue), scanCallback (db.c:1702). Closes with a correct five-condition summary of when deletion actually fires. Grounding: cites resolve exact except the delete step cited at 2995 where the deleteExpiredKeyAndPropagate call is at 2996 (off by one, the 'Perform deletion' comment/if precede it) — trivially loose; all other sampled cites are line-exact. Cost/process (post-unblind): 221612 ctx tokens, 14 turns, 4 shell calls, 9 reads."
+        },
+        "grove": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. Identifies the focal routine expireIfNeeded (db.c:2935), the keyStatus return contract (enum at db.c:43), the keyIsExpired test (db.c:2877) and its getExpire/commandTimeSnapshot basis, the master/replica guard (returns KEY_EXPIRED without deleting on a replica), and the deletion branch via deleteExpiredKeyAndPropagate returning KEY_DELETED. Fans out to all four required callers with per-caller outcome handling: lookupKey (db.c:279) treating non-KEY_VALID as a miss, dbRandomKey (db.c:808) discarding and retrying, delGenericCommand (db.c:1415) skipping/not-counting a KEY_DELETED, and scanCallback (db.c:1702) filtering expired entries. Adds a correct by-call-site outcome matrix and the LOOKUP_*->EXPIRE_* flag translation. Grounding: every sampled cite resolves exact — lookupKey 279, expireIfNeeded 2935, enum 43-48, keyIsExpired 2877, dbRandomKey 808, delGenericCommand 1415, scanCallback 1702, and the deleteExpiredKeyAndPropagate->deleteKeyAndPropagate (db.c:2775) chain all confirmed line-exact. Cites the def lines rather than the key's call-site lines for some callers, but both are valid anchors. Cost/process (post-unblind): 296887 ctx tokens, 21 turns, 18 grove calls, no shell, 1 reads."
+        },
+        "lsp": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. Cleanly separates the pure predicate keyIsExpired (db.c:2877, reproduced verbatim and accurate) from the policy layer expireIfNeeded (db.c:2935), enumerates the keyStatus values (db.c:42-48), and walks the decision tree with exact line ranges: trim check 2942-2950, not-expired/access flag, replica guard 2974-2977, config guard 2981-2982, avoid-delete 2986-2987, pause 2992, delete 2994-3003 -> KEY_DELETED. Covers all four callers with outcomes: lookupKey (db.c:279-334) and its flag translation (292-301), dbRandomKey (db.c:808-841, call at 834), delGenericCommand (db.c:1415-1431, call at 1419), and the SCAN callback (db.c:1702). Correctly nails the propagation tail via deleteKeyAndPropagate/alsoPropagate to AOF+repl. Grounding: the tightest of the three — every sampled range and line resolves exact against the pinned source, including the keyIsExpired body and the replica-guard lines. No wrong turns. Cost/process (post-unblind): 328062 ctx tokens, 17 turns, 1 native-LSP calls, 5 shell, 9 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.98-0.99 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was baseline (221612 tokens), most expensive was lsp (328062 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:50:12.659Z"
+    },
+    "L2-spring-boot": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. Lays out both entry points (exit 1396 programmatic; handleRunFailure 803->handleExitCode 881 failure) and frames four sources A-D: caller-supplied varargs, ExitCodeGenerator beans, ExitCodeExceptionMapper beans (902-909, wrapped in MappedExitCodeGenerator, context-active gated), and the self-reporting exception with full cause-chain walk (912-919). Correctly states the single getExitCode() first-non-zero/short-circuit rule (92-108, throw->1) and the add re-sort by @Order/Ordered (76-79). Publication and delivery both captured, including SpringBootExceptionHandler as the ThreadLocal-installed UncaughtExceptionHandler calling System.exit in its finally (SpringBootExceptionHandler.java 72-76 — resolves exact, System.exit at 74-76). One trivial liberty: the pseudocode SpringBootExceptionHandler.forCurrentThread().registerExitCode(...) elides the getSpringBootExceptionHandler()/isMainThread gate that the prose otherwise describes — conceptually right, negligible. All other sampled cites line-exact. Cost/process (post-unblind): 832557 ctx tokens, 11 turns, 19 shell calls, 23 reads."
+        },
+        "grove": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. Identifies the ExitCodeGenerators aggregator with first-non-zero/short-circuit getExitCode() (line 92, generator-throws->1) and the re-sort on every add via AnnotationAwareOrderComparator. Covers both entry points: the startup-failure path run()->handleRunFailure (803)->handleExitCode (881)->getExitCodeFromException (894) with stage-1 mapper beans (getExitCodeFromMappedException 902, wrapping each in MappedExitCodeGenerator) ahead of stage-2 self-reporting exception (getExitCodeFromExitCodeGeneratorException 912) with explicit cause-chain recursion; and the programmatic SpringApplication.exit (1396) aggregating caller-supplied varargs then beans, returning the int. Nails publication: ExitCodeEvent + SpringBootExceptionHandler.registerExitCode, and goes beyond the key to trace the actual System.exit in uncaughtException (line 66) gated by the isMainThread check (929) and the close-throws fallback in exit. Grounding is exact: run() 304, 803, 881, 894, 902, 912, 1396, getExitCode 92, isMainThread 929, uncaughtException 66 all resolve line-exact. Cost/process (post-unblind): 406816 ctx tokens, 32 turns, 23 grove calls, 3 shell, 4 reads."
+        },
+        "lsp": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. Covers both entry points with a clean two-stage cascade for the failure path: run() catch (cited at 330, the actual catch(Throwable ex) line) -> handleRunFailure 803 -> handleExitCode 881 -> getExitCodeFromException 894, stage-1 mapper beans (getExitCodeFromMappedException 902, context null/inactive guard, MappedExitCodeGenerator adaptor) before stage-2 exception-is-generator (getExitCodeFromExitCodeGeneratorException 912) walking the cause chain; and SpringApplication.exit 1396 aggregating caller varargs then beans and returning the int with no mapper participation. States the add re-sort (77-80) and getExitCode first-non-zero/short-circuit + throw->1 (92-108) accurately. Delivery table is correct, and it grounds the SpringBootExceptionHandler mechanics precisely: ThreadLocal init (131-136), System.exit in uncaughtException (74-76), and the main-thread gate (929-931). Every sampled cite resolves line-exact. Cost/process (post-unblind): 271272 ctx tokens, 19 turns, 4 native-LSP calls, 4 shell, 9 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.99-1 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was lsp (271272 tokens), most expensive was baseline (832557 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:50:13.400Z"
+    },
+    "L2-tokio": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Covers the whole spine: budget cell as Budget(Option<u8>); poll_proceed (coop/mod.rs:343) decrement semantics with None/Some(n)/Some(0) outcomes and the hit_zero metric increment; both branches including register_waker -> context::defer and the outside-runtime wake_by_ref fallback; and the speculative-decrement RestoreOnPending contract (rolled back on drop unless made_progress). Lists ample callers under the ready! pattern (chan 295/355, registration 151, semaphore 594, oneshot 824/1318, join 332, sleep 398, copy 97) with what made_progress means at each. Adds correctly-grounded extras the others under-emphasize: the non-consuming poll_budget_available at coop/mod.rs:371 wired into select! via macros/support.rs:16, and the poll_proceed_and_make_progress helper at io/util/mod.rs:91 for always-ready sources. Grounding is exact across the sample — semaphore cited at 594 (the poll_proceed call line; the let-binding is at 598) is a hair loose but resolves. Install sites (worker 675, current_thread 373/783, local 770, blocking 90) all verify. Cost/process (post-unblind): 609252 ctx tokens, 10 turns, 9 shell calls, 20 reads."
+        },
+        "grove": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Hits the entire required spine: identifies the focal routine poll_proceed (coop/mod.rs:343) reading the per-task Budget(Option<u8>) and calling decrement (snapshot at :350, write-back at :351); lays out the Budget/BudgetDecrement contract via an explicit None/Some(n)/Some(0) table mapping to success+hit_zero; covers both branches — proceed returning Poll::Ready(restore) vs forced yield via register_waker -> context::defer (:397) returning Poll::Pending; explains the RestoreOnPending refund/consume contract precisely (Drop at :279 restores pre-decrement budget unless made_progress at :273 wrote unconstrained); and notes the hit_zero forced-yield metric. Fans out to far more than the required four callers (chan 295/355, semaphore 598, oneshot 824/1318, registration 151/222, join 332, copy 97, mem 335/365/393, sleep 398/402, process 1140, consume_budget 33, Coop poll 447) all under the ready! pattern with the correct made_progress meaning, plus the budget-install sites (worker 675, current_thread 373, park 284, blocking 90, block_in_place via coop::stop 491). Grounding is essentially exact across a large sample; the only looseness is the timeout citation given as a wide range 211-248 (actual non-consuming checks at 214/237) and the word 'atomically' for the metric bump. Near-flawless. Cost/process (post-unblind): 392967 ctx tokens, 17 turns, 6 grove calls, 3 shell, 6 reads."
+        },
+        "lsp": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full and the most exhaustive. Walks budget storage, the install/reset sites (worker 675, current_thread 373/783, park 284, blocking 90, local 770) under the ResetGuard, then poll_proceed (mod.rs:343) with a faithful step-by-step of the success branch (post-decrement write-back, pre-decrement RestoreOnPending, hit_zero -> inc_budget_forced_yield_count) and the exhausted branch (register_waker -> context::defer, Poll::Pending). The RestoreOnPending RAII section nails the made_progress=unconstrained / Drop-restores-on-pending semantics. The caller table is complete with the per-site exhausted-vs-progress columns (registration 151/222, semaphore 598, chan 295/355, oneshot 824/1318, sleep 402, join 332, copy 97, empty/repeat/sink via poll_proceed_and_make_progress, mem 335/365/393, process 1140, consume_budget 33, LIFO has_budget_remaining at worker 716). Goes furthest with the deferred-waker drain checkpoints (context.rs:174; worker 443/555/876; current_thread 438/580) — every one of these verified line-exact. Grounding is effectively perfect across a wide sample. Cost/process (post-unblind): 854333 ctx tokens, 34 turns, 5 native-LSP calls, 9 shell, 18 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.98-0.99 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was grove (392967 tokens), most expensive was lsp (854333 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:50:14.144Z"
+    },
+    "L2-typescript": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.99,
+          "completeness": 0.97,
+          "verdict": "Full. Covers scan()'s conservative > emission (scanner.ts:2235-2247), the parser re-scan wrappers (parser.ts:2224-2254), the full re-scan family with precise definition ranges, and all four required branch sites with the inverted/non-inverted check semantics spelled out: binary loop (parser.ts:5613), assignment >>= (:5128), type-arg closing (:6574), type-arg opening split of << (:3792/:6568), regex (:6648-6652). Adds the most internal precision of the three — scanRange's non-destructive look-aside (scanner.ts:3952-3975) and its use inside reScanSlashToken at scanner.ts:2602, both verified exact — plus the JSDoc splits and reScanJsxToken (:6171). Correctly identifies 3792 as parseTypeArgumentsOfTypeReference (type position), not JSX. Clear 'minimal token then re-interpret at grammar points' synthesis. Every sampled cite, including the tightest ranges, is line-exact. Same shared minor gap: nextToken (parser.ts:2207) advancement path not explicitly cited. Cost/process (post-unblind): 1485532 ctx tokens, 14 turns, 19 shell calls, 31 reads."
+        },
+        "grove": {
+          "grounding": 0.98,
+          "completeness": 0.97,
+          "verdict": "Full. Covers the entire gradeable core and then some: the scanner's conservative scan() behavior shown at the greaterThan case (scanner.ts:2235-2247), the full re-scan family — reScanGreaterToken (scanner.ts:2438), reScanLessThanToken (:3673), reScanSlashToken (:2467), reScanTemplateToken (:3658), reScanAsteriskEqualsToken (:2461), reScanQuestionToken (:3689), plus the extras reScanHashToken (:3681), reScanJsxToken (:3668), reScanInvalidIdentifier (:2412) — and the four required parser branch sites: arrow => via isAssignmentOperator(reScanGreaterToken()) (parser.ts:5128), regex-vs-divide (:6650), type-args opening/closing (:6568/:6574), with the binary-loop site (:5613) as a credited extra. Delivers the required 'same characters, different token by context' synthesis cleanly. Every sampled cite is line-exact, including the << fold at scanner.ts:2195-2199 and the JSDoc fall-through cases at parser.ts:4603-4614; correctly places 3792 in parseTypeArgumentsOfTypeReference (type position) rather than JSX. Only shared gap: the nextToken->nextTokenWithoutCheck->scan advancement path (parser.ts:2207) is not cited, though scan() is described. Cost/process (post-unblind): 325107 ctx tokens, 25 turns, 2 grove calls, 4 shell, 17 reads."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 0.97,
+          "verdict": "Full. Same comprehensive coverage: scan()'s > asymmetry (scanner.ts:2184-2247), the Scanner interface re-scan block (scanner.ts:80-96, verified exact), the complete re-scan family with correct definition lines, and all four required branch sites — arrow => (parser.ts:5128), regex (:6650), type-arg open/close (:6568/:6574) — plus the binary-loop extra (:5613) and the template-variant call sites (:3715/:3741/:6510/:6612, all exact). Correctly cites scanJsxToken at scanner.ts:3695 and reScanJsxToken at parser.ts:6171, and correctly treats 3792 as parseTypeArgumentsOfTypeReference. Strong 'scanner makes the locally-obvious token, parser rewinds with grammar context' synthesis. All sampled cites resolve line-exact. Same minor shared gap: the nextToken advancement wrapper (parser.ts:2207) is described in the summary but not pinned to a line. Cost/process (post-unblind): 2163414 ctx tokens, 71 turns, 21 native-LSP calls, 16 shell, 32 reads."
+        }
+      },
+      "key_revisions": [
+        {
+          "level": "L2",
+          "reason": "Spine element #4 labels parser.ts:3792 as the 'JSX <' branch site, but line 3792 sits inside parseTypeArgumentsOfTypeReference (a type-position type-argument list opener: if (!scanner.hasPrecedingLineBreak() && reScanLessThanToken() === SyntaxKind.LessThanToken)). reScanLessThanToken has only two call sites (3792 type-ref, 6568 expression type-args); neither is JSX. The JSX-entry re-scan is reScanJsxToken at parser.ts:6171. All three graded answers correctly characterize 3792 as the type-argument opener, confirming the key's label is the error.",
+          "cite": "src/compiler/parser.ts:3791-3793 (parseTypeArgumentsOfTypeReference) and src/compiler/parser.ts:6171 (reScanJsxToken JSX site)",
+          "ts": "2026-06-29"
+        }
+      ],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). Completeness split: baseline=0.97, grove=0.97, lsp=0.97. Grounding spanned 0.98-0.99 (sampled load-bearing cites verified line-exact against pinned source). Quality separated the arms (see per-arm tiers); cost is secondary: cheapest on context was grove (325107 tokens), most expensive was lsp (2163414 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:50:14.864Z"
+    },
+    "L2-webpack": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.94,
+          "completeness": 1,
+          "verdict": "Full. Headlines _addEntryItem (lib/Compilation.js:2682) as the central routine with the addEntry/addInclude wrapper distinction, the hooks.addEntry fire, and an explicit downstream chain (addModuleTree -> handleModuleCreation -> processModuleDependencies recursion) that correctly frames transitive discovery as the downstream continuation, satisfying the entry-vs-transitive contrast the key asks for. All five callers are present with dep types and what each provides — EntryPlugin (EntryPlugin.js:47), DynamicEntryPlugin (DynamicEntryPlugin.js:51), DllEntryPlugin (dll/DllEntryPlugin.js:53), ContainerPlugin (container/ContainerPlugin.js:80), HtmlModulesPlugin (html/HtmlModulesPlugin.js:204) — plus the ProvideSharedPlugin addInclude extra and a correctly-excluded PrefetchPlugin/AutomaticPrefetchPlugin note (they call addModuleChain directly and are explicitly flagged as NOT entries). Grounding: the spine cites are tight — all five plugin anchors land exactly on the hooks.make/finishMake tap lines, and _addEntryItem at 2682 is exact. Looser are the extras: ProvideSharedPlugin cited at :205 (the finishMake tap is 209, addInclude at 217), PrefetchPlugin :45 (actual 46) and AutomaticPrefetchPlugin :51 (actual 56). The headline routine addEntry itself is described without its 2645 line. Minor looseness confined to non-load-bearing extras. Cost/process (post-unblind): 780839 ctx tokens, 2 turns, 15 shell calls, 22 reads."
+        },
+        "grove": {
+          "grounding": 0.92,
+          "completeness": 1,
+          "verdict": "Full. Identifies the funnel — addEntry (lib/Compilation.js:2645) delegating to _addEntryItem (2682) with the hooks.addEntry fire and addModuleTree (2730) continuation — and the addInclude sibling wrapper (2663), then names all five required callers with what each hands in: EntryPlugin (static EntryDependency), DynamicEntryPlugin (runtime-resolved fresh deps), DllEntryPlugin (DllEntryDependency wrapping EntryDependency[]), ContainerPlugin (ContainerEntryDependency), HtmlModulesPlugin (HTML-tag EntryDependency via finishMake), plus the ProvideSharedPlugin addInclude/includeDependencies extra. It correctly keeps the downstream module-creation path on the downstream side rather than listing it as a caller. Grounding: the precise call-site cites are exact — Compilation.js:2645/2663/2682, ContainerPlugin.js:89, HtmlModulesPlugin.js:246, ProvideSharedPlugin.js:217 all land on the actual addEntry/addInclude lines. The weaker spots are the plugin section anchors: EntryPlugin cited at :33 (the apply line; the make tap/addEntry are 47/48), DynamicEntryPlugin at :40 (apply; the call is at 74), and DllEntryPlugin at :38 — these point at the enclosing method rather than the call, though the inline snippets shown are faithful. A few loose section anchors against otherwise-exact call cites. Cost/process (post-unblind): 296989 ctx tokens, 16 turns, 14 grove calls, no shell."
+        },
+        "lsp": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Identifies _addEntryItem (lib/Compilation.js:2682) as the core with both public wrappers pinned to exact lines in a table — addEntry @ 2645, addInclude @ 2663 — the entries/globalEntry bookkeeping, the hooks.addEntry fire, and addModuleTree as the start of the graph walk. All five required callers are covered with the dep each hands in and the factory it resolves through: EntryPlugin (EntryPlugin.js:47, NormalModuleFactory), DynamicEntryPlugin (DynamicEntryPlugin.js:51), DllEntryPlugin (dll/DllEntryPlugin.js:53, DllModuleFactory), ContainerPlugin (container/ContainerPlugin.js:80, ContainerEntryModuleFactory), HtmlModulesPlugin (html/HtmlModulesPlugin.js:204, finishMake), plus the ProvideSharedPlugin addInclude extra (sharing/ProvideSharedPlugin.js:209) and the wiring via EntryOptionPlugin, and a correctly-distinguished addAsyncEntrypoint (Compilation.js:4406) noted as NOT routing through _addEntryItem. Grounding: the tightest of the three — every sampled cite resolves exactly, including both wrappers, all five caller tap lines, the ProvideSharedPlugin finishMake tap at 209, and addAsyncEntrypoint at 4406. No wrong turns. Cost/process (post-unblind): 594521 ctx tokens, 33 turns, 14 native-LSP calls, 3 shell, 14 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.92-0.97 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was grove (296989 tokens), most expensive was baseline (780839 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:50:15.599Z"
+    },
+    "L3-bitcoin": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full and the most precisely cited. Seven spine stops in order with the densest accurate cites: SocketHandlerConnected (net.cpp:2147), Sock::Recv (cited sock.cpp:52 — the file is actually src/util/sock.cpp, line-exact but path-imprecise) at call site net.cpp:2205, ReceiveMsgBytes (net.cpp:668) called at 2210 with the inner loop cites ReceivedBytes 677 / GetReceivedMessage 685 / vRecvMsg.push_back 703 all exact, readHeader/readData (739/782), V1 GetReceivedMessage (809), V2 ReceivedBytes/GetReceivedMessage (1330/1460), MarkReceivedMsgsForProcessing (4093) with the splice at 4105, WakeMessageHandler call site (2220), ThreadMessageHandler (3193), ProcessMessages (5141) with PollMessage call at 5178, PollMessage def (4110), and ProcessMessage cited at BOTH the call site (5201) and definition (3603) — the only answer to distinguish them. Pins the concrete per-type branch at the VERSION line (3612, exact). Every sampled cite resolves line-exact; the only blemish is the sock.cpp vs util/sock.cpp path. Cost/process (post-unblind): 1148937 ctx tokens, 9 turns, 18 shell calls, 29 reads."
+        },
+        "grove": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. All seven spine stops in correct order with the cleanest function-entry cites of the three: SocketHandlerConnected (net.cpp:2147, exact def), ReceiveMsgBytes (net.cpp:668), V1Transport::ReceivedBytes inline (net.h:434, confirmed) with readHeader/readData (net.cpp:739/782) and GetReceivedMessage (net.cpp:809), plus a correct V2/BIP324 alternate (net.cpp:1330), MarkReceivedMsgsForProcessing (net.cpp:4093), ThreadMessageHandler (net.cpp:3193), ProcessMessages (net_processing.cpp:5141), PollMessage (net.cpp:4110), and ProcessMessage (net_processing.cpp:3603). Correctly names the cross-thread handoff, the separate locks (cs_vRecv / m_msg_process_queue_mutex / g_msgproc_mutex), the TRACEPOINT observability point, and fPauseRecv backpressure. Terminal per-type branch named generically (NetMsgType::TX) without the 4460 line cite, but spine meaning fully covered. All sampled cites resolve line-exact. Cost/process (post-unblind): 432586 ctx tokens, 27 turns, 20 grove calls, 2 shell, 3 reads."
+        },
+        "lsp": {
+          "grounding": 0.95,
+          "completeness": 1,
+          "verdict": "Full. All seven spine stops in order: socket read via SocketHandlerConnected and m_sock->Recv (net.cpp:2206 region — A headers the function at net.cpp:2195, which is the recvSet read branch inside it; the function actually opens at 2147, a slight mislabel but the cited code is exact), bytes into the transport at CNode::ReceiveMsgBytes (net.cpp:668), V1 parse via readHeader/readData (net.cpp:739/782) and GetReceivedMessage (net.cpp:809), the cross-thread handoff through MarkReceivedMsgsForProcessing (net.cpp:4093) and WakeMessageHandler (net.cpp:2275, def), the message-handler thread ThreadMessageHandler (net.cpp:3193), the per-message pull PollMessage (net.cpp:4110), ProcessMessages (net_processing.cpp:5141) dispatching to ProcessMessage (net_processing.cpp:3603), and the type-match if-chain with per-type handler logic. A names the two-queue/two-lock design and the terminal per-type branch generically (NetMsgType::TX) without pinning the 4460/4473 deserialize line, but the spine meaning is fully covered. Every sampled cite resolves exact except the 2195-vs-2147 function-label slip; net.h:434 inline ReceivedBytes confirmed. Cost/process (post-unblind): 453228 ctx tokens, 30 turns, 11 native-LSP calls, 6 shell, 11 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.95-0.98 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was grove (432586 tokens), most expensive was baseline (1148937 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:54:38.351Z"
+    },
+    "L3-hugo": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Hits every spine element in order: CLI entry main.go->Execute (commandeer.go:61) -> build()->fullBuild (559, with the errgroup copyStatic/buildSites concurrency)->buildSites (440)->h.Build (450); HugoSites.Build (hugo_sites_build.go:64) listing process :171/assemble :177/render :197/writeBuildStats :203/renderDeferred :212/postProcess :221 in correct order; render (399) over sites x formats; renderPages (site_render.go:71) worker pool over treePages; pageRenderer (123) with the per-page line cites 148/161/176/212/231; resolveTemplate (page.go:630, descriptor at :616) -> LookupPagesLayout (templatestore.go:584); and renderAndWritePage (site.go:1647) -> renderForTemplate (1743) -> ExecuteWithContext/AndKey (templatestore.go:503/507, executer call :540) -> publisher.Publish (publisher.go:94, OpenFileForWriting :115, io.Copy :127). The phase-line set, the site_render and site.go cites, and the publisher cites are all line-exact, and templatestore.go:540 correctly lands on the inner executer call. One loose cite: main.go:26 is func main() (the Execute call is line 28). Commandeer.go:61 (Execute) is exact. Excellent grounding. Cost/process (post-unblind): 3004664 ctx tokens, 15 turns, 53 shell calls, 52 reads."
+        },
+        "grove": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Covers the entire required spine in order: command entry via hugoBuildCommand.Run (commands.go:71) -> build() (hugobuilder.go:410) -> fullBuild (559) with the copyStatic/buildSites concurrency -> buildSites (440) -> h.Build (450); HugoSites.Build (hugo_sites_build.go:64) with the ordered phase sequence process->assemble->render->renderDeferred->postProcess; render phase fanning over sites x formats; Site.render (site.go:1787) -> renderPages (site_render.go:71) worker pool over s.pageMap.treePages; pageRenderer (123) with renderResources/renderAliases/resolveTemplate; resolveTemplate (page.go:630) -> LookupPagesLayout (templatestore.go:584); and the terminal renderAndWritePage (site.go:1647) -> renderForTemplate (1743) -> ExecuteWithContext (ExecuteWithContextAndKey, templatestore.go:507) -> publisher.Publish (publisher.go:94) with OpenFileForWriting/io.Copy. Sampled cites are line-exact — commands.go:71, hugobuilder.go:410/440/450/559, the full phase line set, site_render.go:71/123/148/161/176/212, page.go:616/630, templatestore.go:584/507, templatedescriptor.go:66 (compareDescriptors), publisher.go:94/115/127 all resolve. One loose cite: main.go:26 is func main(); the commands.Execute call is on line 28. It also routes through main()->Execute and hugoBuildCommand.Run->rootCmd.Run without explicitly citing commandeer.go:393, but that link is covered. Strong grounding; deep extras (transformer chain, processFiles, baseof phase) all check out. Cost/process (post-unblind): 918099 ctx tokens, 46 turns, 43 grove calls, 1 shell."
+        },
+        "lsp": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. The tightest-grounded of the three, covering the complete spine in order with the strongest front-end cites: main.go:28 (the exact commands.Execute line), hugoBuildCommand.Run (commands.go:71), rootCommand.Run (commandeer.go:393, correctly noting newHugoBuilder + loadConfig + build), build() (hugobuilder.go:410), fullBuild (559), buildSites (440), h.Build (450); HugoSites.Build (hugo_sites_build.go:64) with the phase definitions at the exact key lines — process :283, processFull :1274/processFiles :1346, assemble :302, render :399, renderDeferred :488, postProcess :650; Site.render (site.go:1787) -> renderPages (site_render.go:71) with the NodeShiftTreeWalker over treePages and shouldRender gate; pageRenderer (123); resolveTemplate (page.go:630, descriptor :616) -> LookupPagesLayout (templatestore.go:584) -> findBestMatchWalkPath (:858) -> compareDescriptors (templatedescriptor.go:66); renderAndWritePage (site.go:1647) -> renderForTemplate (1743) -> ExecuteWithContextAndKey (templatestore.go:507) -> publisher.Publish (publisher.go:94). Every sampled cite resolves line-exact, including the harder phase-definition and front-end anchors. The only soft spot is the enumerated compareDescriptors weight values (+5/+6/+4/+2) which are illustrative embellishment rather than verified constants, but they are non-load-bearing extras and the function/line itself is correct. Cost/process (post-unblind): 1004200 ctx tokens, 39 turns, 15 native-LSP calls, 1 shell, 20 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.97-0.99 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was grove (918099 tokens), most expensive was baseline (3004664 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:54:39.055Z"
+    },
+    "L3-laravel": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Traces the complete ordered chain end to end: Kernel::handle (Kernel.php:137) -> sendRequestThroughRouter global Pipeline (:164/:174-178) -> dispatchToRouter closure calling router->dispatch (:195/:200) -> Router::dispatch/dispatchToRoute (Router.php:749/:762/:764) -> findRoute + routes->match (:773/:777) -> runRoute with RouteMatched (:793/:797) -> second route-middleware Pipeline in runRouteWithinStack (:811-823) -> Route::run branch to runController (Route.php:209/:215/:273/:275) -> ControllerDispatcher::dispatch resolving params and calling callAction (ControllerDispatcher.php:38/:46) -> terminal Controller::callAction $this->{$method}(...) (Controller.php:52/:54). Both pipelines distinguished as separate stops; the terminal method invocation is named. Grounding is tight: all core cites line-exact, and sampled extras (Pipeline::then:128, RouteCollection::match:198, AbstractRouteCollection::matchAgainstRoutes:79, Route::matches:350, bind:387, gatherRouteMiddleware:832) resolve exact. Only loose point: handleMatchedRoute cited :32 vs actual :29. Correctly places SubstituteBindings in the route pipeline. Cost/process (post-unblind): 534746 ctx tokens, 20 turns, 6 shell calls, 13 reads."
+        },
+        "grove": {
+          "grounding": 0.92,
+          "completeness": 1,
+          "verdict": "Full. Complete ordered trace with every hand-off cited: Kernel::handle (:137) -> sendRequestThroughRouter global Pipeline (:164) -> dispatchToRouter closure->router->dispatch (:195/:200) -> Router::dispatch/dispatchToRoute (:749/:762) -> findRoute (:773) -> match -> runRoute with RouteMatched (:793) -> second route-middleware Pipeline in runRouteWithinStack (:811) -> Route::run->runController (:209/:273) -> ControllerDispatcher::dispatch resolveParameters (:38) -> Controller::callAction $this->{$method}(...) (Controller.php:52). Both pipelines distinguished and the terminal invocation named. Cite accuracy is high: CompiledRouteCollection::match:116, resolveMiddleware:844, gatherMiddleware:1065, controllerMiddleware:1126, runCallable:239, controllerDispatcher:1387 all resolve exact. Two content inaccuracies in the extras drop grounding slightly: it asserts $this->routes is a CompiledRouteCollection 'at runtime' (only true when routes are cached; the uncompiled RouteCollection is the default path), and it claims model binding/substituteBindings runs inside handleMatchedRoute 'before middleware' — incorrect, since SubstituteBindings is a route-stack middleware and handleMatchedRoute->bind only extracts raw URI params. These don't touch the required spine but are unsupported claims. Cost/process (post-unblind): 357837 ctx tokens, 33 turns, 31 grove calls, no shell."
+        },
+        "lsp": {
+          "grounding": 0.95,
+          "completeness": 1,
+          "verdict": "Full. Hits all nine spine stops in order with code excerpts: Kernel::handle (:137), sendRequestThroughRouter global Pipeline (:164), dispatchToRouter closure->router->dispatch (:195/:200), Router::dispatch/dispatchToRoute (:749/:762), findRoute+Routing event (:773), RouteCollection::match (:198) -> matchAgainstRoutes (AbstractRouteCollection:79) -> Route::matches validators (:350) -> handleMatchedRoute/bind (:29/:387), runRoute with RouteMatched (:793), second Pipeline in runRouteWithinStack (:811), Route::run->runController (:209/:273), ControllerDispatcher::dispatch (:38), terminating at Controller::callAction $this->{$method}(...) (Controller.php:52/:54). Both pipelines distinguished. Core cites all line-exact; a few secondary cites slightly loose — getValidators cited 1406 vs 1401, carry 194 vs 192, gatherRouteMiddleware 826 (docblock) vs 832 — but none are wrong turns. Correctly keeps middleware/route-param semantics straight. Cost/process (post-unblind): 1040304 ctx tokens, 29 turns, 12 native-LSP calls, 1 shell, 14 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.92-0.97 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was grove (357837 tokens), most expensive was lsp (1040304 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:54:39.773Z"
+    },
+    "L3-rails": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. All six spine stops in order: load (relation.rb:1165) -> exec_queries:1385 -> exec_main_query:1405 (with the eager-vs-simple branch shown correctly) -> build_arel (query_methods.rb:1732) and where_clause.ast (where_clause.rb:70) -> _query_by_sql (querying.rb:69) -> select_all (database_statements.rb:69) -> to_sql_and_binds:17 -> visitor walk -> select:626 -> adapter internal_exec_query -> ActiveRecord::Result -> instantiate_records (relation.rb:1437) -> _load_from_sql (querying.rb:73) -> instantiate_instance_of (persistence.rb:313) -> build_from_database/init_with_attributes (core.rb:500). Strongest on the Arel->SQL layer: names the actual visitor methods at their exact lines (to_sql.rb visit_Arel_Nodes_SelectStatement:120, SelectCore:149, And:622, Equality:643) and uses postgresql/database_statements.rb:65 internal_exec_query plus result.rb:49 initialize. Every sampled cite resolves line-exact against the pinned source (which the answer matches, not the stale key). Grounding excellent. Cost/process (post-unblind): 2499017 ctx tokens, 3 turns, 56 shell calls, 47 reads."
+        },
+        "grove": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. Complete ordered chain: load (relation.rb:1165) -> exec_queries:1385 -> exec_main_query:1405 (correctly shows the none/contradiction/eager short-circuits before the common else branch) -> arel/build_arel (query_methods.rb:1572/1732) with where_clause.ast (where_clause.rb:70) -> _query_by_sql (querying.rb:69) -> select_all (database_statements.rb:69) -> to_sql_and_binds:17 -> visitor compile -> select:626 -> internal_exec_query (postgresql/database_statements.rb:65) -> ActiveRecord::Result -> instantiate_records (relation.rb:1437) -> _load_from_sql (querying.rb:73, STI branch correct) -> instantiate_instance_of (persistence.rb:313) -> build_from_database (builder.rb:15, LazyAttributeSet) -> init_with_attributes (core.rb:500). All sampled cites resolve line-exact against the pinned tree, matching the source rather than the stale key. Grounding excellent; essentially tied with A and B. Cost/process (post-unblind): 623726 ctx tokens, 39 turns, 37 grove calls, no shell."
+        },
+        "lsp": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. Hits all six spine stops in correct order and well past them: where-build via build_where_clause->PredicateBuilder (query_methods.rb:1591 build_where_clause exact; predicate_builder build:57), force-load (relation.rb:1165 load -> exec_queries:1385), dispatch (exec_main_query:1405 -> _query_by_sql), SQL handoff to the connection (querying.rb:69 _query_by_sql calls connection.select_all; database_statements.rb:69 select_all -> to_sql_and_binds:17 -> visitor.compile to_sql.rb:17), rows back (ActiveRecord::Result result.rb:36/hash_rows:170), instantiate_records -> _load_from_sql (querying.rb:73), and the terminal instantiate/instantiate_instance_of (persistence.rb:100/:313) with build_from_database (builder.rb:15) and init_with_attributes (core.rb:500). Adds the query-cache override (query_cache.rb:236) and a concrete sqlite3 internal_exec_query:24 as the adapter example. Grounding near-perfect: every sampled cite — relation.rb 330/335/1165/1385/1405, query_methods 1572/1591/1732, where_clause.rb:70, database_statements 69/17/626, to_sql.rb:17, result.rb 36, querying.rb:73, persistence 100/313, builder.rb:15, core.rb:500 — resolves line-exact against the pinned tree. Note these match the SOURCE, not the reference key, whose numbers are systematically stale. Cost/process (post-unblind): 1079969 ctx tokens, 41 turns, 2 native-LSP calls, 15 shell, 22 reads."
+        }
+      },
+      "key_revisions": [
+        {
+          "level": "L3",
+          "reason": "Reference key line numbers are systematically stale vs the pinned rails v7.2.2 tree. Verified actual lines: Relation#where query_methods.rb:1011 (key 1097), where! :1021 (key 1107), build_where_clause :1591; Relation#load relation.rb:1165 (key 1205/1429), exec_queries :1385 (key 1429), exec_main_query :1405 (key 1442), instantiate_records :1437 (key 1485); _query_by_sql querying.rb:69 (key 79), _load_from_sql :73 (key 83); select_all database_statements.rb:69 (key 71); persistence.rb instantiate:100, discriminate_class_for_record:323, instantiate_instance_of:313. All three arms cite the CORRECT source lines, not the key's.",
+          "cite": "activerecord/lib/active_record/relation.rb:1165,1385,1405,1437; query_methods.rb:1011,1591,1732; querying.rb:69,73; persistence.rb:100,313,323",
+          "ts": "2026-06-29"
+        }
+      ],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.99-0.99 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was grove (623726 tokens), most expensive was baseline (2499017 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:54:40.496Z"
+    },
+    "L3-redis": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Walks the entire ordered chain: read entry readQueryFromClient (networking.c:3830, installed at 133) reading via connRead (3915) into c->querybuf; drive via processInputBuffer (3626); RESP parse via processMultibulkBuffer (3214) into argv; hand-off via processCommandAndResetClient (3491); resolve in processCommand (server.c:4412) through lookupCommand/lookupCommandLogic (3593); and terminal execution call (3949) invoking c->cmd->proc(c) (4015). Grounding: every load-bearing cite resolves exactly — 3830/133/3915/3626/3214/3491/4412/3593/3949/4015 all verified, plus the accepted extras preprocessCommand (call site networking.c:3720 and def server.c:4362) and the c->lookedcmd reuse path (4452 region). Slightly loose only in characterizing the in-processCommand lookup as a conditional re-run of lookupCommand 'if argv was mutated' and the preprocess step as a 'speculative lookupCommand for prefetching' — a mild gloss on the actual c->lookedcmd/isCommandReusable caching, but the cited lines are correct. Terminal handler named correctly. Cost/process (post-unblind): 185683 ctx tokens, 11 turns, 2 shell calls, 8 reads."
+        },
+        "grove": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Hits all six spine stops in order: readQueryFromClient (networking.c:3830) + connRead into querybuf; processInputBuffer (3626); processMultibulkBuffer (3214) materializing pcmd->argv; preprocessCommand (server.c:4362) with the lookup; lookupCommand->lookupCommandLogic (3593/3609); processCommandAndResetClient (3491); processCommand (server.c:4412) gauntlet; and call (3949) with c->cmd->proc(c) as the actual handler invocation. Grounding: all sampled load-bearing cites resolve exactly (3830/3626/3214/4362/3593/3609/3491/4412/3949), and the lookupCommandLogic dictFetchValue + subcommands_dict description matches source. Only incidental, unverifiable embellishments (lookahead default 1 for unauthenticated clients, the precise ordering inside the policy gauntlet) carry no cite weight. Correctly frames the double-resolution (preprocess eager lookup vs processCommand re-check) and names the terminal c->cmd->proc(c). Cost/process (post-unblind): 410390 ctx tokens, 16 turns, 14 grove calls, no shell."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Complete ordered chain: readQueryFromClient (networking.c:3830) with connRead (3915) into c->querybuf; processInputBuffer (3626) parse+dispatch loop; processMultibulkBuffer (3214) RESP framing into pcmd->argv; processCommandAndResetClient (3491) wrapper calling processCommand then commandProcessed; processCommand (server.c:4412) lookup + policy checks with call(c, CMD_CALL_FULL) at 4788 / queueMultiCommand at 4784; lookupCommand/lookupCommandLogic (3609/3593) dict lookup; and call (3949) invoking c->cmd->proc(c) as the terminal handler. Grounding: every load-bearing cite resolves exactly (3830/3915/3626/3214/3491/4412/4788/4784/3609/3593/3949), the isCommandReusable/lastcmd fast-path cite (4452) is correct, and the broad line ranges given (e.g. 4776-4791, 4500-4773) bracket the verified anchors. Minor imprecision only in calling the big-argument path 'embstr/raw' (it actually takes ownership of the querybuf SDS) — an accepted-extra detail that doesn't touch the spine. Terminal proc invocation named correctly. Cost/process (post-unblind): 317807 ctx tokens, 22 turns, 7 native-LSP calls, 13 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.97-0.98 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was baseline (185683 tokens), most expensive was grove (410390 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:54:41.212Z"
+    },
+    "L3-spring-boot": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. Hits all 11 spine stops in order with dense, well-placed cites: run (304), createBootstrapContext (344), getRunListeners (453), EventPublishingRunListener.starting (76), prepareEnvironment with getOrCreateEnvironment (475), configureEnvironment (498), configurePropertySources (513), environmentPrepared (356) routing to EnvironmentPostProcessorApplicationListener.onApplicationEnvironmentPreparedEvent (130) over the postProcessEnvironment loop, bindToSpringApplication (550), createApplicationContext (579), prepareContext (380) with postProcessApplicationContext (591), applyInitializers (616), contextPrepared, bootstrapContext.close (395), load (683), contextLoaded (418 call-site; publisher 93-99), refreshContext (441-446), afterRefresh (764), started (103), callRunners (767), ready (109), plus the initialMulticaster constructor (62-67) and refreshApplicationListeners (140). Names both listener planes distinctly and the crossover at contextLoaded. Grounding sampled exact on the distinctive lines (395, 418, 513, 550, 591, 616, 62-67, 140); the single loose cite is 'EnvironmentPostProcessorApplicationListener.java:119' for the listener entry — onApplicationEvent is at 118, off by one. Otherwise line-exact. Cost/process (post-unblind): 254437 ctx tokens, 11 turns, 5 shell calls, 5 reads."
+        },
+        "grove": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. Covers all 11 spine stops in order and is explicit that the chain fans out through SpringApplicationRunListeners (the doWithListeners fanout/StartupStep wrapper) and EventPublishingRunListener (the bridge to ApplicationEvent): run (304), getRunListeners (453), starting via multicastInitialEvent (135), prepareEnvironment (350) with getOrCreateEnvironment (475), configureEnvironment (498), the environmentPrepared hop driving EnvironmentPostProcessorApplicationListener's post-processors, bindToSpringApplication (550), printBanner (559), createApplicationContext (579), prepareContext (380) with applyInitializers (616), contextPrepared/ApplicationContextInitializedEvent, bootstrapContext.close, load (683), contextLoaded EventPublishingRunListener (92)/ApplicationPreparedEvent and the listener-transfer point, refreshContext (441)->refresh (755), afterRefresh (764), started (103)/LivenessState, callRunners (767) over ApplicationRunner/CommandLineRunner, ready (109)/ReadinessState with the isRunning() guard. The summary table and initialMulticaster-vs-context-bus note are accurate. Grounding sampled exact on the distinctive lines (135, 559, 755, 92, 109, 103); the one loose cite is 'listeners.environmentPrepared (line 69 of RunListeners)' — the composite environmentPrepared is at 64, while 69 is contextPrepared, a single mislabeled composite line. All other cites resolve line-exact. Cost/process (post-unblind): 385525 ctx tokens, 32 turns, 27 grove calls, 3 shell."
+        },
+        "lsp": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Traverses all 11 spine stops in order: entry run (304) with bootstrap context (createBootstrapContext 344) and getRunListeners (453); listeners.starting publishing ApplicationStartingEvent; prepareEnvironment (350) with getOrCreateEnvironment (475), configureEnvironment (498), bindToSpringApplication (550) and the load-bearing environmentPrepared hop into EnvironmentPostProcessorApplicationListener.onApplicationEnvironmentPreparedEvent (130) looping postProcessEnvironment; printBanner; createApplicationContext (579); prepareContext (380) with applyInitializers (616), contextPrepared, load (683) and contextLoaded (92-99); refreshContext (441); afterRefresh (764); started (103, ApplicationStartedEvent); callRunners (767) dispatching ApplicationRunner/CommandLineRunner; and ready (109, ApplicationReadyEvent). The composite-vs-publisher distinction and two-phase multicaster are named explicitly. Grounding is strong: every specific cite sampled resolves exactly (344, 453, 475, 498, 550, 579, 591, 616, 683, 764, 767, EPPAL:130). The one looseness is the section header 'Refresh (lines 441-757)' which is a wide range label rather than a precise cite (441 is exact; refresh def is 755); the deep refresh() sub-phase enumeration is Spring-Framework narrative beyond the pinned file, presented as acceptable context not miscited. Cost/process (post-unblind): 523467 ctx tokens, 19 turns, 3 native-LSP calls, 4 shell, 10 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.96-0.97 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was baseline (254437 tokens), most expensive was lsp (523467 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:58:25.227Z"
+    },
+    "L3-tokio": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Eight-section end-to-end walk hitting every spine element in order: Driver::turn + mio poll (driver.rs:179, :188) -> event iteration with token->*ScheduledIo decode (:201-222) and the token-is-the-pointer insight cited to ScheduledIo::token (scheduled_io.rs:188) -> set_readiness packed-atomic update (:207) -> wake draining reader/writer/list with lock-before-wake (:236) -> WakeList::wake_all (util/wake_list.rs:65-72) -> Waker::wake/wake_by_val (waker.rs:93) -> transition_to_notified_by_val (harness.rs:68) -> raw.rs:346 schedule -> multi_thread handle.rs:110 -> schedule_task (worker.rs:1327) with same-thread LIFO/run_queue vs cross-thread push_remote_task (:1397) + notify_parked_remote (:1453) + mio Waker unpark. Densest and tightest of the three: every sampled cite resolves line-exact, including the often-missed token() at scheduled_io.rs:188, schedule_local at 1353, push_remote_task at 1397, notify_parked_remote at 1453, and the wake_list loop. No loose or wrong cites found. Cost/process (post-unblind): 526078 ctx tokens, 18 turns, 4 shell calls, 13 reads."
+        },
+        "grove": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. Six-step trace covering the whole spine: Driver::turn polls and iterates events recovering *ScheduledIo from the token (driver.rs:179, poll/iteration shown) -> set_readiness fetch_update on the packed AtomicUsize (scheduled_io.rs:207) -> wake collecting reader/writer slots + interest-filtered list, lock dropped before wake_all (scheduled_io.rs:236) -> the Readiness future registration path -> Waker vtable -> transition_to_notified -> schedule -> schedule_task local-vs-remote (worker.rs:1327). All required stops in order plus the registration-side and state-CAS extras. Grounding strong: driver.rs:179, scheduled_io.rs:207/236, raw.rs:346, worker.rs:1327, schedule_local at 1353, push_remote_task all exact. Minor notes: routes the waker through wake_by_ref (waker.rs:106 -> harness.rs:96) rather than the wake_by_val variant the WakeList path actually uses — both functions exist and the logic is identical, so not a wrong turn; Readiness::poll cited at scheduled_io.rs:427 vs the key's 424 (a few lines loose). Cost/process (post-unblind): 665971 ctx tokens, 25 turns, 21 grove calls, 2 shell."
+        },
+        "lsp": {
+          "grounding": 0.95,
+          "completeness": 1,
+          "verdict": "Full. Walks the entire ordered chain: park/turn (driver.rs:179) -> mio poll (:188) -> event iterate + token decode to &ScheduledIo (:201-216, EXPOSE_IO.from_exposed_addr) -> set_readiness (scheduled_io.rs:207) -> wake (scheduled_io.rs:236) draining reader/writer slots + interest-filtered list under the lock, dropped before wake_all -> waker vtable wake_by_val (waker.rs:93) -> state transition_to_notified (harness.rs:68) -> raw.rs:346 schedule -> multi_thread handle/schedule_task (worker.rs:1327) with local LIFO vs remote inject+unpark. Hits all 7 spine stops in order plus credited extras (waker vtable, state CAS, add_source contrast). Grounding mostly exact: driver.rs:179/188/201-222, scheduled_io.rs:207, waker.rs:93, harness.rs:68, raw.rs:346, worker.rs:1327/1353/1397 all resolve line-exact. A few loose cites: ScheduledIo::wake cited at scheduled_io.rs:226 (the doc-comment start) where the fn is at :236 (its own diagram correctly uses 236); add_source cited driver.rs:263 vs actual 266; a diagram reference to raw.rs:276. Conclusions all correct. Cost/process (post-unblind): 924777 ctx tokens, 33 turns, 10 native-LSP calls, 8 shell, 13 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.95-0.98 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was baseline (526078 tokens), most expensive was lsp (924777 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:58:25.939Z"
+    },
+    "L3-typescript": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Eleven sections walking the full chain in order: createSourceFile (parser.ts:1344) -> Parser.parseSourceFile (parser.ts:1603) -> initializeState (parser.ts:1735) handing text to the scanner; the scanner's internal model (createScanner scanner.ts:1022); priming via the nextToken call site (parser.ts:1812) -> nextToken (parser.ts:2207) -> nextTokenWithoutCheck (parser.ts:2198) -> scanner.scan (scanner.ts:1891); the parseList (parser.ts:3094) -> parseStatement (parser.ts:7380) loop with a concrete parseVariableStatement (parser.ts:7727)/parseVariableDeclarationList (parser.ts:7666)/parseVariableDeclaration (parser.ts:7649) trace; node stamping via finishNode (parser.ts:2600) and getNodePos (parser.ts:2180); SourceFile assembly at the inner createSourceFile (parser.ts:1978); and parent-linking via fixupParentReferences (parser.ts:1970, call site parser.ts:1836) -> setParentRecursive (utilities.ts:10722). All sampled cites resolve line-exact. Correctly distinguishes the parser's setParentNodes path from the binder. Excellent grounding. Cost/process (post-unblind): 433045 ctx tokens, 22 turns, 7 shell calls, 14 reads."
+        },
+        "grove": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. Traces the complete ordered spine: entry createSourceFile (parser.ts:1344) delegating to Parser.parseSourceFile; initializeState (parser.ts:1735) handing text to the scanner via scanner.setText (scanner.ts:3993) and resetTokenState (scanner.ts:4019); parseSourceFileWorker (parser.ts:1803) priming with nextToken (parser.ts:2207) -> scanner.scan (scanner.ts:1891); the parseList (parser.ts:3094) -> parseStatement (parser.ts:7380) loop building nodes with finishNode (parser.ts:2600)/createNodeArray (parser.ts:2594); SourceFile assembly via the inner createSourceFile (parser.ts:1978); and parent-linking through fixupParentReferences (parser.ts:1970). Sampled cites all resolve line-exact, including scanIdentifier (scanner.ts:2425) and getIdentifierToken (scanner.ts:1815). Two minor looseness points: the dispatch block cited as 'parser.ts:1626-1632' is a few lines early (the actual initializeState/worker/clearState calls land ~1633-1636), and parseExpected is hedged as 'parser.ts:~2490' (2490 is actually parseExpectedJSDoc). Neither affects correctness; rich, accurate, end-to-end. Cost/process (post-unblind): 673663 ctx tokens, 30 turns, 6 grove calls, 5 shell, 17 reads."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Nine clean phases covering every spine element in order: createSourceFile (parser.ts:1344) -> Parser.parseSourceFile (parser.ts:1603) -> initializeState (parser.ts:1735) with scanner.setText (scanner.ts:3993); the shared scanner instance (parser.ts:1444) primed by nextToken (parser.ts:2207) -> scanner.scan (scanner.ts:1891); parseList (parser.ts:3094) -> parseStatement (parser.ts:7380) with getNodePos (parser.ts:2180), parseVariableStatement (parser.ts:7727), node stamping via finishNode (parser.ts:2600) and createNodeArray (parser.ts:2594); SourceFile assembly at the inner createSourceFile (parser.ts:1978); and parent-linking via fixupParentReferences (parser.ts:1970) -> setParentRecursive (utilities.ts:10722). Every sampled cite resolves line-exact, including the baseNodeFactory (parser.ts:1462) and the scanner var declaration. Correctly notes the binder as the alternate parent-setter. Tightest grounding of the three. Cost/process (post-unblind): 658015 ctx tokens, 33 turns, 13 native-LSP calls, 18 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.96-0.98 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was baseline (433045 tokens), most expensive was grove (673663 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:58:26.645Z"
+    },
+    "L3-webpack": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. Hits all eight required spine stops in order: make-phase EntryPlugin tap (EntryPlugin.js:47, addEntry at :48, plus the dependencyFactories registration at 34-44 and the make hook itself at Compiler.js:1415), addEntry->_addEntryItem (Compilation.js:2645->2682), addModuleTree factory lookup + handleModuleCreation (2591/2604/2613), handleModuleCreation->factorizeModule->_factorizeModule->factory.create (2298/2271/2171), NormalModuleFactory.create with the correct hook waterfall beforeResolve->factorize->resolve->afterResolve->createModule->new NormalModule (1011/1054/1090/475/493/512/528/533), addModule+setResolvedModule+setIssuerIfUnset (2362/2388/2412, ModuleGraph.setResolvedModule at 259), buildModule->_buildModule->NormalModule.build->_doBuild->runLoaders->parser.parse (2500/1670/1779/1468/1567/1975 with handleParseResult 1843 / handleBuildDone 1858), and the terminal processModuleDependencies->_processModuleDependencies recursion back into handleModuleCreation (2561/1780/1832). Grounding is essentially perfect: every sampled cite resolves line-exact, including extras (Compiler.js:1415, ModuleGraph.js:259, resolveRequestArray 852, resolveResource 926, createSource 1526). Notably beforeResolve is cited at 1054, which is even tighter than the key's 1052. The most exhaustive of the three with no wrong turns. Cost/process (post-unblind): 977175 ctx tokens, 17 turns, 10 shell calls, 30 reads."
+        },
+        "grove": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Covers all eight spine stops in correct order: pre-make plugin registration and EntryPlugin.apply (EntryPlugin.js:33) with dependencyFactories.set and createDependency->addEntry, addEntry->_addEntryItem->addModuleTree (Compilation.js:2645/2682/2591), factorizeModule->_factorizeModule->factory.create (2271/2171, NormalModuleFactory.create 1011), the resolve waterfall with the stage-100 factorize tap at 469 driving resolve at 546 then afterResolve/createModule/new NormalModule (528), addModule/_addModule dedup (1596), moduleGraph.setResolvedModule + setIssuerIfUnset wiring, _handleModuleBuildAndDependencies->buildModule->_buildModule->NormalModule.build->_doBuild->runLoaders->parser.parse (2449/1670/1779/1468/1567), and the closing processModuleDependencies->_processModuleDependencies->handleModuleCreation recursion (1780). Also credits the queue hierarchy (1214-1238, parent chain). All sampled cites resolve line-exact; the answer is somewhat line-lighter in the graph-wiring stage (setResolvedModule given conceptually without its 2388/2404 line) but every claim is correct, so grounding stays very high. Cost/process (post-unblind): 439120 ctx tokens, 27 turns, 20 grove calls, 2 shell, 3 reads."
+        },
+        "lsp": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Walks all eight spine stops in order: make hook + EntryPlugin tap and EntryDependency creation (EntryPlugin.js:47/45, factory registration referenced at :37), addEntry->_addEntryItem (Compilation.js:2645-2652/2682), addModuleTree factory lookup + handleModuleCreation with originModule null (2591), factorizeModule->_factorizeModule (2298/2171) with factory.create, NormalModuleFactory.create resolution with beforeResolve->factorize(469)->resolve(546)->afterResolve->createModule->new NormalModule(528)->module hook, addModule/_addModule dedup+cache (1596) and graph wiring setResolvedModule(2403/2404)+setIssuerIfUnset(2412), _handleModuleBuildAndDependencies->buildModule->_buildModule with needBuild(1678)->NormalModule.build(1779)->_doBuild(1468)->runLoaders(1567)->parser.parse(1975), and processModuleDependencies->_processModuleDependencies(1780)->setParents(1869)->onDependenciesSorted(1829)->handleModuleCreation recursion. Includes a tidy file:line summary table whose entries are accurate (factory.create at Compilation.js:2186 is line-exact). Grounding is high with one loose spot: the step-10 header cites Compilation.js:2500 (the buildModule call) for processModuleDependencies, which actually lives at 2561. Otherwise all sampled cites resolve exact. Cost/process (post-unblind): 734752 ctx tokens, 29 turns, 10 native-LSP calls, 1 shell, 16 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.97-0.99 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was grove (439120 tokens), most expensive was baseline (977175 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-28T18:58:27.368Z"
+    },
+    "L3-django": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. Covers the entire spine in order with exact anchors: WSGIHandler.__call__ (wsgi.py:120) and WSGIRequest.__init__ (wsgi.py:57) building the request, get_response (base.py:138) entering the startup-assembled _middleware_chain (load_middleware base.py:27, innermost convert_exception_to_response around _get_response), _get_response (176), resolve_request (302), URLResolver.resolve (resolvers.py:670)/URLPattern.resolve (471), and the actual call wrapped_callback(request, *args, **kwargs) at base.py:199 with make_view_atomic (347) and the process_view loop (186). Bonus cites also verify exact: the cached resolver _get_cached_resolver under @functools.cache (resolvers.py:115) and the root pattern r'^/' (line 116). Cleanest-grounded of the three — every sampled cite is line-exact. Cost/process (post-unblind): 152532 ctx tokens, 7 turns, 1 shell calls, 5 reads."
+        },
+        "grove": {
+          "grounding": 0.93,
+          "completeness": 1,
+          "verdict": "Full. Hits all six spine stops in order: WSGIHandler.__call__ (wsgi.py:120) and WSGIRequest.__init__ (wsgi.py:57), the startup middleware chain via load_middleware (base.py:27), get_response (base.py:138) entering _middleware_chain, _get_response (176) with the inline view-dispatch code, resolve_request (302), URLResolver.resolve (resolvers.py:670) and URLPattern.resolve/RoutePattern.match (471/324, both exact), ResolverMatch (resolvers.py:34), ending at wrapped_callback(request, *args, **kwargs). Most cites are line-exact, but two are loose: the section-10 header cites base.py:210 for the view call, whereas line 210 is the template-response render block and the actual invocation is base.py:199 (the inline code block shown earlier is correct); and it describes the root resolver pattern as 'typically the empty string' when it is RegexPattern(r'^/'). Conclusion is right but the headline cite for the most load-bearing spine element points to the wrong line. Cost/process (post-unblind): 337011 ctx tokens, 17 turns, 15 grove calls, no shell."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Walks all six spine stops in order: WSGI entry building the request at WSGIHandler.__call__ (wsgi.py:120) with request_class(environ) (123) and get_response (124), the startup load_middleware (base.py:27) whose innermost layer is convert_exception_to_response(self._get_response) (39; wrapper at exception.py:25), get_response entering _middleware_chain (base.py:138/142), _get_response (176) calling resolve_request (183->302), resolver.resolve(request.path_info) reaching URLResolver.resolve (resolvers.py:670), and the final wrapped_callback(request, *args, **kwargs) at base.py:199 with make_view_atomic (347). Adds correct extras (process_view loop 186, RoutePattern/RegexPattern leaf matching at resolvers.py:324/202, ResolverMatch at 34, URLPattern.resolve 471). Every sampled cite resolves line-exact; no wrong turns. Cost/process (post-unblind): 353694 ctx tokens, 14 turns, 4 native-LSP calls, 8 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.93-0.99 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was baseline (152532 tokens), most expensive was lsp (353694 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
+      "ts": "2026-06-29T00:45:15.896Z"
     }
   }
 }
