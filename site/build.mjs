@@ -87,6 +87,7 @@ function rd2(p) { return readFileSync(p, "utf8"); }
 const cells = [];
 let nHarvested = 0, nDnf = 0, nPending = 0;
 mkdirSync(join(OUT, "transcripts"), { recursive: true });
+mkdirSync(join(OUT, "raw"), { recursive: true });
 
 for (const rung of RUNGS) {
   for (const repo of REPOS) {
@@ -105,6 +106,16 @@ for (const rung of RUNGS) {
         const dest = `transcripts/${repo}-${rung}.${arm}.md`;
         copyFileSync(readableAbs, join(OUT, dest));
         transcript = `data/${dest}`;
+      }
+
+      // copy the raw stream-json so the "raw" toggle resolves on the static site
+      // (the repo-relative evidence/ path is outside site/). raw_local = fetchable
+      // by the page; evidence.raw stays the provenance path it was harvested from.
+      let rawLocal = null;
+      if (existsSync(rawPath)) {
+        const dest = `raw/${repo}-${rung}.${arm}.jsonl`;
+        copyFileSync(rawPath, join(OUT, dest));
+        rawLocal = `data/${dest}`;
       }
 
       const engageKey = ENGAGE_KEY[arm];
@@ -133,7 +144,7 @@ for (const rung of RUNGS) {
         cost: run ? { usd: run.cost, ...run.cost_split } : null,
         tools: run?.tools ?? null,
         series: run?.series ?? null,
-        evidence: { raw: existsSync(rawPath) ? `evidence/nav3/${rung}/raw/${repo}-${rung}.claude.${arm}.jsonl` : null, readable: transcript },
+        evidence: { raw: existsSync(rawPath) ? `evidence/nav3/${rung}/raw/${repo}-${rung}.claude.${arm}.jsonl` : null, raw_local: rawLocal, readable: transcript },
         dnf_reason: side?.note ?? side?.reason ?? null,
         flags,
       });
@@ -180,4 +191,4 @@ writeFileSync(join(OUT, "experiment.json"), JSON.stringify(experiment, null, 2))
 writeFileSync(join(OUT, "cells.json"), JSON.stringify(cells, null, 2));
 writeFileSync(join(OUT, "judge.json"), JSON.stringify(judge, null, 2));
 
-console.error(`feed → ${OUT}  | cells: ${cells.length} (${nHarvested} harvested, ${nDnf} dnf/blocked, ${nPending} pending) | judged: ${judge.length} | transcripts copied: ${readdirSync(join(OUT, "transcripts")).length}`);
+console.error(`feed → ${OUT}  | cells: ${cells.length} (${nHarvested} harvested, ${nDnf} dnf/blocked, ${nPending} pending) | judged: ${judge.length} | transcripts: ${readdirSync(join(OUT, "transcripts")).length} | raw: ${readdirSync(join(OUT, "raw")).length}`);

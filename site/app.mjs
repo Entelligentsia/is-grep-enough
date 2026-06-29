@@ -190,14 +190,83 @@ function renderDetail(cid) {
   renderCoverage();
 }
 
+// transcript modal: readable trail (marked) ↔ raw stream-json. The raw view
+// renders one collapsible row per event (summary cheap, pretty JSON lazy on
+// expand) so a large jsonl never builds a multi-MB <pre> in one shot.
 async function openTranscript(c) {
   const body = $("#tx-body");
-  body.innerHTML = `<p class="caveat">${c.id} · ${c.arm} — loading…</p>`;
   $("#tx-overlay").classList.add("open");
-  try {
-    const md = await fetch(c.evidence.readable).then((r) => r.text());
-    body.innerHTML = `<span class="caveat">raw evidence: <code>${c.evidence.raw ?? "—"}</code></span>` + marked.parse(md);
-  } catch (e) {
-    body.innerHTML = `<p>could not load transcript: ${c.evidence.readable}</p>`;
+  let view = "readable";
+  const cache = {};
+
+  const head = el("div", { className: "tx-head" });
+  const title = el("span", { className: "caveat" }, `${c.id} · ${c.arm}`);
+  const toggle = el("div", { className: "tx-toggle" });
+  const bReadable = el("button", { textContent: "readable", onclick: () => switchTo("readable") });
+  const bRaw = el("button", { textContent: "raw json", onclick: () => switchTo("raw"), disabled: !c.evidence.raw_local });
+  toggle.append(bReadable, bRaw);
+  head.append(title, toggle);
+  const content = el("div", { className: "tx-content" });
+  body.replaceChildren(head, content);
+
+  function switchTo(v) {
+    view = v;
+    bReadable.setAttribute("aria-pressed", v === "readable");
+    bRaw.setAttribute("aria-pressed", v === "raw");
+    render();
   }
+
+  async function render() {
+    if (view === "readable") {
+      if (!cache.readable) {
+        content.innerHTML = `<p class="caveat">loading…</p>`;
+        try { cache.readable = marked.parse(await fetch(c.evidence.readable).then((r) => r.text())); }
+        catch { cache.readable = `<p>could not load transcript: ${c.evidence.readable}</p>`; }
+      }
+      content.innerHTML =
+        `<p class="caveat">provenance: <code>${c.evidence.raw ?? "—"}</code></p>` + cache.readable;
+    } else {
+      if (!cache.raw) {
+        content.innerHTML = `<p class="caveat">loading raw…</p>`;
+        try { cache.raw = renderRaw(await fetch(c.evidence.raw_local).then((r) => r.text())); }
+        catch { cache.raw = el("p", {}, `could not load raw: ${c.evidence.raw_local}`); }
+      }
+      content.replaceChildren(cache.raw);
+    }
+  }
+  switchTo("readable");
+}
+
+// Build a lazy, collapsible event list from a stream-json blob. One <details>
+// per line; the pretty JSON body is rendered only when the row is first opened.
+function renderRaw(text) {
+  const lines = text.split("\n").filter((l) => l.trim());
+  const list = el("div", { className: "rawlist" });
+  list.append(el("p", { className: "caveat" }, `${lines.length} stream-json events — click any to expand.`));
+  for (const line of lines) {
+    let obj = null; try { obj = JSON.parse(line); } catch { /* keep raw */ }
+    const d = el("details", { className: "rawev" });
+    const sum = el("summary", {}, rawSummary(obj, line));
+    const pre = el("pre");
+    let filled = false;
+    d.ontoggle = () => { if (d.open && !filled) { pre.textContent = obj ? JSON.stringify(obj, null, 2) : line; filled = true; } };
+    d.append(sum, pre);
+    list.append(d);
+  }
+  return list;
+}
+
+function rawSummary(obj, line) {
+  if (!obj) return line.slice(0, 120);
+  const type = obj.type ?? "?";
+  let extra = "";
+  if (type === "assistant" || type === "user") {
+    extra = (obj.message?.content ?? []).map((p) =>
+      p.type === "tool_use" ? `▸ ${p.name}` : p.type === "tool_result" ? "◂ result" : p.type === "text" ? "💬 text" : p.type).join("  ");
+  } else if (type === "result") {
+    extra = `${obj.subtype ?? ""} · ${obj.num_turns ?? "?"} turns · $${(obj.total_cost_usd ?? 0).toFixed(4)}${obj.is_error ? " · ERROR" : ""}`;
+  } else if (type === "system") {
+    extra = obj.subtype ?? "";
+  }
+  return `${type}${extra ? "  —  " + extra : ""}`;
 }
