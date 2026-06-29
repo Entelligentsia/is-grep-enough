@@ -971,184 +971,192 @@
     "L1-redis": {
       "scores": {
         "baseline": {
-          "grounding": 0.93,
+          "grounding": 0.96,
           "completeness": 1,
-          "verdict": "Full. Identifies struct redisObject/robj at object.h:100-112, nails the type-vs-encoding distinction, and covers all 6 spine fields plus iskvobj/metabits/kvobj extras. Cites resolve well (object.h:96-98 for refcount sentinels is slightly loose since 98 is OBJ_FIRST_SPECIAL, and objectSetLRUOrLFU is at 189 not 188-190), but server.h:126 OBJ_SHARED_INTEGERS and kvobjGetAllocPtr@194 confirm. Used grep then a full Read."
+          "verdict": "Full. Identifies struct redisObject/robj (object.h:100-112) and covers all six spine elements with the type-vs-encoding distinction stated cleanly (type never changes, encoding promoted as the value grows), plus a correct type->encoding fan-out table. refcount sentinels at object.h:96-98 with OBJ_SHARED_INTEGERS server.h:126 (verified exact), lru dual-mode, and ptr payload; rich kvobj/metabits extras with kvobjGetAllocPtr popcount detail (object.h:194-198, exact). Grounding: nearly all cites resolve exact — object.h:96-98,122,194-198 and server.h:126 confirmed; two loose anchors: incrRefCount/decrRefCount cited 128-130 (actual 128-129) and objectSetLRUOrLFU cited 188-190 (actual 189-190, off by one). Strong overall. Process (un-blind): cheapest arm — 126k context / 7 turns, grep-led (5 shell, no structural tool)."
         },
         "grove": {
-          "grounding": 1,
-          "completeness": 1,
-          "verdict": "(grove v0.1.11 re-run) Full. All 6 spine elements: struct redisObject/robj at object.h:100, type:4(101), encoding:4(102) with a clear logical-vs-representation distinction, refcount with both sentinels (OBJ_SHARED/STATIC_REFCOUNT), lru with LRU/LFU dual-meaning, ptr as payload, plus credited extras (iskvobj, metabits, kvobj). Reproduced struct verbatim-accurate to object.h:100-112; encoding constants 0-13 match object.h:75-88; the explicit cite object.h:100 resolves exact and OBJ_REFCOUNT_BITS=23(95), LRU_BITS=24(90), sentinels(96-97) all check out. No loose cites."
-        },
-        "lsp": {
           "grounding": 0.95,
           "completeness": 1,
-          "verdict": "Full. After the LSP index failed to warm, fell back to grep + Read and still produced a complete, accurate answer: struct at object.h:100-112, type constants server.h:856-884 (verified), encoding 75-88, LRU_CLOCK_RESOLUTION object.h:92, and a sharp two-level type-system summary. All 6 spine elements plus kvobj layout. Cites resolve (incr/decr 129-130 slightly loose on decr@128)."
+          "verdict": "Full. Names struct redisObject/robj (object.h:100) and walks all six spine elements: type:4 as logical type, encoding:4 as concrete representation with an explicit 'type is the what, encoding is the how' distinction (the central gradeable point), refcount:23 with OBJ_SHARED_REFCOUNT and OBJ_STATIC_REFCOUNT sentinels, lru:24 dual-purpose LRU-clock/LFU, and ptr to the payload; credits iskvobj/metabits extras with an accurate inline-allocation diagram. Grounding: cite-light (object.h:100 the main explicit anchor) but the reproduced struct matches source field-for-field and the full encoding-constant table (RAW 0 .. SLICED_ARRAY 13) verifies exactly against object.h:75-88, including correctly flagging 3-5 as retired; accuracy-not-density keeps grounding high, only loss is sparse file:line anchors on the lifetime/eviction claims. Process: 268k context / 13 turns; mixed route (3 grove calls + 7 shell)."
+        },
+        "lsp": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. Names struct redisObject/robj (object.h:100-112) and explains all six spine elements with a crisp type-vs-encoding one-liner ('type is what the user asked for; encoding is how Redis chose to store it'). type constants traced to server.h:856-882 (verified — OBJ_STRING 856 through OBJ_GCRA at 881), encoding constants object.h:75-88, refcount sentinels object.h:96-98, and a standout LFU detail citing the actual bit-split at evict.c:302-303 (o->lru>>8 / o->lru&255, exact), with LRU_CLOCK_MAX object.h:91 and the ~194-day wrap correct; kvobj accessors object.h:123-125 verified. Minor looseness — incrRefCount/decrRefCount cited 129-130 (actual 128-129) and server.h:687 for maxmemory-policy lands on the MAXMEMORY_FLAG block rather than the policy enum. High overall. Process: re-run on the FIXED native-LSP wiring (lsp_tools=1) — dearest arm at 379k context / 13 turns, 1 native LSP call anchoring an otherwise grep-heavy trace (9 shell)."
         }
       },
       "key_revisions": [],
-      "verdict": "All three arms scored Full on completeness with strong grounding — each correctly centered the type (logical) vs encoding (concrete) distinction and covered refcount, lru, ptr, and the kvobj extras. Grove was marginally tightest on citations via its structural tools; baseline and LSP both reached the same answer via grep+Read, with LSP notable for recovering gracefully after its index failed to warm.",
-      "ts": "2026-06-27T17:12:30.752Z"
+      "verdict": "All three arms reached Full on the redisObject/robj spine — the type/encoding fields with the explicit logical-type-vs-physical-encoding distinction (the gradeable core), refcount with its shared/static sentinels, the dual-purpose lru field, the ptr payload, and the kvobj/metabits extras. Grounding is a tight near-tie (0.95-0.96): every load-bearing cite resolves, with only one-line-wide looseness on the incr/decrRefCount range across arms and a couple of loose secondary anchors. Quality did not separate them; COST did — baseline cheapest on this single-struct L1 lookup (126k / 7 turns, pure grep), grove mid (268k), the semantic arm dearest (379k / 13 turns) for the identical Full answer. The lsp arm is the re-run on the corrected native-LSP wiring (lsp_tools=1). Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T06:10:56.866Z"
     },
     "L1-django": {
       "scores": {
         "baseline": {
-          "grounding": 0.95,
+          "grounding": 0.97,
           "completeness": 1,
-          "verdict": "Cites class:34, _func_path 64-71, view_name 73-74, namespace filtering at lines 59/61 — all resolve correctly in source. Covers every spine element: func, args/kwargs with the captured/extra split, url_name/route, both namespace axes, view_name, and the __getitem__ triple consumed by the base handler."
+          "verdict": "Full. Covers every required spine element: class ResolverMatch (urls/resolvers.py:34), the view callable func with the _func_path derivation (64-71), args/kwargs plus the captured_kwargs/extra_kwargs split with correct captured-vs-injected semantics, url_name and route, both namespace axes (app_names/app_name, namespaces/namespace), the composed view_name for reverse(), and the __getitem__ (func,args,kwargs) triple (76-77) as the dispatch contract consumed by core/handlers/base.py. Grounding tight: the inlined _func_path block matches 64-71 exactly, view_name join exact at 73-74, empty-string filtering pinned to 59/61, __getitem__ quoted verbatim; no wrong turns. Process (un-blind): cheapest arm by far — 72k context / 3 turns, a single targeted grep + one Read."
         },
         "grove": {
-          "grounding": 1,
+          "grounding": 0.97,
           "completeness": 1,
-          "verdict": "(grove v0.1.11 re-run) Full. Nails all 6 spine pieces: class ResolverMatch (resolvers.py:34, exact), func, args/kwargs + captured_kwargs/extra_kwargs split, url_name/route, the full namespacing chain (app_names/app_name, namespaces/namespace, view_name from namespaces + _func_path), and __getitem__ (func,args,kwargs) with the base.py dispatch contract. The lone numbered cite (resolvers.py:34) lands exactly on `class ResolverMatch:`; the three verbatim blocks reproduce lines 64-77 faithfully; base.py resolve_request unpacks the triple at 183/237. Light on explicit line numbers beyond 34, but every quoted construct verifies — grounding by cite-accuracy is exact (up from 0.80 on the v0.1.9 run, which was penalized for cite density)."
+          "verdict": "Full. Covers the complete spine cleanly: ResolverMatch (resolvers.py:34), func stored as the resolver found it with the _func_path peek (snippet matches 64-71 exactly), args/kwargs plus the captured_kwargs/extra_kwargs split with correct user-typed-vs-developer-hardwired framing, url_name, the application (app_names/app_name) and instance (namespaces/namespace) namespace stacks with empty-string filtering, the composed view_name (view_path = url_name or self._func_path / join matches 73-74), route/tried diagnostics, the __getitem__ triple quoted verbatim (76-77) with the base.py consumer, and the __reduce_ex__ pickle guard (104-105). Line-light relative to the most verbose arm but every claim accurate and verbatim snippets exact, so grounding stays high; no wrong turns. Process: 102k context / 4 turns, pure-structural (2 grove calls, no shell)."
         },
         "lsp": {
-          "grounding": 1,
+          "grounding": 0.97,
           "completeness": 1,
-          "verdict": "Most line-precise of the three: func:48, view_class:64, url_name:51, _func_path:70-71, view_path/view_name:73-74, route:52, tried:53, __getitem__:76-77 — every cite resolves exactly. Complete coverage of all spine elements and correctly names BaseHandler.resolve_request as the triple's consumer."
+          "verdict": "Full. Hits all spine elements and is the most thorough on provenance: ResolverMatch (resolvers.py:34), func (raw, unwrapped) plus _func_path (64-71) and view_name (73-74), the four-field argument model with kwargs = {**captured_kwargs, **extra_kwargs}, url_name, both namespace axes built outward through the resolver chain, and the __getitem__ triple quoted verbatim. Additionally grounds the construction sites — URLPattern.resolve() 471-485 (kwargs={**captured_kwargs, **self.default_args} at 476; captured/extra passed 483-484) and URLResolver.resolve() 700-714 layering default_kwargs (710-713). Only minor looseness: the namespace-build cite given as 705-706 where the instance-namespace line is precisely 706 — a one-line-wide range, content correct. Process: re-run on the FIXED native-LSP wiring (native LSP tool, not the old MCP bridge); engaged lsp_tools=3 — 250k context / 9 turns, 3 native LSP calls + 3 reads + 1 grep (the dearest arm here)."
         }
       },
       "key_revisions": [],
-      "verdict": "All three arms correctly identify ResolverMatch and hit the full required spine with no factual errors. LSP edges out on grounding with the most numerous and exactly-correct line citations, baseline is close behind with accurate range cites, and grove is equally complete in content but offers the fewest explicit line numbers.",
-      "ts": "2026-06-27T17:12:32.164Z"
+      "verdict": "All three arms reached Full on the complete ResolverMatch spine — the container class, the func callable + _func_path/view_name derivation, the args/kwargs + captured/extra split, url_name/route, both namespace axes, and the __getitem__ (func,args,kwargs) dispatch triple. Grounding is a clean three-way tie at 0.97: every sampled load-bearing cite resolves line-exact against the pinned source (SHA 7903ee10), the only looseness a one-line-wide namespace range. Quality did not separate them; the differentiator is COST and it widens monotonically on this bounded single-class L1 lookup — baseline cheapest (72k / 3 turns, one grep+Read), grove next (102k / 4 turns, pure-structural), the semantic arm dearest (250k / 9 turns) for the identical Full answer. The lsp arm is the re-run on the corrected native-LSP wiring (lsp_tools=3). Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T06:09:47.557Z"
     },
     "L5-redis": {
       "scores": {
         "baseline": {
-          "grounding": 0.88,
+          "grounding": 0.98,
           "completeness": 1,
-          "verdict": "Traces the full cross-cutting path: dirty-delta detection in call, deferred alsoPropagate into server.also_propagate, the afterCommand->postExec->propagatePendingCommands flush with MULTI/EXEC wrapping, propagateNow split to AOF/replicationFeedSlaves, and RESP encoding into the shared repl buffer, even extending to per-replica socket write. Cites mostly resolve (3978, 4032, 4127-4154, 3732, 3811, 3867, 3704, 631, server.h:1802, networking 2734 all correct); a few are loose (setGenericCommand labeled t_string.c:190 which is the server.dirty++ line, and putClientInPendingWriteQueue tied to networking.c:275 which is the write-handler-install region)."
+          "verdict": "Full. All six spine elements connected, compact but complete: setGenericCommand bumps server.dirty++ (t_string.c:190); call snapshots dirty before (server.c:3978) and computes the delta after (4032), propagate_flags set in the 4127-4154 block; alsoPropagate (3732) deep-copies argv into server.also_propagate (redisOp struct at server.h:1802) without flushing — flagged intentional for atomicity; the bridge afterCommand (4189) -> postExecutionUnitOperations (3867) -> propagatePendingCommands (3811, MULTI/EXEC wrap) -> propagateNow (3704) forking to feedAppendOnlyFile and replicationFeedSlaves (replication.c:631); RESP encoding via replBufWriter into server.repl_buffer_blocks with replBufWriterAllocBlock (484) and the offset/refcount work in replBufWriterEnd (565); plus the event-loop drain via _writeToClientSlave (networking.c:2734). Nearly all sampled cites exact; only minor looseness in putClientInPendingWriteQueue (networking.c:275). Process (un-blind) CAVEAT: most expensive arm — 1.58M context / 27 grep + 23 reads, a near-runaway brute-force scan."
         },
         "grove": {
-          "grounding": 1,
+          "grounding": 0.99,
           "completeness": 1,
-          "verdict": "(grove v0.1.11 re-run) Full. All 6 spine elements connected — proc-in-call (server.c:3949/4015), dirty detection (3978/4032), deferred alsoPropagate into also_propagate (queue-then-flush made explicit), afterCommand(4271)->postExec->propagatePendingCommands(3811)->propagateNow(3704) flush bridge, fan-out replicationFeedSlaves(3716), RESP/SELECT-injection into the repl buffer (replication.c:631). Every sampled cite exact: call 3949, alsoPropagate 3732, shouldPropagate 3673, propagatePendingCommands 3811, afterCommand 4271, propagateNow 3704, replicationFeedSlaves replication.c:631, prepareReplicasToWrite 363, replBufWriterEnd 565, _writeToClientSlave networking.c:2734 — no loose lines. Tightest grounding of the redis cells."
+          "verdict": "Full. Hits every spine element: call (server.c:3949) snapshots dirty around c->cmd->proc(c) and computes the delta; alsoPropagate (def 3732) queues a refcounted argv copy into server.also_propagate with no I/O, noting its shouldPropagate guard (def 3673); the flush bridge afterCommand (4271) -> postExecutionUnitOperations -> propagatePendingCommands (3811, MULTI/EXEC wrap) -> propagateNow (3704) forking to feedAppendOnlyFile and replicationFeedSlaves; and RESP encoding via the replBufWriter API into the shared replBufBlock slab list, committed in replBufWriterEnd (replication.c:565) which advances master_repl_offset and anchors each slave->ref_repl_buf_node. The queue-then-flush indirection is explicit. Sampled cites all line-exact, including prepareReplicasToWrite (363) and _writeToClientSlave (networking.c:2734). Process: cheapest arm — 387k context / 24 turns, 18 grove calls."
         },
         "lsp": {
-          "grounding": 0.93,
+          "grounding": 0.99,
           "completeness": 1,
-          "verdict": "Full chain covered end-to-end with the deferred-flush rationale and nesting guard explained; core cites (3949, 3978, 4015, 4032, 4127-4153, 3732, 3811, 3867, 3704, 631, replBufWriter 466/565, prepareReplicasToWrite 363) all verify. Slightly loose only on the SELECT-injection (cited 672-699; actual createObject/feed is ~682-688) and RESP-encoding (702-724) line ranges, which are approximate but in the right region."
+          "verdict": "Full. Connects all six spine elements: handler run via c->cmd->proc(c) (server.c:4015) inside call (3949); dirty bracketing dirty=server.dirty (3978) and dirty=server.dirty-dirty (4032) as the write signal; deferred queue via alsoPropagate (4153, def 3732) appending to server.also_propagate with nothing sent inline; the flush bridge afterCommand (4189, def 4271) -> postExecutionUnitOperations (def 3867, nesting guard) -> propagatePendingCommands (def 3811, MULTI/EXEC wrap) -> propagateNow (def 3704); fan-out to replicationFeedSlaves (replication.c:631) plus AOF via feedAppendOnlyFile; and RESP serialization through the replBufWriter API into server.repl_buffer_blocks committed in replBufWriterEnd (565). Explicitly names the queue-then-flush indirection as the crux. Grounding near-perfect: every sampled cite line-exact, including the event-loop drain extras sendReplyToClient (networking.c:2888), writeToClient (2786), _writeToClientSlave (2734) and the master_repl_offset/refcount/trim mechanics in replBufWriterEnd (575-613). Process: re-run on the FIXED native-LSP wiring (lsp_tools=16) — 753k context / 33 turns, 16 native LSP calls + 15 reads."
         }
       },
-      "key_revisions": [],
-      "verdict": "All three arms reached Full: each traced proc->dirty-detection->deferred alsoPropagate->afterCommand/postExec/propagatePendingCommands flush->propagateNow->replicationFeedSlaves/feedReplicationBuffer and explicitly named the queue-then-flush indirection that is the crux. Grove had the tightest grounding (every cite exact), LSP nearly as good with a couple of approximate line ranges, and baseline was equally complete (going furthest into the per-replica socket-write path) but carried two slightly loose citations.",
-      "ts": "2026-06-27T17:12:31.462Z"
+      "key_revisions": [
+        {
+          "level": "L5",
+          "reason": "Key spine item 6 states replicationFeedSlaves serializes argv and appends via feedReplicationBuffer (replication.c:773, def 618). Verified against pinned source: this redis revision refactored the command-serialization body to the inline replBufWriter API (replBufWriterBegin 704, replBufWriterAppendBulkLen 707/712, replBufWriterAppend 717-721, replBufWriterEnd 724). feedReplicationBuffer (def 618) is used only for the SELECT injection at line 688; line 773 is inside replicationFeedStreamFromMasterStream (the sub-replica proxy path), not replicationFeedSlaves. All three answers correctly describe replBufWriter and are not docked for being right where the key is stale.",
+          "cite": "experiment/repos/redis/src/replication.c:701-724 (replBufWriter body); 688 (feedReplicationBuffer for SELECT); 565 replBufWriterEnd commit",
+          "ts": "2026-06-29"
+        }
+      ],
+      "verdict": "All three arms Full on the write-propagation spine — dirty bracketing around c->cmd->proc(c) in call(), the alsoPropagate deferred queue into server.also_propagate (nothing sent inline), the afterCommand -> postExecutionUnitOperations -> propagatePendingCommands -> propagateNow flush bridge with MULTI/EXEC wrap, fan-out to replicationFeedSlaves + AOF, and RESP serialization via the replBufWriter API committed in replBufWriterEnd. Grounding is a near-perfect tie (0.98-0.99); every sampled cite resolves line-exact. Notably all three arms independently described the inline replBufWriter API, which is MORE accurate than the reference key (recorded as a key revision: the key's feedReplicationBuffer :773 points into the sub-replica proxy path, not the command-serialization body). The differentiator is COST and it is stark — grove cheapest (387k / 24 turns, 18 structural calls), the re-run semantic arm mid (753k / 33), and baseline a near-runaway (1.58M context, 27 grep + 23 reads) for the same Full answer. The lsp arm is the re-run on the corrected native-LSP wiring (lsp_tools=16). Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T06:13:21.028Z"
     },
     "L5-django": {
       "scores": {
         "baseline": {
-          "grounding": 1,
+          "grounding": 0.98,
           "completeness": 1,
-          "verdict": "Traced the full save->save_base->_save_table->_do_update/_do_insert->QuerySet._update/_insert->compiler.execute_sql->cursor.execute chain with both branches. All cited lines (base.py 841/950/1069/1206/1246, query.py 1428/2112, compiler.py 1801/1925/2037) resolve correctly. Describes pre_save/post_save signals and the updated/created feedback though without citing the exact signal lines."
+          "verdict": "Full. All six spine elements connected: save (base.py:841) flag-exclusivity + deferred promotion, save_base (950) pre_save unless auto_created + transaction choice + post_save created=(not updated), _save_table (1069) with non_pks_non_generated collection, the force_insert shortcut, UPDATE attempt then INSERT-on-miss and the returned updated boolean, _do_update (1206)/_do_insert (1246) into QuerySet._update (query.py:1428)/_insert (2112), and the compiler layer as_sql (compiler.py:1801)/execute_sql (1925) ending at cursor.execute, correctly noting SQLUpdateCompiler.execute_sql delegates to base SQLCompiler.execute_sql. All sampled cites exact, including pre_sql_setup (2167) and the fetch_returned_rows/last_insert_id readback. Process (un-blind): cheapest arm by far — 183k context / 9 turns, 3 grep + 5 reads."
         },
         "grove": {
-          "grounding": 1,
+          "grounding": 0.99,
           "completeness": 1,
-          "verdict": "(grove v0.1.11 re-run) Full. All 6 spine elements connected — save (base.py:841) -> save_base(950) with pre_save/post_save (created=not updated), _save_table update-first/insert-fallback (1069 -> _do_update 1140 -> if not updated 1157 -> _do_insert 1199), hand-off through _do_insert(1246)/manager._insert(1251)/QuerySet._insert(query.py:2112) and the _update mirror (query.py:1428), down to SQLInsertCompiler.execute_sql(compiler.py:1925)->cursor.execute(1936), with _assign_returned_values(1259) feeding updated/created back up. Every sampled cite exact (base.py 841/950/976/1069/1140/1157/1199/1246/1251/1259, query.py 1428/2112, compiler.py 1801/1925/1936/2037/2114); class boundaries confirm insert vs update compiler split. No loose lines."
+          "verdict": "Full. Tightest line precision of the three: save (841) with _prepare_related_fields_for_save, db_for_write, flag validation and the deferred shortcut; save_base (950) proxy/origin handling, pre_save, atomic vs mark_for_rollback_on_error, _save_parents, post_save created=(not updated); _save_table (1069) decision keyed on _state.adding with the field.pre_save(add=) distinction; _do_update (1206)/_do_insert (1246) as the model->queryset seam; QuerySet._update (query.py:1428)/_insert (2112) building UpdateQuery/InsertQuery and get_compiler; compiler as_sql (1801/2037), execute_sql (1925) and uniquely the SQLUpdateCompiler.execute_sql (2114)->SQLCompiler.execute_sql (1595) delegation and execute_returning_sql (2135), ending at cursor.execute with rowcount/RETURNING/last_insert_id, then _assign_returned_values back-write. Every sampled cite resolves exact. Process: pure-structural — 516k context / 26 turns, 23 grove calls, no shell."
         },
         "lsp": {
-          "grounding": 1,
+          "grounding": 0.98,
           "completeness": 1,
-          "verdict": "Most granular and fully accurate: cites the precise signal line (base.py:976 pre_save), PK setup (1098), the fast-insert and update/insert ranges, plus base SQLCompiler.execute_sql (1595) under the update path. Every sampled cite resolves correctly and the full cross-cutting path is connected end to end."
+          "verdict": "Full. Hits all six spine elements end to end: Model.save (base.py:841) with deferred-field narrowing and db_for_write, save_base (950) owning pre_save/post_save with created=(not updated), _save_table (1069) making the UPDATE-first/INSERT-fallback decision with field.pre_save(add=True/False), _do_update (1206)/_do_insert (1246) handing into QuerySet._update (query.py:1428)/_insert (2112), the compiler bridge SQLInsertCompiler.as_sql (compiler.py:1801) and execute_sql (1925) reaching cursor.execute, plus _assign_returned_values feeding updated back to the created flag. Explicitly states the model layer never emits SQL itself. Every sampled load-bearing cite resolves exact (841/950/1069/1206/1246/1428/2112/1801/1925/2037/2135). Process: re-run on the FIXED native-LSP wiring (lsp_tools=10) — 517k context / 21 turns, 10 native LSP calls + 9 reads."
         }
       },
       "key_revisions": [],
-      "verdict": "All three arms produced Full answers tracing the entire cross-cutting write path with grounding that checks out against the pinned source. LSP is marginally the most precise (it cites the exact pre_save signal line and the base execute_sql), while baseline and grove describe the signals correctly but cite fewer exact signal line numbers; the difference is cosmetic since all hit every required spine element.",
-      "ts": "2026-06-27T17:12:32.876Z"
+      "verdict": "All three arms Full on the complete save() spine — Model.save -> save_base (pre_save/post_save, created=not updated) -> _save_table (UPDATE-first/INSERT-fallback, pre_save add=) -> _do_update/_do_insert -> QuerySet._update/_insert -> the SQL compilers (as_sql/execute_sql) reaching cursor.execute, with the model layer explicitly never emitting SQL itself. Grounding is a near-perfect tie (0.98-0.99): every sampled cite resolves line-exact against the pinned source. Quality did not separate them; COST did, steeply — baseline cheapest (183k / 9 turns, grep+Read), while grove (516k, pure-structural) and the re-run semantic arm (517k / 21 turns) each spent ~2.8x the context for the same Full answer. The lsp arm is the re-run on the corrected native-LSP wiring (lsp_tools=10). Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T06:13:18.053Z"
     },
     "L4-redis": {
       "scores": {
         "baseline": {
           "grounding": 0.98,
           "completeness": 1,
-          "verdict": "Full. All four spine pieces — launch/fork (bgsaveCommand rdb.c:4833, rdbSaveBackground rdb.c:2070, redisFork server.c:7428, openChildInfoPipe childinfo.c:25), child write (rdbSave rdb.c:2027, atomic rename rdb.c:2041), the childinfo progress pipe (sendChildInfoGeneric childinfo.c:49, receiveChildInfo childinfo.c:150 called from cron server.c:1694), and parent reap+finalize (checkChildrenDone server.c:1416 -> backgroundSaveDoneHandler rdb.c:4605 -> Disk rdb.c:4544, updateSlavesWaitingBgsave rdb.c:4628). Best-grounded on the progress mechanism: cited the throttle block rdb.c:1855 and described the 1024-key & >=1s gate before sendChildInfo exactly as in source. Every sampled cite resolves exact; also nailed the dirty -= dirty_before_bgsave bookkeeping and SIGUSR1 clean-abort. Reached this on 19 turns / 310k context — cheapest arm."
+          "verdict": "Full. Most densely and precisely cited of the three: bgsaveCommand (rdb.c:4833) -> rdbSaveBackground (rdb.c:2070) -> redisFork (server.c:7428) + openChildInfoPipe (childinfo.c:25); child rdbSave (rdb.c:2027) -> rdbSaveRio (rdb.c:1880) with the per-key progress heartbeat (sendChildInfo at the 1024-key check, rdb.c:1855) and dismissObject CoW hint (rdb.c:1850, exact), atomic rename rdb.c:2041 (exact); the child_info_pipe mechanics with sendChildInfoGeneric (childinfo.c:49)/receiveChildInfo (childinfo.c:150) from cron (server.c:1694); finalize via checkChildrenDone (server.c:1416) -> backgroundSaveDoneHandler/Disk (rdb.c:4605/4544) with the dirty_before_bgsave subtraction and updateSlavesWaitingBgsave (rdb.c:4628, exact). Every sampled cite resolves line-exact; no wrong turns. Process (un-blind): 310k context / 19 turns, grep+Read (7 shell, 11 reads)."
         },
         "grove": {
           "grounding": 0.98,
           "completeness": 1,
-          "verdict": "Full (re-run on grove v0.1.11, the shipped route-by-task steering — image grove-testbench/grove:v0.1.11, baked block). All four spine pieces: launch/fork (bgsaveCommand rdb.c:4833, rdbSaveBackground rdb.c:2070, redisFork server.c:7428, openChildInfoPipe childinfo.c:25), child write (rdbSave rdb.c:2027 -> rdbSaveInternal rdb.c:1956 -> rdbSaveRio rdb.c:1880), progress pipe (sendChildInfoGeneric childinfo.c:49), and reap+finalize (checkChildrenDone server.c:1416 @cron 1695 -> backgroundSaveDoneHandler rdb.c:4605 / Disk rdb.c:4544). Every sampled cite resolves exact. This run navigated pure-grove (21 grove calls, no shell) but far leaner than the pre-steering rigid run (36 source calls): 359k context vs 560k. The route-by-task steering's win holds whether or not the model combines on a given run — fewer, better-targeted grove calls via map/breadth-control. (Prior records: rigid v0.1.10 baked = 560k/36-grove; host-injected new steering = 329k/20-grove+3-grep+2-read. n=1 each; stochastic on whether it combines, consistent ~330-360k band.)"
+          "verdict": "Full. All four pieces: trigger bgsaveCommand (rdb.c:4833) -> rdbSaveBackground (rdb.c:2070); fork through redisFork (server.c:7428) opening the info pipe (openChildInfoPipe childinfo.c:25); child rdbSave (rdb.c:2027) -> rdbSaveInternal (rdb.c:1956) -> rdbSaveRio (rdb.c:1880) with the atomic rename; progress via sendChildInfoGeneric (childinfo.c:49) drained by the parent plus sendChildCowInfo; completion via checkChildrenDone (server.c:1695/1416, waitpid WNOHANG) -> backgroundSaveDoneHandler (rdb.c:4605) -> backgroundSaveDoneHandlerDisk (rdb.c:4544) reconciling dirty/lastsave/status and updateSlavesWaitingBgsave. All sampled cites exact, including the less-common rdbSaveInternal rdb.c:1956 and the def-vs-callsite distinctions; completion sequence matches server.c:1443/1452/1453 precisely. Process: pure-structural — 359k context / 23 turns, 21 grove calls, no shell."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. All four spine pieces connected: launch/fork via rdbSaveBackground (rdb.c:2070) -> redisFork(CHILD_TYPE_RDB) (server.c:7428) with openChildInfoPipe; child-side rdbSave in the child branch (rdb.c:2082-2089) writing via rdbSaveRio (rdb.c:1880); the childinfo progress pipe (sendChildInfoGeneric childinfo.c:49 / receiveChildInfo childinfo.c:150 drained from cron server.c:1694); parent reap+finalize (checkChildrenDone server.c:1416 waitpid WNOHANG -> backgroundSaveDoneHandler rdb.c:4605 -> backgroundSaveDoneHandlerDisk rdb.c:4544). COW/non-blocking rationale well explained with correct extras (dirty_before_bgsave subtraction, updateSlavesWaitingBgsave, SIGUSR1 whitelist). Every sampled cite exact; minor: leans on described helpers without line cites, but no wrong turns. Process: re-run on the FIXED native-LSP wiring (lsp_tools=8) — cheapest arm this cell at 285k context / 24 turns, 8 native LSP calls + 12 reads + 2 grep."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms Full on every spine piece — launch/fork (rdbSaveBackground -> redisFork + openChildInfoPipe), child rdbSave/rdbSaveRio with atomic rename, the childinfo progress pipe (sendChildInfoGeneric/receiveChildInfo drained from cron), and parent reap+finalize (checkChildrenDone -> backgroundSaveDoneHandler -> Disk) with the dirty_before_bgsave bookkeeping. Cleanest-grounded cell in the set: every sampled citation from all three arms resolves line-exact (grounding 0.98 three-way tie). The differentiator is COST and on this bounded 3-file subsystem it inverts the L5 pattern — here the re-run semantic arm was actually CHEAPEST (285k / 24 turns) edging baseline (310k / 19) and grove (359k / 23, pure-structural 21 calls). The lsp arm is the re-run on the corrected native-LSP wiring (lsp_tools=8). Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T06:10:57.600Z"
+    },
+    "L5-bitcoin": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.8,
+          "completeness": 0.8,
+          "verdict": "Partial. Names all entities and explains the queue-then-flush correctly — RPC (rpc/mempool.cpp), BroadcastTransaction (node/transaction.cpp), ProcessTransaction (validation.cpp:4455) -> AcceptToMemoryPool (1781) -> AcceptSingleTransactionAndCleanup (591) -> AcceptSingleTransactionInternal (1323), the signal at 1318, InitiateTxBroadcastToAll (net_processing.cpp:2272) inserting into m_tx_inventory_to_send, and SendMessages (5792) draining/filtering into MakeAndPushMessage(INV). But it gets the load-bearing connection WRONG: its 'Stage 3 — Signal dispatch into net_processing' claims acceptance triggers relay via ValidationSignals::TransactionAddedToMempool -> ChainImpl::TransactionAddedToMempool (node/interfaces.cpp) -> InitiateTxBroadcastToAll. That bridge does not exist — InitiateTxBroadcastToAll is called DIRECTLY from BroadcastTransaction at node/transaction.cpp:133; there is no TransactionAddedToMempool override in net_processing, and interfaces.cpp:690 is only a sibling broadcastTransaction caller. Since 'how the stages connect' is exactly what the prompt centers on, this is a structural wrong turn; individual cites resolve exact but the flow routes through a fabricated path, capping grounding. Process (un-blind) CAVEAT: also the most expensive arm — 1.67M context / 32 grep + 20 reads, a near-runaway brute-force scan that still mis-wired the central indirection."
+        },
+        "grove": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. All six spine elements connected: sendrawtransaction (rpc/mempool.cpp:47) -> BroadcastTransaction (node/transaction.cpp:32) which makes the DIRECT peerman->InitiateTxBroadcastToAll call after a VALID ProcessTransaction; mempool acceptance via ProcessTransaction (validation.cpp:4455) -> AcceptToMemoryPool (1781) -> AcceptSingleTransactionInternal (1323) with PreChecks (786)/CheckTransaction/IsStandardTx and script verification; the per-peer queue m_tx_inventory_to_send (net_processing.cpp:2272/2291) with handshake gate; and the deferred SendMessages flush (5792) building CInv{MSG_WTX/MSG_TX} (6145-6146) and MakeAndPushMessage(NetMsgType::INV) (6160/6172). Explicitly states 'nothing is sent yet' — the queue-then-flush indirection nailed. Every load-bearing cite resolves exact. Process: cheapest and cleanest arm — 547k context / 27 turns, 23 grove calls, no grep."
         },
         "lsp": {
           "grounding": 0.97,
           "completeness": 1,
-          "verdict": "Full. All four pieces with good structural depth on the child write path (rdbSave rdb.c:2027 -> rdbSaveInternal rdb.c:1956 -> rdbSaveRio, temp file rdb.c:2032, atomic rename rdb.c:2041, rio/incremental-fsync detail), the childinfo pipe (sendChildInfoGeneric childinfo.c:49, receiveChildInfo childinfo.c:150), and reap+finalize (serverCron server.c:1692, checkChildrenDone server.c:1416, backgroundSaveDoneHandler rdb.c:4605/Disk rdb.c:4544, dispatcher post-handler rdb.c:4622). Every cite in the answer resolves exact; leaned on a couple of grep/Read anchors mid-trace and carried one fewer distinct childinfo-helper line than baseline. 566k context / 29 turns."
-        }
-      },
-      "key_revisions": [],
-      "verdict": "All three arms reached Full on every spine piece — launch/fork, child rdbSave, the childinfo progress pipe, and parent reap+finalize (checkChildrenDone -> backgroundSaveDoneHandler -> Disk) — each connecting the fork+copy-on-write rationale for non-blocking and the dirty_before_bgsave bookkeeping. This is the cleanest-grounded cell measured: every sampled citation from all three arms resolves exactly against the pinned source (grounding 0.97-0.98, a near-tie). The differentiator is COST, and it inverts L5-redis: on this bounded 3-file subsystem (rdb.c/server.c/childinfo.c) baseline's targeted grep+Read was both fully correct and the CHEAPEST (310k context / 19 turns), while grove (560k / 38) and lsp (566k / 29) fanned out across many symbols for ~1.8x the context to reach the same Full answer. Baseline was also the most precise on the progress-pipe throttle (rdb.c:1855, 1024-key & >=1s gate).",
-      "ts": "2026-06-27T16:44:54.114Z"
-    },
-    "L5-bitcoin": {
-      "scores": {
-        "grove": {
-          "grounding": 0.95,
-          "completeness": 0.97,
-          "verdict": "Full. All 6 spine elements connected with accurate, specific cites: sendrawtransaction (rpc/mempool.cpp:47)->BroadcastTransaction (node/transaction.cpp:32)->ProcessTransaction (validation.cpp:4455)->AcceptToMemoryPool->AcceptSingleTransactionInternal (validation.cpp:1323); PreChecks (validation.cpp:786) with CheckTransaction and IsStandardTx named (script verification covered via PolicyScriptChecks/ConsensusScriptChecks, though CheckInputScripts/:1150 not named outright); InitiateTxBroadcastToAll (net_processing.cpp:2272) with explicit 'nothing sent yet'; per-peer m_tx_inventory_to_send queueing; and SendMessages (net_processing.cpp:5792) building CInv{MSG_WTX/MSG_TX} -> MakeAndPushMessage(NetMsgType::INV). Queue-then-flush indirection (the crux) clearly acknowledged. Every load-bearing cite present resolves; only minor docking for a few omitted sub-line numbers. Tightest grounding of the three at the lowest context cost (547k)."
-        },
-        "lsp": {
-          "grounding": 0.9,
-          "completeness": 1,
-          "verdict": "Full. All 6 spine elements connected: sendrawtransaction (rpc/mempool.cpp:47)->BroadcastTransaction (node/transaction.cpp:32)->ProcessTransaction/AcceptToMemoryPool/MemPoolAccept with CheckTransaction, IsStandardTx, CheckInputScripts (PreChecks validation.cpp:786, PolicyScriptChecks ~1139); InitiateTxBroadcastToAll relay trigger (net_processing.cpp:2272); per-peer m_tx_inventory_to_send queueing; SendMessages flush (net_processing.cpp:5792) building CInv and emitting NetMsgType::INV. Queue-then-flush deferred indirection explicitly emphasized ('announcement decoupled from acceptance'). Cites specific and largely accurate; minor looseness (CheckInputScripts placed ~:1139 vs ref :1150, a few unverified net.cpp extras) keeps grounding just below grove. Engaged native LSP (lsp_tools=2) with grep-anchoring (bash=22) -- the honest cold-index cost."
-        },
-        "baseline": {
-          "grounding": 0.8,
-          "completeness": 0.95,
-          "verdict": "Full. All six spine elements connected: sendrawtransaction->BroadcastTransaction; ProcessTransaction->AcceptToMemoryPool->AcceptSingleTransactionInternal (validation.cpp:4455/1781/1323 correct); full check set CheckTransaction/IsStandardTx/CheckInputScripts (line numbers omitted); InitiateTxBroadcastToAll (net_processing.cpp:2272); per-peer m_tx_inventory_to_send queueing (with the 2287 handshake gate, 2290 known-filter); SendMessages flush (5792, range 6112-6172) emitting CInv/NetMsgType::INV; queue-then-flush indirection called out. Grounding dented: routes the relay trigger through the validationinterface signal path (ChainImpl::TransactionAddedToMempool calling InitiateTxBroadcastToAll) whereas the locally-submitted flow has BroadcastTransaction call node.peerman->InitiateTxBroadcastToAll directly at node/transaction.cpp:137; validation.cpp:591/1318 cites unsupported. Highest context cost (1.67M, ~3x grove)."
-        }
-      },
-      "key_revisions": [],
-      "verdict": "All three arms reached Full: each threaded sendrawtransaction->BroadcastTransaction->ProcessTransaction->AcceptToMemoryPool/MemPoolAccept (CheckTransaction/IsStandardTx/CheckInputScripts)->InitiateTxBroadcastToAll relay trigger->per-peer m_tx_inventory_to_send queue->SendMessages flush emitting CInv/NetMsgType::INV, and each named the queue-then-flush deferred indirection that is the crux. Differentiation is in grounding and context cost, not completeness: grove tightest (0.95) at 547k context; lsp fully complete (1.0) but slightly looser cites (0.90) at 1.44M with grep-anchored native-LSP engagement; baseline complete (0.95) but took a wrong turn routing the relay trigger through the validationinterface TransactionAddedToMempool signal rather than the direct node.peerman->InitiateTxBroadcastToAll(node/transaction.cpp:137) and carried two unsupported cites (grounding 0.80) at the highest context cost (1.67M, ~3x grove). Blind-judged (anonymized A/B/C, mapping withheld from judges).",
-      "ts": "2026-06-27T18:21:51.275Z"
-    },
-    "L5-typescript": {
-      "scores": {
-        "grove": {
-          "grounding": 1,
-          "completeness": 1,
-          "verdict": "Full. All four stages in order: parse (createProgram program.ts:1515 -> processSourceFile/findSourceFileWorker:3545 -> createSourceFile parser.ts:1344, call at program.ts:410), bind (getTypeChecker:2684 -> createTypeChecker -> initializeTypeChecker checker.ts:51555 -> bindSourceFile binder.ts:502), check (getSemanticDiagnosticsForFile:2858 -> checkSourceFile checker.ts:49547, lazy+cached), emit (emit:2688 -> emitWorker:2718 -> emitFiles emitter.ts:752 -> getTransformers transformer.ts:120 -> transformNodes). Every sampled cite line-exact (incl. getSyntacticDiagnosticsForFile:2831, getPreEmitDiagnostics:634). Cheapest context (570k), 10 grove structural calls + opportunistic shell."
-        },
-        "lsp": {
-          "grounding": 1,
-          "completeness": 1,
-          "verdict": "Full. Same checker-driven-bind / lazy-cached-check / transform-then-write chain; cites line-exact (createGetSourceFile:392, getMergedBindAndCheckDiagnostics:2923, emitJsFileOrBundle emitter.ts:821, emitDeclarationFileOrBundle:886, getTransformers transformer.ts:120). One self-flagged approximate (onProgramCreateComplete ~1725). 12 native-LSP calls, read-anchored (19 reads, 2 bash). 773k ctx."
-        },
-        "baseline": {
-          "grounding": 0.98,
-          "completeness": 1,
-          "verdict": "Full. Most line-dense answer (~45 cites), overwhelmingly exact incl. call-sites (nextToken:1812, parseList:1814, bind binder.ts:2751, bindContainer:953, printSourceFileOrBundle emitter.ts:993, getScriptTransformers transformer.ts:127, transformNodes:248, internal bindSourceFile binder.ts:571 / locals-guard:584). One label conflation: 'getBindAndCheckDiagnosticsForFile' cited at program.ts:2887, but 2887 is the NoCache variant (plain is 2869). 3 Explore subagents, 114 tool calls, 2.43M ctx (~4.3x grove)."
-        }
-      },
-      "verdict": "All three arms Full on completeness with line-exact grounding; answer quality does not separate the tools on this cross-cutting parse->bind->check->emit trace. Cost is the differentiator and it is dramatic: baseline 2.43M ctx (3 parallel Explore subagents, 114 tool calls, 57 bash + 54 read) vs grove 570k (1.00 grounding, 10 structural calls) vs lsp 773k (12 LSP calls, read-anchored). Note: the reference key anchors steps at call-sites (initializeTypeChecker call checker.ts:2410, emitWorker call program.ts:2699, getDiagnostics call :2906) while the arms cite definitions (checker.ts:51555, program.ts:2718) -- both valid, no key revision.",
-      "ts": "2026-06-28T02:40:22.088Z"
-    },
-    "L5-spring-boot": {
-      "scores": {
-        "grove": {
-          "grounding": 1,
-          "completeness": 1,
-          "verdict": "Full. All 6 spine elements + extras across a 9-stage walkthrough: attach (ConfigurationPropertySources.attach@89, get@120) -> adapt (SpringConfigurationPropertySources.adapt@64 -> SpringConfigurationPropertySource.from@171, SYSTEM_ENVIRONMENT_MAPPERS) -> name resolution (getConfigurationProperty@85, mapper.map, getPropertySourceProperty@106; SystemEnvironmentPropertyMapper.map@47 four forms + reverse map@63/convertName@72/processElementValue@81) -> Binder.bind@287/private bind@365/onStart -> bindObject@423/findProperty@476/bindProperty@490 -> handleBindResult@384 (onSuccess/onFinish, BindConverter convert@105) -> BindResult. Every sampled cite line-exact vs the actual core/spring-boot/ tree; found the cache reverse-lookup path beyond the key. Heaviest navigation of the bench (42 grove calls) at 877k ctx; recovered from the repo's restructured layout."
-        },
-        "baseline": {
-          "grounding": 1,
-          "completeness": 1,
-          "verdict": "Full. All 6 spine elements across a 7-stage walkthrough, and uniquely nailed the attach() vs from() two-path distinction (spine 1) explicitly. Hits the env-var name mapping (SystemEnvironmentPropertyMapper, 4 candidate forms, SYSTEM_ENVIRONMENT vs LEGACY buildSimpleToString/Form.UNIFORM-ORIGINAL), handler callbacks (onStart/onSuccess/onFinish), conversion (BindConverter delegates), and BindResult.of/UNBOUND. LINE-LIGHT — names classes/methods, almost no file:line cites — but the concrete claims are accurate (no wrong cites), so grounding is not docked per cite-accuracy-not-density. CHEAPEST cell of the triple (397k ctx, 1 Explore subagent) despite the repo-layout restructure."
-        },
-        "lsp": {
-          "grounding": 1,
-          "completeness": 1,
-          "verdict": "Full (RE-RUN; the original run DNF'd mid-synthesis on a transient 'Connection closed' API error, which the new is_error gate now catches). The MOST line-precise of the three arms: an 11-stage walkthrough with every sampled cite line-exact vs the actual tree -- attach (ConfigurationPropertySources.java:89), SpringConfigurationPropertySource.from:171/getConfigurationProperty:85/getPropertySourceProperty:106, SystemEnvironmentPropertyMapper.map:47/:63, SpringIterableConfigurationPropertySource:105/tryUpdate:258 (the cache), ConfigurationPropertiesBindingPostProcessor:82, ConfigurationPropertiesBinder.bind:92/getBindHandler:113/getBinder:185/onStart:239, Binder constructor:201/:218/bind:248/:365/bindObject:423/findProperty:476/bindProperty:490/bindDataObject:498, BindConverter:64/:95. Uniquely traced the NO_DIRECT_PROPERTY short-circuit and the forward+reverse cache mapping. 3 native-LSP/jdtls calls, read-anchored (13 reads); 559k ctx -- cheaper than grove here."
+          "verdict": "Full. All six spine elements with the tightest acceptance detail: RPC (rpc/mempool.cpp:47) -> BroadcastTransaction (node/transaction.cpp:32) making the direct InitiateTxBroadcastToAll call on success; ProcessTransaction (validation.cpp:4455) -> AcceptToMemoryPool (1781) -> AcceptSingleTransactionInternal, with PreChecks (786), PolicyScriptChecks (1139) and ConsensusScriptChecks (1162) both naming CheckInputScripts; per-peer m_tx_inventory_to_send queue (net_processing.cpp:2272) with the handshake gate and known-filter; and the SendMessages flush (5792) producing CInv and MakeAndPushMessage(NetMsgType::INV). The decoupling point (synchronous queue, asynchronous trickle-timed flush) is explicit. Sampled cites including the harder ones (1139/1162, 2272, 5792) all resolve exact. Process: re-run on the FIXED native-LSP wiring (lsp_tools=2) — engaged but grep-heavy (1.36M context / 47 turns, 2 native LSP calls anchoring 26 grep + 17 reads)."
         }
       },
       "key_revisions": [
         {
           "level": "L5",
-          "reason": "Reference key example paths use the legacy spring-boot-project/spring-boot/ module layout; the pinned repo has since been restructured to core/spring-boot/. Package-relative structure and verified spine line numbers (attach@89, getConfigurationProperty@85, map@47/63, convertName@72, processElementValue@81, bindObject@423, findProperty@476, bindProperty@490, BindConverter@58/126) still match — only the module path prefix changed.",
-          "cite": "core/spring-boot/src/main/java/org/springframework/boot/context/properties/{source,bind}/",
-          "ts": "2026-06-28"
+          "reason": "node/transaction.cpp line anchors drifted in the pinned source: InitiateTxBroadcastToAll is the direct call at line 133 (key says 137), InitiateTxBroadcastPrivate at 136 (key says 140), AddUnbroadcastTx at 102 (key says ~91). Verified by reading node/transaction.cpp:99-138. Spine meaning unchanged; the direct (non-signal) call from BroadcastTransaction is confirmed.",
+          "cite": "experiment/repos/bitcoin/src/node/transaction.cpp:133 (InitiateTxBroadcastToAll), :102 (AddUnbroadcastTx), :136 (InitiateTxBroadcastPrivate)",
+          "ts": "2026-06-29"
         }
       ],
-      "verdict": "All three arms Full with line-exact grounding (baseline accurate-but-line-light). The cell inverts the usual cost story: baseline is CHEAPEST (397k vs grove 877k vs lsp 559k) and uniquely called out the attach()-vs-from() nuance, while grove went deepest (42 structural calls, found the cache reverse-lookup) and lsp was the most line-precise (11 stages, every cite exact, incl. NO_DIRECT_PROPERTY + forward/reverse cache). The lsp value is a RE-RUN: its first run DNF'd mid-synthesis on a transient 'Connection closed mid-response' API error that the original gate missed (has_result was true despite is_error=true, subtype:success); side-metrics.sh + the runarm gate now reject is_error==true. Note: the pinned repo was restructured to core/spring-boot/ vs the key's legacy spring-boot-project/ paths (see key_revisions); all arms navigated the actual tree, verified line-exact.",
-      "ts": "2026-06-28T03:52:46.066Z"
+      "verdict": "The differentiator here is QUALITY, not just cost — the first cell in the set where an arm missed. grove and lsp both reached Full (0.97): RPC -> BroadcastTransaction's DIRECT InitiateTxBroadcastToAll call after mempool acceptance (ProcessTransaction -> AcceptToMemoryPool -> AcceptSingleTransactionInternal), the per-peer m_tx_inventory_to_send queue, and the deferred SendMessages INV flush — the queue-then-flush indirection the prompt centers on. baseline dropped to Partial (0.8): it fabricated a 'signal dispatch' bridge (TransactionAddedToMempool -> ChainImpl -> InitiateTxBroadcastToAll) that does not exist, mis-routing the very connection being asked about — and did so as the MOST expensive arm (1.67M context near-runaway vs grove's 547k). The re-run semantic arm engaged (lsp_tools=2) but leaned grep-heavy (1.36M). Key revision recorded: transaction.cpp line anchors drifted (direct call now at :133, not :137); no arm docked for the stale key. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T06:13:19.550Z"
+    },
+    "L5-typescript": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. Traces all five stages with every required spine element: program/file discovery (createProgram program.ts:1515 -> processRootFile :3291 -> findSourceFileWorker :3545 -> host.getSourceFile :3635 -> createSourceFile parser.ts:1344), scan/parse (parseSourceFile :1603 -> parseSourceFileWorker :1803, scanner.scan scanner.ts:1891), bind correctly identified as checker-driven (getTypeChecker program.ts:2684 -> createTypeChecker checker.ts:1486 -> initializeTypeChecker :51555 -> bindSourceFile binder.ts:502), lazy cached check (getSemanticDiagnostics -> checkSourceFile checker.ts:49547 via getDiagnostics :49689), and emit (emitWorker :2718 -> getTransformers :2757 -> emitFiles emitter.ts:752 -> transformNodes transformer.ts:248 -> printer -> writeFile, JS/decl split at 821/886). Sampled cites resolve exact; minor: mislabels program.ts:2887 (NoCache variant vs :2869 cache wrapper) and a garbled getTransformers line — neither affects the conclusion. Process (un-blind) CAVEAT: ran to 2.43M context / 57 grep + 54 reads — a near-runaway scan (by far the most expensive arm), Full but brute-force."
+        },
+        "grove": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Covers all four stages with connective seams in a clean table: createProgram (program.ts:1515) discovers+parses via findSourceFileWorker :3545 -> host.getSourceFile :410 -> createSourceFile parser.ts:1344; parse-time getSyntacticDiagnosticsForFile :2831; binding deferred to first getTypeChecker :2684 -> initializeTypeChecker :51555 -> bindSourceFile binder.ts:502; lazy per-file check via getSemanticDiagnosticsForFile :2858 with the concatenate(bind+check, programDiagnostics) merge and cache; emit via emitWorker :2718 -> emitFiles emitter.ts:752 with getTransformers transformer.ts:120, transformNodes -> printer -> host.writeFile. Surfaces getPreEmitDiagnostics :634 (acceptable extra). Every sampled cite exact. Process: leanest of the three — 570k context / 33 turns, 10 grove calls + 9 grep + 12 reads."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. The most structured walkthrough; hits every spine element plus deep extras, all grounded: program construction (createProgram program.ts:1515 -> processSourceFile :3486 / findSourceFileWorker :3545 -> host.getSourceFile :3635 -> createSourceFile parser.ts:1344 -> collectExternalModuleReferences :3318); scan/parse (createScanner scanner.ts:1022, recursive-descent loop); bind as checker-driven (getTypeChecker :2684 -> initializeTypeChecker checker.ts:51555 -> loop :51557 -> bindSourceFile binder.ts:502, globals merge mergeSymbolTable :51577); lazy cached check (getSemanticDiagnosticsForFile :2858 -> getBindAndCheckDiagnosticsForFile :2869 -> getDiagnostics checker.ts:49689 -> checkSourceFile :49547 -> checkSourceFileWorker :49578 with NodeCheckFlags.TypeChecked guard :49580, addLazyDiagnostic :49611); emit (emit :2688 -> emitWorker :2718 -> getEmitResolver checker.ts:2506 -> emitFiles emitter.ts:752 -> transformNodes transformer.ts:248 -> emitJsFileOrBundle :821 / emitDeclarationFileOrBundle :886 -> writeFile). Every deep cite sampled resolves line-exact (51557, 51577, 49578, 49580, 49611, 2506, 1550, 2947). No wrong turns. Process: re-run on the FIXED native-LSP wiring (lsp_tools=17) — 1.10M context / 42 turns, 17 native LSP calls + 23 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms Full on the parse->bind->check->emit pipeline with the load-bearing indirections correct: binding driven by the checker's initializeTypeChecker (not createProgram), checking lazy+cached per file, emit running transformNodes before printing. Grounding is uniformly high (0.96-0.98); every sampled cite resolves line-exact, deepest into checker internals on the re-run semantic arm. Quality did not separate them; COST did, with a sharp split — grove leanest (570k / 33 turns), the re-run semantic arm mid (1.10M / 42), and baseline a near-runaway (2.43M context, 57 grep + 54 reads) that reached the same Full answer only by brute-force breadth on this large repo. The lsp arm is the re-run on the corrected native-LSP wiring (lsp_tools=17). Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T06:13:18.803Z"
+    },
+    "L5-spring-boot": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.9,
+          "completeness": 1,
+          "verdict": "Full. Line-light but complete in meaning: covers all six spine elements — bean post-processor entry, ConfigurationPropertiesBinder handler-chain + getBinder/from() source wiring, SpringConfigurationPropertySource.from mapper selection, SystemEnvironmentPropertyMapper.map four-form forward mapping with the SYSTEM_ENVIRONMENT vs LEGACY format distinction, the Binder onStart->bindObject->findProperty->bindProperty loop, BindConverter delegate chain, handleBindResult callbacks, and BindResult — and uniquely closes by explicitly contrasting the attach() (env/@Value) path against the from() (Binder) path, so the cross-cutting attach hop is acknowledged. Few file:line cites to sample, but the named classes/methods and the four-candidate mapping logic are accurate; minor imprecision placing JSR-303 validation at onSuccess/convert (it fires on onFinish). Accuracy keeps grounding high despite low cite density. Process (un-blind): cheapest arm — 397k context / 15 turns, 14 grep + 21 reads."
+        },
+        "grove": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. The most complete and tightest-grounded: explicitly opens with the raw SystemEnvironmentPropertySource and ConfigurationPropertySources.attach :89 (addFirst head insertion) and get :120 (the attach hop), then adapt :64 -> SpringConfigurationPropertySource.from :171 mapper/class selection, the binder entry via ConfigurationPropertiesBinder.bind :92 / getBindHandler :113 / getBinder :185, the private bind :365 with CacheOverride/onStart, bindObject :423 (containsNoDescendantOf guard), findProperty :476, both lookup paths in getConfigurationProperty :105/:85, forward map :47 four-form table and reverse map(String) :63/processElementValue, bindProperty :490 (value->placeholders->convert), BindConverter.convert :95/:105 delegate loop, handleBindResult :384 onSuccess/onFinish, and BindResult. Sampled cites resolve line-exact across the board, including the iterable cache tryUpdate :258. No wrong turns. Process: highest-grounded but by far the most expensive — 877k context / 57 turns, 42 grove calls + 11 grep."
+        },
+        "lsp": {
+          "grounding": 0.97,
+          "completeness": 0.92,
+          "verdict": "Full-minus. Threads source-adaptation (SpringConfigurationPropertySource.from :171, mapper-set + class selection), name-mapping both directions (SystemEnvironmentPropertyMapper.map :47 forward four-form, reverse adapt/processElementValue), the Binder loop (bind :365 with onStart, bindObject :423, findProperty :476/:482, bindProperty :490 placeholders+convert), conversion (BindConverter), handler callbacks (onSuccess/onFinish :387/:405) and BindResult.of :289 — plus correct extras (post-processor entry :82, ConfigurationPropertiesBinder.bind :92, the iterable cache tryUpdate :258). The one gap vs the required spine: it enters via the ConfigurationPropertiesBinder getConfigurationPropertySources()->from() path and never names the ConfigurationPropertySources.attach(environment) step (spine 1) the prompt explicitly asks about — it covers source-wrapping by meaning but not the attach hop, hence completeness 0.92. Grounding strong: every sampled file:line resolves exact (from :171, Binder :365/:384/:423/:476/:490, post-processor :82); BindConverter.java:100 is a couple lines loose of convert at :95, otherwise clean. Process: re-run on the FIXED native-LSP wiring (lsp_tools=4) — 505k context / 33 turns, 4 native LSP calls + 8 grep + 19 reads."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "QUALITY separated the arms slightly here, on the one spine element the prompt foregrounds — the ConfigurationPropertySources.attach(environment) hop. grove reached Full at the tightest grounding (0.98), uniquely opening on attach :89 / get :120 before the from()/Binder path. baseline also Full (line-light, 0.9 grounding) and explicitly contrasted attach() vs from(). The re-run semantic arm landed Full-minus (completeness 0.92): excellent grounding (0.97) on the Binder loop but it entered via from() and never named the attach hop. COST inverts the quality order: baseline cheapest (397k / 15 turns), the re-run semantic arm mid (505k / 33), grove dearest by a wide margin (877k / 57 turns, 42 structural calls) — it bought the top grounding with the most context. The lsp arm is the re-run on the corrected native-LSP wiring (lsp_tools=4). Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T06:13:20.271Z"
     },
     "L2-bitcoin": {
       "scores": {
