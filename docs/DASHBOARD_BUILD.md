@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P3 / T3.4` — **P1 + P2 complete; T3.1–T3.3 done** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P3 / T3.5` — **P1 + P2 complete; T3.1–T3.4 done** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -159,7 +159,13 @@ raw byte in ≤3 clicks.
   files with live counts, incl. the walled-off `*.reference.md` keys and the
   statectl-only ledger). Pricing confirmed against the claude-api reference. Verified
   headless: model label, all 5 price rows, 8 sources, dynamic judge count; no errors.
-- [ ] **T3.4 Reproduce-it box** — exact commands to rebuild the feed (§10.8).
+- [x] **T3.4 Reproduce-it box** — exact commands to rebuild the feed (§10.8). A
+  "Reproduce this page" block in `#methodology` emits the three exact commands
+  (`git checkout <build-sha>` → `node site/build.mjs --sha … --at …` → `python3 -m
+  http.server -d site 8099`) with the build's own `meta.git_sha` + `generated_at`
+  interpolated, so re-running regenerates *this* feed; a caveat notes `site/data/`
+  is gitignored and Pages rebuilds on deploy. Verified headless: real SHA (3f260b9),
+  build command present, deterministic note; no errors.
 - [ ] **T3.5 Cite-link verification** — confirm cited lines resolve at the SHA.
 - [ ] **T3.6 Accessibility + no-JS fallback + reduced-motion** pass (§11).
 

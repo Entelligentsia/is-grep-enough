@@ -94,6 +94,11 @@
     <h3 class="meth-h">Data sources</h3>
     <p class="note">The feed is a pure function of committed evidence, synthesized by <code>site/build.mjs</code>. The cell ledger is written <b>only</b> through the validated <code>statectl</code> CLI — never hand-edited. These are the exact files behind the current view:</p>
     <div id="meth-sources"></div>
+
+    <h3 class="meth-h">Reproduce this page</h3>
+    <p class="note">The feed is deterministic — re-running <code>build.mjs</code> against the same evidence reproduces <code>site/data/</code> byte-for-byte (only the stamped SHA/timestamp differ). Rebuild and serve locally, then diff against what's published:</p>
+    <pre id="meth-repro" class="repro"></pre>
+    <p class="caveat" id="meth-repro-note"></p>
   </section>
 
   <section>

@@ -152,6 +152,8 @@ table.meth-price td.mono { text-align: right; }
 .meth-sources dt { margin: 0; }
 .meth-sources dt code { font-size: .78rem; }
 .meth-sources dd { margin: 0; color: var(--ink-soft); }
+.repro { background: var(--paper-2); border-left: 2px solid var(--ink-faint); padding: .7rem .9rem; margin: .4rem 0 .3rem;
+         font-family: var(--mono); font-size: .78rem; line-height: 1.5; white-space: pre-wrap; overflow-x: auto; color: var(--ink); }
 
 /* free cell-vs-cell compare (§8, T2.3) */
 .fc-pickers { display: flex; gap: 1.4rem; flex-wrap: wrap; align-items: center; font-size: .85rem; margin-bottom: 1rem; }

@@ -168,6 +168,23 @@ function renderMethodology() {
     list.append(el("dd", { textContent: d }));
   }
   $("#meth-sources").replaceChildren(list);
+
+  // reproduce-it box (§10.8) — the exact commands that rebuild THIS feed. The SHA
+  // is the build's own git_sha so re-running it regenerates the published data.
+  const sha = DATA.meta.git_sha;
+  $("#meth-repro").textContent = [
+    "# 1. check out the exact commit this page was built from",
+    `git checkout ${sha}`,
+    "",
+    "# 2. regenerate the feed (deterministic over committed evidence)",
+    `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "${DATA.meta.generated_at}"`,
+    "",
+    "# 3. serve it and open the dashboard",
+    "python3 -m http.server -d site 8099   # → http://localhost:8099/",
+  ].join("\n");
+  $("#meth-repro-note").textContent =
+    `This page was generated ${DATA.meta.generated_at} from ${sha}. ` +
+    "site/data/ is gitignored (a build artifact); the Pages Action regenerates it on deploy.";
 }
 
 function fillSelect(sel, vals) { for (const v of vals) sel.append(el("option", { value: v, textContent: v })); }
