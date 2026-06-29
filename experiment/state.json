@@ -152,11 +152,11 @@
     },
     "L1-lsp-django": {
       "status": "harvested",
-      "run_wall_s": 42,
-      "context": 127173,
+      "run_wall_s": 70,
+      "context": 249776,
       "engaged": true,
       "evidence": "evidence/nav3/L1/raw/django-L1.claude.lsp.jsonl",
-      "ts": "2026-06-27T09:55:26.787Z"
+      "ts": "2026-06-29T05:31:17.662Z"
     },
     "L2-baseline-django": {
       "status": "harvested",
