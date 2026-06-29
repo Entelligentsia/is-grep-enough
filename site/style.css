@@ -100,6 +100,13 @@ td.repo:hover { color: var(--ink); }
 .detail .genesis { font-size: .78rem; color: var(--ink-faint); font-style: italic; margin: .4rem 0 .3rem; }
 .detail .prompt-text { font-family: var(--sans); font-size: .86rem; line-height: 1.5; color: var(--ink); white-space: pre-wrap;
                        background: var(--paper-2); border-left: 2px solid var(--ink-faint); padding: .7rem .9rem; margin: 0 0 1.2rem; }
+.spark { margin-top: .5rem; border-top: 1px solid var(--rule); padding-top: .35rem; }
+.spark-h { display: flex; justify-content: space-between; align-items: baseline; }
+.spark-h .k { color: var(--ink-faint); font-size: .82rem; }
+.spark-turns { font-family: var(--mono); font-size: .72rem; color: var(--ink-faint); }
+.spark-plot { min-height: 62px; }
+.spark-prov { font-size: .68rem; color: var(--ink-faint); margin-top: .1rem; }
+.spark-prov code { font-size: .66rem; }
 .tools { margin-top: .6rem; border-top: 1px dashed var(--rule-strong); padding-top: .3rem; }
 .tools-h { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-faint); margin-bottom: .2rem; }
 .metricrow .v.low { font-weight: 600; }

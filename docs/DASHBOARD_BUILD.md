@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P1 / T1.2` — **T1.1 done** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P1 / T1.3` — **T1.1, TX.1, T1.2 done** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -56,8 +56,12 @@ raw byte in ≤3 clicks.
   repo + a per-rung-per-arm median tick, y from zero (`~s` ticks). Removed metric
   tab state/wiring. Partial rungs render with fewer dots (L4=2, L5=5); single-rung
   filter narrows the facet row.
-- [ ] **T1.2 Context growth sparkline.** Per-turn curve from `series` on
-  hover/drill; provenance points at raw file, not ledger (§3.1 truthbound note).
+- [x] **T1.2 Context growth sparkline.** Per-arm context-growth sparkline drilled
+  in the cell detail (`renderSparkline`), lazy-fetched from `series/<cell>.json`
+  (TX.1): Plot area+line+dots, x=turn y=ctx, axis from zero, in arm-identity
+  color. Provenance line points at the **raw file** ("build-derived, not the
+  ledger scalar"), honoring §3.1 — and visibly so (e.g. baseline L2-redis shows
+  19 series turns vs the ledger's 14 `num_turns`, which the curve is honest about).
 - [ ] **T1.3 Honest aggregation.** Min–max whisker / dot spread + printed `n`
   everywhere an aggregate appears; never a lone mean/median (§5.3).
 - [ ] **T1.4 Arm-visibility toggle** in the global filter bar (§4).
