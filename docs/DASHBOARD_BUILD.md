@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P0 / T0.4` *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P1 / T1.1` — **P0 complete** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -33,15 +33,19 @@ raw byte in ≤3 clicks.
   cell. The modal renders them as nested collapsible sub-trails (lazy-parsed
   Claude Code session → reasoning + `▸ tool(args)`), cite-linked. 22 sessions
   across 16 cells (all baseline `Explore` fan-outs).
-- [ ] **T0.4 Transcript viewer — header context strip.** Model, turns, wall,
-  final cost framing the trail (§7).
-- [ ] **T0.5 Coverage grid — DNF/blocked rendering.** Hatch/fill by shape not
-  color; tooltip the `dnf_reason`; surface attempt count.
-- [ ] **T0.6 Coverage grid — judged-overlay toggle.** Toggle that overlays
-  judged? state per cell (§5.2).
-- [ ] **T0.7 Cell detail — prompt verbatim + engagement table.** Show the bare
-  prompt the arms saw inline (genesis-wall marker), full per-arm tool counts +
-  gate signal pass/fail, cheapest-on-each-axis noted factually (§6).
+- [x] **T0.4 Transcript viewer — header context strip.** Modal header shows
+  model · turns · wall · cost · peak ctx · engagement signal, framing the trail (§7).
+- [x] **T0.5 Coverage grid — DNF/blocked rendering.** Status by shape/fill:
+  filled=harvested, empty=pending, grey-hatch=blocked, arm-bordered-hatch=DNF;
+  tooltip shows status + flags + `dnf_reason`. Attempt count is *not* in the
+  ledger schema (sides carry no attempts field) so it is not fabricated.
+- [x] **T0.6 Coverage grid — judged-overlay toggle.** Checkbox overlays an ink
+  tick on each segment whose arm has a blind judge score (§5.2).
+- [x] **T0.7 Cell detail — prompt verbatim + engagement table.** Bare prompt
+  shown inline with genesis-wall marker (`build.mjs` adds `cell.prompt` from
+  `prompts/<repo>/<rung>.txt`); per-arm tool-usage table (bash/grove/lsp/read/
+  mcp/total) with the gate signal pass/fail; cheapest-on-each-axis marked
+  "lowest" factually (§6).
 
 ## Phase 1 — Dashboard (metrics, filters, honesty)
 

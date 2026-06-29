@@ -98,6 +98,9 @@ for (const rung of RUNGS) {
       const id = `${rung}-${arm}-${repo}`;
       const side = state.sides?.[id];
       const status = side?.status ?? "pending";
+      // the BARE prompt the arm saw (genesis wall: reference keys are NOT shown).
+      const promptPath = join(ROOT, `experiment/prompts/${repo}/${rung}.txt`);
+      const prompt = existsSync(promptPath) ? readFileSync(promptPath, "utf8").trim() : null;
       const rawPath = join(ROOT, `evidence/nav3/${rung}/raw/${repo}-${rung}.claude.${arm}.jsonl`);
       const readableRel = `evidence/nav3/${rung}/readable/${repo}-${rung}.claude.${arm}.md`;
       const run = status === "harvested" ? readRun(rawPath) : null;
@@ -160,7 +163,7 @@ for (const rung of RUNGS) {
       else nPending++;
 
       cells.push({
-        id, rung, repo, arm, status,
+        id, rung, repo, arm, status, prompt,
         lang: manifest[repo]?.lang ?? null,
         sha: manifest[repo]?.sha ?? null,
         engaged: side?.engaged ?? (engageVal != null ? engageVal > 0 : null),

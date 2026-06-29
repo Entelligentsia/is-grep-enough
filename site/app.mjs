@@ -24,7 +24,7 @@ const METRICS = {
   cost: { label: "Cost (billed USD)", get: (c) => c.cost?.usd, fmt: (v) => v != null ? "$" + v.toFixed(3) : "—" },
 };
 
-const state = { rung: "", repo: "", metric: "cost", cell: null };
+const state = { rung: "", repo: "", metric: "cost", cell: null, showJudged: false };
 let DATA;
 let REPO = {}; // id → {id, lang, sha, gh} for cite-link construction
 
@@ -55,6 +55,7 @@ async function init() {
     const b = el("button", { textContent: m.label, onclick: () => { state.metric = k; render(); } });
     b.dataset.k = k; $("#metric-tabs").append(b);
   }
+  $("#t-judged").onchange = (e) => { state.showJudged = e.target.checked; renderCoverage(); };
   $("#tx-close").onclick = () => $("#tx-overlay").classList.remove("open");
   $("#tx-overlay").onclick = (e) => { if (e.target.id === "tx-overlay") e.target.classList.remove("open"); };
 
@@ -102,8 +103,18 @@ function renderCoverage() {
       if (state.cell === cid) mark.classList.add("active");
       for (const arm of ARMS) {
         const c = byId[`${rg}-${arm}-${repo}`];
-        const st = c?.status === "harvested" ? "harvested" : c?.status === "blocked" ? "blocked" : "pending";
-        mark.append(el("span", { className: `seg ${st} ${arm}`, title: `${rg} · ${arm} · ${repo}: ${c?.status ?? "pending"}` }));
+        // status by shape/fill, never good/bad color: filled=harvested,
+        // empty=pending, hatched=blocked/DNF. DNF reason tooltipped when known.
+        let st = "pending";
+        if (c?.status === "harvested") st = c.flags?.includes("dnf") ? "dnf" : "harvested";
+        else if (c?.status === "blocked") st = "blocked";
+        const judged = state.showJudged && DATA.judge[`${rg}-${repo}`]?.scores?.[arm] ? " judged" : "";
+        const reason = c?.dnf_reason ? ` — ${c.dnf_reason}` : "";
+        const flagstr = c?.flags?.length ? ` [${c.flags.join(",")}]` : "";
+        mark.append(el("span", {
+          className: `seg ${st} ${arm}${judged}`,
+          title: `${rg} · ${arm} · ${repo}: ${c?.status ?? "pending"}${flagstr}${reason}`,
+        }));
       }
       mark.onclick = () => { state.cell = cid; renderDetail(cid); $("#detail-section").scrollIntoView({ behavior: "smooth" }); renderCoverage(); };
       td.append(mark); tr.append(td);
@@ -153,20 +164,49 @@ function renderDetail(cid) {
 
   const host = $("#detail"); host.replaceChildren();
   const cols = el("div", { className: "armcols" });
+
+  // cheapest-on-each-axis, stated factually (never "winner"): the lowest value
+  // across arms on a cost-like axis, only when ≥2 arms have data (§6).
+  const AXES = { context: (c) => c.metrics?.context, turns: (c) => c.metrics?.turns,
+                 wall: (c) => c.metrics?.run_wall_s, cost: (c) => c.cost?.usd };
+  const cheapest = {};
+  for (const [k, get] of Object.entries(AXES)) {
+    const vals = arms.map(get).filter((v) => v != null);
+    cheapest[k] = vals.length > 1 ? Math.min(...vals) : null;
+  }
+  const lowest = (c, axis) => cheapest[axis] != null && AXES[axis](c) === cheapest[axis];
+
   for (const c of arms) {
     const col = el("div", { className: "armcol" });
     col.append(el("h4", {}, [el("span", { className: "bar", style: `background:${ARM_COLOR[c.arm]}` }),
       document.createTextNode(c.arm), ...(c.flags?.length ? [el("span", { className: "flag", textContent: c.flags.join(" ") })] : [])]));
     const rowsM = [
-      ["status", c.status],
-      ["engagement", c.engagement ? `${c.engagement.key}=${c.engagement.value} ${c.engagement.passed ? "✓" : "✗"}` : "—"],
-      ["context", c.metrics?.context?.toLocaleString() ?? "—"],
-      ["turns", c.metrics?.turns ?? "—"],
-      ["wall", c.metrics?.run_wall_s != null ? c.metrics.run_wall_s + "s" : "—"],
-      ["cost", c.cost?.usd != null ? "$" + c.cost.usd.toFixed(4) : "—"],
-      ["cache r/c", c.cost ? `${c.cost.cache_read.toLocaleString()} / ${c.cost.cache_create.toLocaleString()}` : "—"],
+      ["status", c.status, null],
+      ["engagement", c.engagement ? `${c.engagement.key}=${c.engagement.value} ${c.engagement.passed ? "✓" : "✗"}` : "—", null],
+      ["context", c.metrics?.context?.toLocaleString() ?? "—", "context"],
+      ["turns", c.metrics?.turns ?? "—", "turns"],
+      ["wall", c.metrics?.run_wall_s != null ? c.metrics.run_wall_s + "s" : "—", "wall"],
+      ["cost", c.cost?.usd != null ? "$" + c.cost.usd.toFixed(4) : "—", "cost"],
+      ["cache r/c", c.cost ? `${c.cost.cache_read.toLocaleString()} / ${c.cost.cache_create.toLocaleString()}` : "—", null],
     ];
-    for (const [k, v] of rowsM) col.append(el("div", { className: "metricrow" }, [el("span", { className: "k", textContent: k }), el("span", { className: "v", textContent: String(v) })]));
+    for (const [k, v, axis] of rowsM) {
+      const valSpan = el("span", { className: "v", textContent: String(v) });
+      if (axis && lowest(c, axis)) { valSpan.classList.add("low"); valSpan.append(el("span", { className: "lowtag", textContent: " lowest" })); }
+      col.append(el("div", { className: "metricrow" }, [el("span", { className: "k", textContent: k }), valSpan]));
+    }
+    // engagement / tool-usage table — the "did it do it the hard way?" evidence
+    if (c.tools) {
+      const tb = el("div", { className: "tools" });
+      tb.append(el("div", { className: "tools-h", textContent: "tool usage" }));
+      for (const [key, label] of [["bash_calls", "bash"], ["grove_tools", "grove"], ["lsp_tools", "lsp"], ["reads", "read"], ["mcp_nongrove_tools", "mcp"], ["tool_calls", "total"]]) {
+        if (c.tools[key] == null) continue;
+        const gate = c.engagement?.key === key;
+        const v = el("span", { className: "v", textContent: String(c.tools[key]) });
+        if (gate) v.append(el("span", { className: "lowtag", textContent: c.engagement.passed ? " gate ✓" : " gate ✗" }));
+        tb.append(el("div", { className: "metricrow", }, [el("span", { className: "k", textContent: label }), v]));
+      }
+      col.append(tb);
+    }
     if (jr?.scores?.[c.arm]) {
       const s = jr.scores[c.arm];
       const jd = el("div", { className: "judge" });
@@ -182,9 +222,15 @@ function renderDetail(cid) {
     cols.append(col);
   }
 
-  // prompt + judge synthesis + key revisions (judge transparency is first-class)
+  // prompt verbatim + judge synthesis + key revisions (judge transparency is first-class)
   const head = el("div");
-  head.append(el("div", { className: "prompt", textContent: "Prompt and reference key live in the transcript header (genesis wall: arms saw only the bare prompt)." }));
+  const prompt = arms.find((a) => a.prompt)?.prompt;
+  if (prompt) {
+    head.append(el("div", { className: "genesis", textContent: "The prompt shown to all three arms — the only thing they saw. Reference keys were judge-only (genesis wall); they are not on this page except as post-hoc key revisions below." }));
+    head.append(el("pre", { className: "prompt-text", textContent: prompt }));
+  } else {
+    head.append(el("div", { className: "prompt", textContent: "(bare prompt not found in feed)" }));
+  }
   host.append(head, cols);
   if (jr?.verdict) host.append(el("p", { className: "note", style: "margin-top:1rem", textContent: "Judge synthesis: " + jr.verdict }));
   for (const kr of jr?.key_revisions ?? [])
@@ -202,12 +248,23 @@ async function openTranscript(c) {
   const cache = {};
 
   const head = el("div", { className: "tx-head" });
-  const title = el("span", { className: "caveat" }, `${c.id} · ${c.arm}`);
+  // header context strip — frames the trail by what it cost to produce (§7)
+  const left = el("div", { className: "tx-head-l" });
+  left.append(el("div", { className: "tx-title" }, `${c.id} · ${c.arm}`));
+  const bits = [
+    `model ${DATA.meta.model}`,
+    c.metrics?.turns != null ? `${c.metrics.turns} turns` : null,
+    c.metrics?.run_wall_s != null ? `${c.metrics.run_wall_s}s wall` : null,
+    c.cost?.usd != null ? `$${c.cost.usd.toFixed(4)}` : null,
+    c.metrics?.context != null ? `${c.metrics.context.toLocaleString()} peak ctx` : null,
+    c.engagement ? `${c.engagement.key}=${c.engagement.value} ${c.engagement.passed ? "✓" : "✗"}` : null,
+  ].filter(Boolean).join("  ·  ");
+  left.append(el("div", { className: "tx-meta" }, bits));
   const toggle = el("div", { className: "tx-toggle" });
   const bReadable = el("button", { textContent: "readable", onclick: () => switchTo("readable") });
   const bRaw = el("button", { textContent: "raw json", onclick: () => switchTo("raw"), disabled: !c.evidence.raw_local });
   toggle.append(bReadable, bRaw);
-  head.append(title, toggle);
+  head.append(left, toggle);
   const content = el("div", { className: "tx-content" });
   body.replaceChildren(head, content);
 

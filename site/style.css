@@ -50,6 +50,9 @@ h2 { font-size: .82rem; font-weight: 600; text-transform: uppercase; letter-spac
 .legend .swatch { display: inline-block; width: .7rem; height: .7rem; margin-right: .35rem; vertical-align: baseline; }
 .swatch.baseline { background: var(--baseline); } .swatch.grove { background: var(--grove); } .swatch.lsp { background: var(--lsp); }
 
+/* toggles */
+.toggle { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; color: var(--ink-soft); margin-bottom: .6rem; cursor: pointer; }
+
 /* filter bar */
 .filters { display: flex; gap: 1.4rem; flex-wrap: wrap; align-items: center; font-size: .85rem; }
 .filters label { color: var(--ink-faint); margin-right: .4rem; }
@@ -69,6 +72,14 @@ td.repo:hover { color: var(--ink); }
 .seg.harvested.lsp { background: var(--lsp); border-color: var(--lsp); }
 .seg.pending { background: var(--paper-2); }
 .seg.blocked { background: repeating-linear-gradient(45deg, var(--paper-2), var(--paper-2) 2px, var(--ink-faint) 2px, var(--ink-faint) 3px); }
+/* DNF: harvested-but-no-clean-result — arm-colored border, hatched fill so it
+   reads as "ran, didn't land" without using a good/bad hue. */
+.seg.dnf.baseline { border-color: var(--baseline); }
+.seg.dnf.grove { border-color: var(--grove); }
+.seg.dnf.lsp { border-color: var(--lsp); }
+.seg.dnf { background: repeating-linear-gradient(45deg, transparent, transparent 2px, var(--ink-faint) 2px, var(--ink-faint) 3px); }
+/* judged overlay: a small ink tick at the segment's foot */
+.seg.judged { box-shadow: inset 0 -3px 0 -1px var(--ink); }
 .cellmark.active { outline: 2px solid var(--ink); outline-offset: 1px; }
 
 /* chart */
@@ -82,6 +93,13 @@ td.repo:hover { color: var(--ink); }
 /* detail / compare */
 .detail { border: 1px solid var(--rule-strong); padding: 1.1rem 1.2rem; background: var(--paper); }
 .detail .prompt { font-size: .9rem; color: var(--ink-soft); border-left: 2px solid var(--rule-strong); padding-left: .8rem; margin: .6rem 0 1rem; }
+.detail .genesis { font-size: .78rem; color: var(--ink-faint); font-style: italic; margin: .4rem 0 .3rem; }
+.detail .prompt-text { font-family: var(--sans); font-size: .86rem; line-height: 1.5; color: var(--ink); white-space: pre-wrap;
+                       background: var(--paper-2); border-left: 2px solid var(--ink-faint); padding: .7rem .9rem; margin: 0 0 1.2rem; }
+.tools { margin-top: .6rem; border-top: 1px dashed var(--rule-strong); padding-top: .3rem; }
+.tools-h { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-faint); margin-bottom: .2rem; }
+.metricrow .v.low { font-weight: 600; }
+.lowtag { font-family: var(--sans); font-size: .68rem; font-style: italic; color: var(--ink-faint); font-weight: 400; }
 .armcols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
 .armcol h4 { margin: 0 0 .4rem; font-size: .9rem; display: flex; align-items: center; gap: .4rem; }
 .armcol .bar { width: .6rem; height: .6rem; display: inline-block; }
@@ -106,8 +124,10 @@ td.repo:hover { color: var(--ink); }
 .tx-panel td, .tx-panel th { border: 1px solid var(--rule); padding: .2rem .5rem; font-size: .82rem; }
 
 /* transcript readable/raw toggle */
-.tx-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+.tx-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
            border-bottom: 1px solid var(--rule); padding-bottom: .5rem; margin-bottom: .8rem; }
+.tx-title { font-size: .9rem; font-weight: 600; }
+.tx-meta { font-family: var(--mono); font-size: .76rem; color: var(--ink-faint); margin-top: .2rem; }
 .tx-toggle { display: flex; gap: .2rem; }
 .tx-toggle button { font-family: var(--sans); font-size: .78rem; background: none; border: 1px solid var(--rule-strong);
                     color: var(--ink-soft); padding: .2rem .6rem; cursor: pointer; }
