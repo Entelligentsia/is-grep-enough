@@ -563,11 +563,11 @@
     },
     "L5-lsp-typescript": {
       "status": "harvested",
-      "run_wall_s": 201.763,
-      "context": 773286,
+      "run_wall_s": 219,
+      "context": 1101933,
       "engaged": true,
       "evidence": "evidence/nav3/L5/raw/typescript-L5.claude.lsp.jsonl",
-      "ts": "2026-06-28T02:35:27.796Z"
+      "ts": "2026-06-29T06:00:21.519Z"
     },
     "L1-baseline-webpack": {
       "status": "pending"

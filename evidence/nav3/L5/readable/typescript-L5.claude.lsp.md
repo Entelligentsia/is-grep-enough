@@ -1,193 +1,212 @@
 # transcript: I'm planning a change to what happens around producing output and reported errors for a source file, so I need to understand the full journey from source tex...
 
 
-💬 Let me load the LSP tool and start tracing the pipeline from program creation through emit.
+💬 I'll navigate this with the LSP tool, tracing each stage in order. Let me load it and start finding the key entry points across all five modules.
   ▸ ToolSearch(select:LSP)
 
-💬 I'll trace the full pipeline by looking up the key entry points across all stages in parallel.
+💬 Now let me find the key entry points across all five pipeline stages in parallel.
   ▸ LSP(createProgram)
-  ▸ LSP(createSourceFile)
+  ▸ LSP(createScanner)
   ▸ LSP(bindSourceFile)
+  ▸ LSP(createTypeChecker)
   ▸ LSP(emitFiles)
 
-💬 Now let me read the key sections of each stage — program creation, parsing, binding, type-checking, and emit — in parallel.
+💬 Good. Now I'll read focused sections of each stage's entry point in parallel.
   ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
-  ▸ Read(/home/bench/repos/typescript/src/compiler/parser.ts)
+  ▸ Read(/home/bench/repos/typescript/src/compiler/scanner.ts)
   ▸ Read(/home/bench/repos/typescript/src/compiler/binder.ts)
   ▸ Read(/home/bench/repos/typescript/src/compiler/emitter.ts)
 
-💬 Now let me look at how `createProgram` drives file loading and binding, how `getTypeChecker` is exposed, and how `program.emit` connects to `emitFiles`.
-  ▸ LSP(processSourceFile)
+💬 Now I need to trace how `createProgram` wires everything together — file loading, binding, checker creation, and emit. Let me look at those connection points.
+  ▸ LSP(processRootFile)
   ▸ LSP(getTypeChecker)
-  ▸ LSP(getDiagnosticsProducingTypeChecker)
-  ▸ LSP(getSemanticDiagnostics)
+  ▸ LSP(createSourceFile)
+  ▸ LSP(getEmitResolver)
   ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
   ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
-  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
-
-💬 Now let me read the `findSourceFile` body, `emitWorker`'s transformer assembly, and the actual checker trigger in `getBindAndCheckDiagnosticsForFileNoCache`.
-  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
-  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
-  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
-
-💬 Let me read how `findSourceFileWorker` actually calls parse and bind, and how `getTransformers` assembles the transform chain.
-  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
-  ▸ LSP(getTransformers)
-  ▸ Read(/home/bench/repos/typescript/src/compiler/transformer.ts)
-  ▸ LSP(getSourceFile CompilerHost)
-
-💬 Let me check where `bindSourceFile` is actually called from `program.ts`, and look at how `createGetSourceFile` wires up parse+bind.
-  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
-  ▸ LSP(bindSourceFile program)
-
-💬 Let me find exactly where `bindSourceFile` is called within program.ts.
-  ▸ Bash(grep -n "bindSourceFile" /home/bench/repos/typescript/src/compiler/program.ts | head -20)
-  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
-  ▸ Bash(grep -rn "bindSourceFile\b" /home/bench/repos/typescript/src/compiler/ | grep -v "binder.ts")
-  ▸ Read(/home/bench/repos/typescript/src/compiler/checker.ts)
-
-💬 Now let me read more of `initializeTypeChecker` to understand what the checker does after binding, and look at the parser's internal `parseSourceFile`.
-  ▸ Read(/home/bench/repos/typescript/src/compiler/checker.ts)
   ▸ Read(/home/bench/repos/typescript/src/compiler/parser.ts)
+  ▸ LSP(emit program)
 
-💬 Let me look at how `checker.getDiagnostics` does per-file lazy checking.
-  ▸ LSP(getDiagnostics TypeChecker)
+💬 Now let me read the `emitWorker` (how emit creates the resolver and calls `emitFiles`), how `processSourceFile` calls the parser and binder, and `getEmitReso...
+  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
+  ▸ LSP(processSourceFile)
   ▸ Read(/home/bench/repos/typescript/src/compiler/checker.ts)
+  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
+  ▸ LSP(getSemanticDiagnosticsForFile)
+  ▸ LSP(transformNodes)
+  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
+  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
+  ▸ Read(/home/bench/repos/typescript/src/compiler/transformer.ts)
 
-💬 Let me read how `emitJsFileOrBundle` applies transforms and drives the printer.
+💬 Now I need to see where binding happens after parsing, how the host's `getSourceFile` chain works, and how the printer runs after transforms.
+  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
+  ▸ LSP(getDiagnostics checker)
   ▸ Read(/home/bench/repos/typescript/src/compiler/emitter.ts)
 
-💬 I now have a complete picture of all five stages. Here's the full walkthrough.  ---  ## Source text → emitted JavaScript & diagnostics  ### Stage 0 — Entry p...
+💬 Let me look at the checker's `getDiagnostics` to understand lazy type-checking, and where `bindSourceFile` gets called in the program creation flow.
+  ▸ Read(/home/bench/repos/typescript/src/compiler/checker.ts)
+  ▸ Read(/home/bench/repos/typescript/src/compiler/program.ts)
 
-──────── RESULT (success, 201763ms, 35 turns) ────────
-I now have a complete picture of all five stages. Here's the full walkthrough.
+💬 I need to find where `bindSourceFile` is called during program construction. Let me check the call sites.
+  ▸ LSP({"operation":"findReferences","filePath":"/home/bench/repos/typescript/src/compiler/binder.ts","line":502,"character":17})
 
----
+💬 `bindSourceFile` is called from within `checker.ts`. Let me see those call sites — both the import alias and the usage in `initializeTypeChecker`.
+  ▸ Read(/home/bench/repos/typescript/src/compiler/checker.ts)
+  ▸ Read(/home/bench/repos/typescript/src/compiler/checker.ts)
 
-## Source text → emitted JavaScript & diagnostics
+💬 Now I need to see how `initializeTypeChecker` is called — whether it's immediate or lazy — and how `createTypeChecker` sets up the checker object.
+  ▸ Read(/home/bench/repos/typescript/src/compiler/checker.ts)
+  ▸ LSP({"operation":"findReferences","filePath":"/home/bench/repos/typescript/src/compiler/checker.ts","line":51555,"character":14})
+  ▸ Read(/home/bench/repos/typescript/src/compiler/checker.ts)
 
-### Stage 0 — Entry point (`program.ts`)
+💬 Now let me look at the internal `Parser.parseSourceFile` to see how it uses the scanner, and how the `checkSourceFile` function works.
+  ▸ Read(/home/bench/repos/typescript/src/compiler/parser.ts)
+  ▸ LSP(checkSourceFile)
+  ▸ Read(/home/bench/repos/typescript/src/compiler/checker.ts)
 
-Everything starts at `createProgram` (program.ts:1515). It sets up mutable state (file lists, caches, resolution maps) and a `CompilerHost`, but does not yet bind or type-check anything. The host is the only I/O boundary: `createGetSourceFile` (program.ts:392) returns a closure that reads a file from disk and hands the text to the parser.
+💬 Now I have everything I need. Here's the complete picture of how all five stages connect:  ---  ## TypeScript compiler pipeline: source text → JS + diagnosti...
 
----
-
-### Stage 1 — Parse (`parser.ts`)
-
-Files are discovered depth-first inside `createProgram`. For each root name, `processSourceFile` → `findSourceFile` → `findSourceFileWorker` (program.ts:3545) calls `host.getSourceFile(fileName, sourceFileOptions)`. That calls the public `createSourceFile` (parser.ts:1344), which delegates to the internal `Parser.parseSourceFile`.
-
-The parser:
-- Runs the **scanner** over the raw text, producing a token stream.
-- Builds an **AST** of `Node` objects up to a `SourceFile` root. Every node carries `pos`/`end` text offsets.
-- Records **syntax errors** in `sourceFile.parseDiagnostics`.
-- Initialises `sourceFile.bindDiagnostics = []` (an empty array the binder will fill).
-- Sets `text`, `languageVersion`, `scriptKind`, calls `setExternalModuleIndicator`, and handles a top-level-await reparse for ES modules.
-
-The returned `SourceFile` has a full AST but **no symbols, no control-flow graph, no type information**.
-
-After `findSourceFileWorker` returns the file it recursively processes triple-slash references, `/// <reference types="…"/>` directives, and imported modules — each of which triggers another `findSourceFile` call. The `processingOtherFiles` / `processingDefaultLibFiles` arrays grow until the whole closure is covered; then they are assembled into the final `files` array at `onProgramCreateComplete` (program.ts:1725 area).
+──────── RESULT (success, 218548ms, 42 turns) ────────
+Now I have everything I need. Here's the complete picture of how all five stages connect:
 
 ---
 
-### Stage 2 — Bind (`binder.ts`)
+## TypeScript compiler pipeline: source text → JS + diagnostics
 
-Binding does **not** happen at `createProgram` time. It is deferred until the first call to `getTypeChecker()` (program.ts:2684):
+### Stage 1 — Program construction (`program.ts:createProgram`, line 1515)
+
+`createProgram` is the orchestrator. It accepts root file names and `CompilerOptions`, then recursively discovers every file the program needs:
+
+```
+createProgram
+  → forEach(rootNames, processRootFile)         # line 1782
+  → processSourceFile → findSourceFileWorker    # line 3486, 3545
+  → host.getSourceFile(fileName, options)       # line 3635
+      → readFile(fileName)                      # I/O
+      → createSourceFile(fileName, text, ...)   # parser.ts:1344 — parses
+  → collectExternalModuleReferences             # line 3318 — extracts imports
+  → processImportedModules                      # recurse for each import
+```
+
+After the full file graph is walked, `program.files` is the complete `SourceFile[]`. **Binding and type-checking are not done yet** — only I/O and parsing.
+
+---
+
+### Stage 2 — Scanning + parsing (`scanner.ts:1022`, `parser.ts:1344`)
+
+`createSourceFile` calls `Parser.parseSourceFile` (the `Parser` namespace is a module-level singleton). The parser creates one `Scanner` (via `createScanner`), which it drives via demand:
+
+- The scanner holds `pos`, `end`, `token`, `tokenValue`, `tokenFlags` as local `var`s for speed. Each call to `scan()` advances `pos` and returns the next `SyntaxKind`.
+- The parser is a **recursive-descent, one-token lookahead** parser. Each `parseXxx` function reads tokens by calling `nextToken()` (which calls `scanner.scan()`), builds an `AST Node` with `pos`/`end` into the source text, and returns it.
+- The returned `SourceFile` carries `.text` (raw source), `.statements` (top-level AST), `.parseDiagnostics` (syntax errors), and `.bindDiagnostics` initialized to `[]` (to be filled by the binder).
+
+The scanner never produces a full token stream up front; tokens are consumed on demand as the parser descends.
+
+---
+
+### Stage 3 — Binding (`binder.ts:571`, called from `checker.ts:51558`)
+
+**Binding is deferred until the type checker is first created.** `program.getTypeChecker()` is lazy (program.ts:2684):
 
 ```ts
-function getTypeChecker() {
-    return typeChecker || (typeChecker = createTypeChecker(program));
+typeChecker || (typeChecker = createTypeChecker(program))
+```
+
+`createTypeChecker` runs immediately to completion, and the last thing it does before returning `checker` is call `initializeTypeChecker()` (checker.ts:2410). That function immediately binds **all** source files in a single pass:
+
+```ts
+// checker.ts:51557
+for (const file of host.getSourceFiles()) {
+    bindSourceFile(file, compilerOptions);   // binder.ts:502
 }
 ```
 
-`createTypeChecker` (checker.ts) ends with a call to `initializeTypeChecker` (checker.ts:51555), which loops over every source file and calls `bindSourceFile(file, compilerOptions)` (binder.ts:502) for each.
+The binder (`createBinder` returns a closure, binder.ts:509) walks every AST node and:
 
-The binder (`createBinder`) is a single shared closure. For each file it:
-- Walks the AST depth-first, maintaining a stack of **container** nodes (functions, namespaces, source files, class bodies) and **block-scope containers**.
-- Creates `Symbol` objects for every declaration and attaches them to the container's `locals` (or to the file's own `symbol.exports` for module-level exports).
-- **Merges** multiple declarations of the same name into a single `Symbol` (e.g. function overloads, declaration merging).
-- Builds the **control-flow graph**: `FlowNode` objects linked by antecedent pointers across branches, loops, `return`/`throw`, and exceptions. This graph drives narrowing in the checker.
-- Emits binder errors into `file.bindDiagnostics` — duplicate identifiers, illegal uses in strict mode, etc.
+- Creates `Symbol` objects for every declaration and installs them into `file.locals` (or into the enclosing container's symbol table).
+- Builds the **control flow graph** (`FlowNode` objects) used for type narrowing.
+- Fills `file.bindDiagnostics` with binding-phase errors (duplicate identifiers, illegal `use strict`, etc.).
 
-After all files are bound, `initializeTypeChecker` does a second pass to merge global-scope symbols: for every non-module file, `mergeSymbolTable(globals, file.locals!)` (checker.ts:51577). Module augmentations are merged in a third pass.
+After the per-file loop, `initializeTypeChecker` merges non-module files' `locals` into the `globals` symbol table (line 51577) and processes module augmentations — so the global symbol table is coherent before any type-checking begins.
 
 ---
 
-### Stage 3 — Type checking (`checker.ts`)
+### Stage 4 — Type checking + diagnostics (`checker.ts`, `program.ts:2858`)
 
-The checker is a single large object created by `createTypeChecker`. It operates **per-file lazily**: `checkSourceFile` runs only when diagnostics for that file are requested.
-
-The call chain for "give me semantic errors for file F":
+Type checking is **lazy per file** — it runs on demand when someone calls `program.getSemanticDiagnostics(file)`:
 
 ```
-program.getSemanticDiagnostics(F)
-  → getDiagnosticsHelper(F, getSemanticDiagnosticsForFile)
-      → getSemanticDiagnosticsForFile(F)
-          → getBindAndCheckDiagnosticsForFile(F)          ← cached in cachedBindAndCheckDiagnosticsForFile
-              → getBindAndCheckDiagnosticsForFileNoCache(F)
-                  reads: F.bindDiagnostics             (from binder)
-                  calls: typeChecker.getDiagnostics(F)
-                      → getDiagnosticsWorker(F)
-                          → checkSourceFileWithEagerDiagnostics(F)
-                              → checkSourceFile(F)       ← the big traversal
-          → getProgramDiagnostics(F)                     (option-level / file-inclusion errors)
+program.getSemanticDiagnosticsForFile(file)       # program.ts:2858
+  → getBindAndCheckDiagnosticsForFile             # line 2869, cached per file
+      → typeChecker.getDiagnostics(file)          # checker.ts:49689
+          → getDiagnosticsWorker
+              → checkSourceFileWithEagerDiagnostics
+                  → checkSourceFile               # line 49547
+                      → checkSourceFileWorker     # line 49578
+                          → forEach(node.statements, checkSourceElement)
+  → concatenate(bindDiagnostics, checkDiagnostics, programDiagnostics)
 ```
 
-Inside `checkSourceFile`, the checker walks every node. It resolves `Symbol` → `Type` mappings on demand — types are created lazily the first time a symbol or expression is asked about. Errors (wrong number of arguments, incompatible types, etc.) go into a `DiagnosticCollection` keyed by file name.
+`checkSourceFileWorker` guards against re-checking via `NodeCheckFlags.TypeChecked` (line 49580). It recursively calls `checkSourceElement` on every statement, which fans out to type-specific checkers (`checkVariableStatement`, `checkFunctionDeclaration`, etc.). Each of those calls `resolveSymbol` / `getTypeOfSymbol` / `checkAssignability` and accumulates diagnostics in the checker's `diagnostics` collection.
 
-After getting the raw diagnostics, `getMergedBindAndCheckDiagnostics` (program.ts:2923) applies **comment directives**: any diagnostic on the line immediately after a `// @ts-ignore` or `// @ts-expect-error` is suppressed; unused `@ts-expect-error` directives produce their own errors.
+Some diagnostics are deferred via `addLazyDiagnostic` callbacks (e.g., `noUnusedLocals` at line 49611) — those are flushed by `ensurePendingDiagnosticWorkComplete` before `getDiagnosticsWorker` returns.
 
-Syntactic diagnostics (`program.getSyntacticDiagnostics`) come purely from `sourceFile.parseDiagnostics` — the parser fills them; the checker is not involved.
+The program merges three sources into the final per-file diagnostic list (program.ts:2863–2866):
+- `sourceFile.bindDiagnostics` — from Stage 3
+- `typeChecker.getDiagnostics(file)` — from Stage 4
+- `getProgramDiagnostics(file)` — options errors, unresolved references, config issues
+
+`ts-ignore` / `ts-expect-error` directives are processed by `getDiagnosticsWithPrecedingDirectives` (program.ts:2947) which suppresses or converts diagnostics in the merged list.
 
 ---
 
-### Stage 4 — Emit (`emitter.ts`, `transformer.ts`)
+### Stage 5 — Emit (`program.ts:2688`, `emitter.ts:752`, `transformer.ts:248`)
 
-`program.emit(sourceFile?, writeFileCallback?, …)` (program.ts:2688) calls `emitWorker` (program.ts:2718).
+`program.emit()` calls `emitWorker` (program.ts:2718), which does two things before touching the emitter:
 
-**First**, `emitWorker` calls `getTypeChecker()` to ensure the checker is initialised, then gets an `EmitResolver`:
-```ts
-const emitResolver = typeChecker.getEmitResolver(sourceFile, cancellationToken, …);
+1. **Get the emit resolver** — `typeChecker.getEmitResolver(file, ...)` (checker.ts:2506). This first calls `getDiagnostics(file)` (unless `skipDiagnostics` is set) to ensure the checker has walked the file, then returns the `emitResolver` object (created at checker.ts:1550 via `createResolver()`). The resolver answers questions the emitter will ask — "is this import type-only?", "does this variable need to be preserved?", "what is the constant value of this expression?"
+
+2. **Call `emitFiles`** (emitter.ts:752) with the resolver, an `EmitHost`, the transformers, and the target file.
+
+`emitFiles` calls `forEachEmittedFile` to iterate outputs, then for each calls `emitSourceFileOrBundle`, which splits into two sub-paths:
+
+**JS output** (`emitJsFileOrBundle`, emitter.ts:821):
 ```
-The `EmitResolver` is the narrow interface the emitter uses to query type-system facts without holding a reference to the full checker: "is this import elided?", "what is the value of this `const enum` member?", "is this declaration internal?".
+transformNodes(resolver, host, factory, options, [sourceFile], scriptTransformers)
+  # transformer.ts:248 — builds TransformationContext, chains transformers
+  # transformers run in order: ts.ts (strip types) → decorators → es2015/etc. → modules
+  # each transformer returns a new/modified subtree; they compose via the context's onEmitNode hook
+→ createPrinter(printerOptions, { onEmitNode, substituteNode, ... })
+→ printSourceFileOrBundle(jsFilePath, ...)
+    → pipelineEmit → pipelineEmitWithHint → pipelineEmitWithHintWorker
+        → dispatch to emitSourceFile / emitFunctionDeclaration / etc.
+        → writes tokens via TextWriter
+→ writeFile(host, emitterDiagnostics, jsFilePath, outputText)
+```
 
-**Second**, `getTransformers` (transformer.ts:120) assembles the ordered transformer lists. Script transformers run in this order (each conditional on options/target):
-
-| Transformer | What it strips/rewrites |
-|---|---|
-| `transformTypeScript` | type annotations, `as` casts, `interface`/`type`, `const enum` |
-| `transformLegacyDecorators` | `experimentalDecorators` syntax |
-| `transformJsx` | JSX → `React.createElement` / `_jsx` |
-| `transformESNext` … `transformES2015` | successively lower language features |
-| `transformGenerators` | `function*` → state machines |
-| `getModuleTransformer(moduleKind)` | `import`/`export` → CommonJS, AMD, ESM, etc. |
-
-Custom transformers (from `customTransformers.before` / `.after`) are spliced in around the built-ins.
-
-Declaration transformers run separately: just `transformDeclarations` (plus any `afterDeclarations`).
-
-**Third**, `emitFiles` (emitter.ts:752) iterates over the output file set via `forEachEmittedFile`. For each pair (source file, output file names):
-
-- **JS emit** (`emitJsFileOrBundle`, line 821):
-  1. `transformNodes(…, scriptTransformers)` — runs the transform chain, producing a new transformed AST.
-  2. `createPrinter(printerOptions, { onEmitNode, substituteNode })` — the printer has callbacks back into the transform layer for emit notifications and node substitution.
-  3. `printSourceFileOrBundle` drives the printer over the transformed tree, node-by-node, writing text to a `TextWriter`. Source map information is collected alongside if enabled.
-  4. `host.writeFile(jsFilePath, text)` writes the result to disk.
-
-- **Declaration emit** (`emitDeclarationFileOrBundle`, line 886) runs the declaration transform chain. Errors produced by the declaration transformer (e.g., a type that can't be expressed in the public surface) are returned as `emitterDiagnostics` on the `EmitResult`.
-
-- **Build info** (`emitBuildInfo`) writes `tsbuildinfo` JSON for incremental builds.
-
-The `EmitResult` returned by `emitFiles` contains `{ emitSkipped, diagnostics, emittedFiles, sourceMaps }`.
+**Declaration output** (`emitDeclarationFileOrBundle`, emitter.ts:886):
+Same transform/print pipeline but using `declarationTransformers` (primarily `transformers/declarations.ts`), which strips all implementation details and synthesizes the `.d.ts` AST.
 
 ---
 
-### How the stages connect — the key joints
+### How the stages connect — data flows
 
-| Boundary | Mechanism |
-|---|---|
-| Parse → Bind | `bindDiagnostics = []` and `locals = undefined` on SourceFile; binder fills both. No AST mutation; new Symbol nodes are attached via `node.symbol`. |
-| createProgram → Checker | `typeChecker` is `undefined` on the `Program` until first access; `getTypeChecker()` creates it lazily and `initializeTypeChecker` eagerly binds all files in that one shot. |
-| Bind → Checker | The binder's `Symbol` graph and control-flow `FlowNode` graph live on AST nodes and in `file.locals`; the checker reads them directly. `file.bindDiagnostics` is read and merged in `getBindAndCheckDiagnosticsForFileNoCache`. |
-| Checker → Emitter | `typeChecker.getEmitResolver()` — the resolver is the only channel; the emitter never calls `getTypeChecker()` directly. |
-| Transform → Printer | `transformNodes` returns `{ transformed, emitNodeWithNotification, substituteNode }`; the printer calls these hooks for each node rather than owning emit logic itself. |
-| Diagnostics assembly | `getSemanticDiagnosticsForFile` = bind diagnostics ∪ checker diagnostics ∪ program diagnostics, then filtered through `commentDirectives`. Declaration diagnostics live separately on `EmitResult`. |
+| What | Produced by | Consumed by |
+|------|-------------|-------------|
+| `SourceFile.text` | host I/O | scanner |
+| `SourceFile.statements` (AST) | parser | binder, checker, emitter |
+| `SourceFile.parseDiagnostics` | parser | program (getSyntacticDiagnostics) |
+| `SourceFile.locals`, `Symbol` objects | binder | checker (symbol resolution) |
+| `SourceFile.bindDiagnostics` | binder | program (merged with check diags) |
+| Control flow graph (`FlowNode`) | binder | checker (narrowing) |
+| `diagnostics` collection (per-file) | checker | program (getSemanticDiagnostics) |
+| `EmitResolver` | checker | emitter (answers resolver questions) |
+| Transformed AST | transformers | printer |
+| Output text | printer | host.writeFile |
+
+### Laziness boundaries
+
+- **Parsing** is eager during `createProgram` — every file is read and parsed to find its imports.
+- **Binding** is deferred until the first `getTypeChecker()` call, then runs eagerly across **all** files at once (because the global symbol table requires all files to be bound before it can be coherent).
+- **Type checking** is lazy per-file — each `SourceFile` is type-checked the first time diagnostics are requested for it, with results cached in `cachedBindAndCheckDiagnosticsForFile`.
+- **Emit** is on-demand and always triggers at least the emit resolver (which triggers type-checking) unless `emitResolverSkipsTypeChecking` is true.
