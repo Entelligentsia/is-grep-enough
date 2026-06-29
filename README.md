@@ -4,6 +4,8 @@
 A fair, mechanism-grounded comparison of three navigation regimes across a ladder
 of task complexity, over 10 large real-world codebases.
 
+📊 **Live results dashboard → <https://entelligentsia.github.io/is-grep-enough/>**
+
 | Regime | Capability the agent gets | How |
 |---|---|---|
 | **baseline** | text search | bash + coreutils + ripgrep |

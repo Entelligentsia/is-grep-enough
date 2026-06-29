@@ -91,6 +91,69 @@ function readRun(rawPath) {
 }
 function rd2(p) { return readFileSync(p, "utf8"); }
 
+// ---- cite verification (T3.5): resolve a transcript's file:line cites against
+// the repo's PINNED source so the dashboard's blob links are confirmed, not just
+// asserted. A cite RESOLVES if its file is located — exact relative path, or a
+// unique basename match in the pinned tree — AND the line is within the file.
+// Bare names with >1 match are "ambiguous"; ones with no match "unlocatable":
+// both are limits of a mechanical checker, reported honestly, never failures.
+// (Reading pinned source is a reporting step, like judging — never shown to an
+// arm; the genesis wall governs running, not this build.)
+const CITE_RE = /([A-Za-z0-9._\-]+(?:\/[A-Za-z0-9._\-]+)*\.[A-Za-z]{1,6}):(\d+)(?:[-:](\d+))?/g;
+const SKIP_DIRS = new Set([".git", "node_modules"]);
+const repoIndexCache = {};
+function repoIndex(repo) {
+  if (repo in repoIndexCache) return repoIndexCache[repo];
+  const root = join(ROOT, `experiment/repos/${repo}`);
+  const idx = new Map(), byPath = new Set();
+  if (existsSync(root)) {
+    const stack = [[root, ""]];
+    while (stack.length) {
+      const [dir, rel] = stack.pop();
+      let ents; try { ents = readdirSync(dir, { withFileTypes: true }); } catch { continue; }
+      for (const e of ents) {
+        const r = rel ? `${rel}/${e.name}` : e.name;
+        if (e.isDirectory()) { if (!SKIP_DIRS.has(e.name)) stack.push([join(dir, e.name), r]); }
+        else if (e.isFile()) { byPath.add(r); let a = idx.get(e.name); if (!a) idx.set(e.name, a = []); a.push(r); }
+      }
+    }
+  }
+  return (repoIndexCache[repo] = { idx, byPath, root, exists: existsSync(root) });
+}
+const lineCountCache = {};
+function lineCount(abs) {
+  if (abs in lineCountCache) return lineCountCache[abs];
+  let n; try { n = readFileSync(abs, "utf8").split("\n").length; } catch { n = -1; }
+  return (lineCountCache[abs] = n);
+}
+function verifyCites(repo, transcriptAbs) {
+  const { idx, byPath, root, exists } = repoIndex(repo);
+  if (!exists) return null; // no pinned source → can't verify, don't fabricate a number
+  let txt; try { txt = readFileSync(transcriptAbs, "utf8"); } catch { return null; }
+  let resolved = 0, out_of_range = 0, ambiguous = 0, unlocatable = 0;
+  const seen = new Set(), fails = [];
+  CITE_RE.lastIndex = 0;
+  let m;
+  while ((m = CITE_RE.exec(txt))) {
+    const path = m[1].replace(/^\.?\//, ""), line = +m[2];
+    const key = `${path}:${line}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    let rel = byPath.has(path) ? path : null;
+    if (!rel && !path.includes("/")) {
+      const cand = idx.get(path);
+      if (cand?.length === 1) rel = cand[0];
+      else if (cand?.length > 1) { ambiguous++; continue; }
+    }
+    if (!rel) { unlocatable++; continue; }
+    const n = lineCount(join(root, rel));
+    if (n >= 0 && line <= n) resolved++;
+    else { out_of_range++; if (fails.length < 5) fails.push(key); }
+  }
+  return { checked: seen.size, located: resolved + out_of_range, resolved, out_of_range, ambiguous, unlocatable,
+           sha: manifest[repo]?.sha ?? null, fails };
+}
+
 // ---- assemble cells over the FULL grid (missing cells flagged, never dropped) -
 const cells = [];
 let nHarvested = 0, nDnf = 0, nPending = 0;
@@ -198,6 +261,8 @@ for (const rung of RUNGS) {
         series_local: seriesLocal, // pointer to series/<id>.json (per-turn ctx growth); curve provenance = raw file
         series_turns: run?.series?.length ?? null,
         evidence: { raw: existsSync(rawPath) ? `evidence/nav3/${rung}/raw/${repo}-${rung}.claude.${arm}.jsonl` : null, raw_local: rawLocal, readable: transcript },
+        // cite-link verification against pinned source (T3.5) — confirmed, not asserted
+        cite_check: status === "harvested" && existsSync(readableAbs) ? verifyCites(repo, readableAbs) : null,
         subagents,
         dnf_reason: side?.note ?? side?.reason ?? null,
         flags,

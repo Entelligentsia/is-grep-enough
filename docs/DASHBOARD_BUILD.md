@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P2 / T2.1` — **P1 complete (T1.1–T1.6, TX.1)** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `COMPLETE` — **all phases done (P0 spike, P1, P2, P3); TX.2 deferred** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -91,23 +91,108 @@ raw byte in ≤3 clicks.
 
 ## Phase 2 — Compare view
 
-- [ ] **T2.1 Side-by-side arms.** Three columns for a locked cell: aligned metric
-  strip + three transcripts in parallel (§8).
-- [ ] **T2.2 Spine-coverage strip.** Per-arm Full/Partial/Miss against the
+- [x] **T2.1 Side-by-side arms.** Three columns for a locked cell: aligned metric
+  strip + three transcripts in parallel (§8). The cell detail already supplies the
+  aligned metric strip (per-arm columns); this adds a `renderCompareTranscripts`
+  strip below it — a lazy "compare N transcripts side by side" toggle that builds
+  one scrollable pane per visible arm with a readable trail, marked-rendered and
+  cite-linked. Synchronized scroll is offered (proportional, reentrancy-guarded)
+  but **off by default** per §8 (trails diverge in length). Verified headless
+  (Playwright/Chrome) on L1-redis (3 panes, 11/1/10 cites) and L5-spring-boot;
+  sync control present + unchecked by default; no data 404s.
+- [x] **T2.2 Spine-coverage strip.** Per-arm Full/Partial/Miss against the
   reference key's required spine; if not machine-parseable, render judge per-arm
-  verdicts side by side — never fabricate (§8, §13.5).
-- [ ] **T2.3 Free cell-vs-cell compare** (e.g. grove L2 vs L3 redis) (§8).
+  verdicts side by side — never fabricate (§8, §13.5). The reference key's element
+  list is **not** in the feed and stays judge-only (genesis wall), so a per-element
+  checklist would be fabrication — taken off the table per §13.5 #5. Instead
+  `renderSpineStrip` renders the spec's endorsed fallback: the blind judge's own
+  per-arm coverage word (Full/Partial/Miss), parsed from the leading token of the
+  verdict prose (`COVERAGE_RE`), aligned side by side with completeness/grounding.
+  All 84 arm-verdicts parse cleanly (83 Full, 1 Partial). Glyphs (●/◐/○) encode
+  coverage, never a good/bad hue (truthbound: no verdict coloring). Verified
+  headless: L1-redis all ● Full; L5-bitcoin baseline ◐ Partial vs grove/lsp ●
+  Full; unjudged L4-spring-boot shows no strip; no page errors.
+- [x] **T2.3 Free cell-vs-cell compare** (e.g. grove L2 vs L3 redis) (§8). New
+  "Free compare" section: two `#fc-a`/`#fc-b` pickers over all harvested cells with
+  a readable trail. `renderFreeCompare` draws an aligned metric strip (context/
+  turns/wall/cost + judge coverage word) with the lower value on each cost-axis
+  marked "lower" factually (never "winner"), then the two trails in parallel panes
+  (reuses `buildPanes` with a cell-id label; sync-scroll off by default). State is
+  URL-encoded (`fca`/`fcb`, T1.6 parity) so a comparison is shareable. Verified
+  headless on the canonical grove L2-vs-L3-redis (L3 costs more context/wall/$ for
+  the same Full coverage — the scaling story §8 wants), a cross-arm baseline-vs-lsp
+  pair, the same-cell guard, and URL restore; no page errors.
 
 ## Phase 3 — Polish & trust toolkit
 
-- [ ] **T3.1 `STYLE.md` tokens** (palette, type scale, spacing, chart defaults)
-  to prevent drift to template defaults (§9).
-- [ ] **T3.2 Dark mode** — truly neutral grey, not black (§9).
-- [ ] **T3.3 Methodology & provenance page** — genesis wall, blind judging,
-  pricing table, data-sources panel (§10).
-- [ ] **T3.4 Reproduce-it box** — exact commands to rebuild the feed (§10.8).
-- [ ] **T3.5 Cite-link verification** — confirm cited lines resolve at the SHA.
-- [ ] **T3.6 Accessibility + no-JS fallback + reduced-motion** pass (§11).
+- [x] **T3.1 `STYLE.md` tokens** (palette, type scale, spacing, chart defaults)
+  to prevent drift to template defaults (§9). `site/STYLE.md` codifies the shipped
+  system **descriptively** — every value is the one actually in `style.css`
+  (`:root`, light + dark) and `app.mjs` (Plot defaults), with a "change both in the
+  same commit" rule. Covers palette (Okabe–Ito arm triad, color = arm identity
+  only), type (one sans + one mono, tabular figures, the full size table), spacing/
+  layout (1060px column, ~70–74ch measure, hairlines-not-boxes), Plot chart
+  defaults (zero-baseline `~s`, dot/median-tick/min–max-whisker vocabulary, DNF
+  hollow-ring), motion, and a11y invariants. Verified truthful: all 17 light+dark
+  hex tokens grep-match `style.css`, and the 6 cited chart defaults grep-match
+  `app.mjs` (no drift).
+- [x] **T3.2 Dark mode** — truly neutral grey, not black (§9). An in-page
+  `#theme-switch` (auto / light / dark) now drives it, persisted in localStorage;
+  "auto" leaves the attribute off so `prefers-color-scheme` rules, while an
+  explicit `:root[data-theme=…]` always wins over the media query so the toggle can
+  override the OS. Dark paper is `#1b1a17` (warm neutral grey, not black). Fixed two
+  dark-mode warts: chart frame stroke and dot halo were hardcoded light hues
+  (`#e3e1dc` / `white`) — now read `cssVar("--rule")` / `cssVar("--paper")` so they
+  track theme (a theme change re-renders, re-reading the vars). Verified headless:
+  default=light tokens, dark click → paper `#1b1a17` + frame stroke `#34322d`
+  (recolored, not the old light value), persists across reload (dark button still
+  pressed), light click forces light; no page errors.
+- [x] **T3.3 Methodology & provenance page** — genesis wall, blind judging,
+  pricing table, data-sources panel (§10). New `#methodology` section with all four
+  trust panels: the **genesis wall** (running arms see only the bare prompt; keys
+  are judge-only, surfaced only as post-hoc key revisions), **blind judging**
+  (A/B/C scrub, grounding + completeness, self-correcting keys), a **pricing table**
+  (`renderMethodology` maps `meta.model` "sonnet" → `claude-sonnet-4-6` and shows its
+  public list price — input $3 / output $15 / cache-write $3.75 (5m) · $6 (1h) /
+  cache-read $0.30 per MTok — explicitly labelled reference-only since figures are
+  billed `total_cost_usd`), and a **data-sources panel** (`<dl>` of the 8 exact feed
+  files with live counts, incl. the walled-off `*.reference.md` keys and the
+  statectl-only ledger). Pricing confirmed against the claude-api reference. Verified
+  headless: model label, all 5 price rows, 8 sources, dynamic judge count; no errors.
+- [x] **T3.4 Reproduce-it box** — exact commands to rebuild the feed (§10.8). A
+  "Reproduce this page" block in `#methodology` emits the three exact commands
+  (`git checkout <build-sha>` → `node site/build.mjs --sha … --at …` → `python3 -m
+  http.server -d site 8099`) with the build's own `meta.git_sha` + `generated_at`
+  interpolated, so re-running regenerates *this* feed; a caveat notes `site/data/`
+  is gitignored and Pages rebuilds on deploy. Verified headless: real SHA (3f260b9),
+  build command present, deterministic note; no errors.
+- [x] **T3.5 Cite-link verification** — confirm cited lines resolve at the SHA.
+  `build.mjs` now re-resolves every transcript `file:line` cite against the repo's
+  **pinned source** (`verifyCites` + a lazy per-repo basename index): a cite is
+  *resolved* when its file is located (exact relative path, or a unique basename
+  match) and the line is within the file; bare names with >1 match are *ambiguous*
+  and unlocatable ones *unlocatable* — both reported apart as mechanical-checker
+  limits, never failures. Each cell carries `cite_check`; the methodology section
+  shows the aggregate and each arm column a `cites resolved R/L at <sha7>` line.
+  Result over all 86 harvested cells: **721/721 locatable cites resolve in-range,
+  0 out-of-range** (1011 unique cites; 194 ambiguous, 96 unlocatable). Reading
+  pinned source is a reporting step (like judging), not shown to any arm — genesis
+  wall intact. Build stays ~0.5s. Verified headless on L1-redis (10/10·1/1·10/10);
+  no errors.
+- [x] **T3.6 Accessibility + no-JS fallback + reduced-motion** pass (§11). Content
+  column is now a semantic `<main id="main">` with a focus-revealed **skip link**;
+  a `<noscript>` notice points a JS-disabled reader at the committed reports/evidence/
+  ledger (the script only makes the same evidence interactive, hides nothing); the
+  JS-filled masthead bits got graceful static defaults so no-JS shows real prose, not
+  "Loading…". Keyboard: the click-only coverage **cells, rung headers, and repo
+  labels** are now `role="button"` + `tabindex=0` with Enter/Space activation
+  (`clickable()` helper); the transcript modal is `role="dialog" aria-modal`, its
+  close is a real `<button>`, **Esc closes it and focus returns to the opener**, and
+  a `:focus-visible` ring makes the focus path visible. Reduced-motion: the existing
+  transition-kill plus smooth-scroll now gated on `prefers-reduced-motion`
+  (`scrollToEl`). Colorblind-safety (Okabe–Ito, shape/glyph for status) was already
+  in by construction. Verified headless: no-JS masthead + noscript render; Enter on a
+  coverage cell opens detail; Esc closes the modal; no page errors.
 
 ## Cross-cutting (do when it unblocks a task above)
 

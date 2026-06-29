@@ -8,23 +8,32 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrap">
+<a class="skip-link" href="#main">Skip to content</a>
+<main class="wrap" id="main">
+  <noscript>
+    <p class="noscript-note">This dashboard renders its coverage grid, charts, and transcripts with JavaScript, which is disabled. The full evidence is still readable directly in the repository: <a href="https://github.com/Entelligentsia/is-grep-enough/tree/master/reports">blind judgements &amp; findings</a>, <a href="https://github.com/Entelligentsia/is-grep-enough/tree/master/evidence/nav3">raw + readable transcripts</a>, and the cell ledger <code>experiment/state.json</code>. No data is hidden behind the script — it only makes the same committed evidence interactive.</p>
+  </noscript>
   <header class="masthead">
+    <div class="theme-switch" id="theme-switch" role="group" aria-label="color theme">
+      <button data-theme-set="auto" type="button">auto</button>
+      <button data-theme-set="light" type="button">light</button>
+      <button data-theme-set="dark" type="button">dark</button>
+    </div>
     <h1>is grep enough?</h1>
     <p class="sub">When a coding agent explores a large, unfamiliar codebase, are basic text tools (grep/read) enough — or does it need something <b>fast and light</b> (structural, tree-sitter) or something more <b>authoritative and accurate</b> (semantic, LSP)? This measures the three side by side and lets you check the answer yourself.</p>
-    <p class="sub" id="purpose" style="margin-top:.4rem;color:var(--ink-faint)">Loading…</p>
+    <p class="sub" id="purpose" style="margin-top:.4rem;color:var(--ink-faint)"></p>
     <div class="legend">
       <span><span class="swatch baseline"></span>baseline · text</span>
       <span><span class="swatch grove"></span>grove · structural</span>
       <span><span class="swatch lsp"></span>lsp · semantic</span>
       <span class="caveat">color = arm identity, never quality. n=1 per cell.</span>
     </div>
-    <p class="provenance" id="provenance">—</p>
+    <p class="provenance" id="provenance"></p>
   </header>
 
   <section id="finding">
     <h2>What this shows</h2>
-    <p class="note" id="finding-text">—</p>
+    <p class="note" id="finding-text">The same exploration task, given to an agent with three rungs of navigation power — plain text search (baseline), fast-light structural (grove), and authoritative semantic (lsp) — across a task-complexity ladder. The question is where on that ladder the extra power stops paying for itself. Everything below links to the raw run that produced it.</p>
   </section>
 
   <section>
@@ -62,6 +71,44 @@
     <div class="detail" id="detail"></div>
   </section>
 
+  <section id="freecompare-section">
+    <h2>Free compare <span class="caveat">(secondary)</span></h2>
+    <p class="note">Pick any two harvested cells — e.g. grove on L2 vs L3 redis — to inspect how an arm scales with task complexity, or how two arms differ on the same task. Aligned metrics on top, the two transcripts in parallel below.</p>
+    <div class="fc-pickers">
+      <span><label>cell A</label><select id="fc-a"><option value="">—</option></select></span>
+      <span><label>cell B</label><select id="fc-b"><option value="">—</option></select></span>
+    </div>
+    <div id="fc-out"></div>
+  </section>
+
+  <section id="methodology">
+    <h2>Methodology &amp; provenance</h2>
+    <p class="note">How the numbers above were produced, and what protects their fairness. Everything here is a standing claim you can check against the evidence linked throughout the page.</p>
+
+    <h3 class="meth-h">The genesis wall</h3>
+    <p class="note">Prompts and their reference answer keys are generated <b>offline, before any arm runs</b>. A running arm sees <b>only the bare prompt</b> — never the reference key, the rationale, or the pinned source under <code>experiment/repos/</code>. Judging reads the keys; running never does. The keys are <b>judge-only</b> and appear on this page only as post-hoc <i>key revisions</i> in a cell's detail, never as the answer itself.</p>
+
+    <h3 class="meth-h">Blind judging</h3>
+    <p class="note">Each cell's three answers are scrubbed to <b>A / B / C</b> with the arm→letter mapping withheld, graded against the reference key on <b>grounding</b> (do the cited <code>file:line</code> anchors resolve in pinned source?) and <b>completeness</b> (does it cover the key's required spine?), and only un-blinded to record the score. Where the key itself was wrong, it is corrected in place and the correction is shown with its cite — proof the grader corrected <i>itself</i>, not the arms.</p>
+
+    <h3 class="meth-h">Cite-link verification</h3>
+    <p class="note">Every <code>file:line</code> in a transcript links to the GitHub blob at that repo's <b>pinned SHA</b>. The build doesn't just link them — it <b>re-resolves them against the pinned source</b>: a cite is confirmed when its file is located (exact path, or a unique basename match in the tree) and the line is within the file. The result across all harvested cells:</p>
+    <p class="note" id="meth-cites">—</p>
+
+    <h3 class="meth-h">Pricing</h3>
+    <p class="note">Every dollar figure on this page is the <b>billed <code>total_cost_usd</code></b> reported by the run itself — not a recomputed list-price estimate. The table below is the public list price for the model used (<span id="meth-model" class="mono">—</span>), shown so a reader can sanity-check the billed figures against the token split. n=1 per cell; cost is a direction, not a benchmark.</p>
+    <div id="meth-pricing"></div>
+
+    <h3 class="meth-h">Data sources</h3>
+    <p class="note">The feed is a pure function of committed evidence, synthesized by <code>site/build.mjs</code>. The cell ledger is written <b>only</b> through the validated <code>statectl</code> CLI — never hand-edited. These are the exact files behind the current view:</p>
+    <div id="meth-sources"></div>
+
+    <h3 class="meth-h">Reproduce this page</h3>
+    <p class="note">The feed is deterministic — re-running <code>build.mjs</code> against the same evidence reproduces <code>site/data/</code> byte-for-byte (only the stamped SHA/timestamp differ). Rebuild and serve locally, then diff against what's published:</p>
+    <pre id="meth-repro" class="repro"></pre>
+    <p class="caveat" id="meth-repro-note"></p>
+  </section>
+
   <section>
     <h2>How to trust this</h2>
     <ul class="note">
@@ -71,10 +118,10 @@
       <li id="caveats"></li>
     </ul>
   </section>
-</div>
+</main>
 
-<div class="tx-overlay" id="tx-overlay">
-  <div class="tx-panel"><span class="close" id="tx-close">close ✕</span><div id="tx-body"></div></div>
+<div class="tx-overlay" id="tx-overlay" role="dialog" aria-modal="true" aria-label="transcript">
+  <div class="tx-panel"><button class="close" id="tx-close" type="button">close ✕</button><div id="tx-body"></div></div>
 </div>
 
 <script type="module" src="app.mjs"></script>

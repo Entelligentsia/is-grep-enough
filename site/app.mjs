@@ -12,6 +12,21 @@ const el = (t, props = {}, kids = []) => {
   for (const k of [].concat(kids)) n.append(k);
   return n;
 };
+// read a CSS custom property off :root so charts track the active theme (light/
+// dark) instead of baking a hardcoded hue that glares in the other mode (T3.2).
+const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+// a11y (T3.6): make a non-button element behave as a keyboard-operable control —
+// role+tabindex so it's focusable, Enter/Space to activate like a real button.
+const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+const scrollToEl = (sel) => $(sel)?.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth" });
+function clickable(node, fn, label) {
+  node.setAttribute("role", "button");
+  node.setAttribute("tabindex", "0");
+  if (label) node.setAttribute("aria-label", label);
+  node.addEventListener("click", fn);
+  node.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fn(e); } });
+  return node;
+}
 
 const ARM_COLOR = { baseline: "#0072B2", grove: "#E69F00", lsp: "#009E73" };
 const ARMS = ["baseline", "grove", "lsp"];
@@ -28,7 +43,8 @@ const METRICS = {
 const METRIC_FAMILIES = ["context", "turns", "wall", "cache", "cost"];
 
 const state = { rung: "", repo: "", cell: null, showJudged: false, showIncomplete: true,
-  arms: { baseline: true, grove: true, lsp: true } };
+  arms: { baseline: true, grove: true, lsp: true }, fcA: "", fcB: "" };
+const cellById = (id) => DATA.cells.find((c) => c.id === id);
 const visibleArms = () => ARMS.filter((a) => state.arms[a]);
 // a cell counts as incomplete/DNF if it never reached harvested OR a harvested
 // run carries the dnf flag (had no clean result / errored) — §5.3 toggle target.
@@ -36,7 +52,27 @@ const isIncomplete = (c) => !c || c.status !== "harvested" || (c.flags ?? []).in
 let DATA;
 let REPO = {}; // id → {id, lang, sha, gh} for cite-link construction
 
+initTheme();
 init();
+
+// Theme: auto (follow OS) · light · dark. Dark is a truly neutral warm grey, not
+// black (§9). Persisted in localStorage; "auto" leaves the attribute off so the
+// prefers-color-scheme media query drives it. Charts re-read CSS vars on render,
+// so a theme change must re-render to recolor frames/halos (T3.2).
+function initTheme() {
+  const saved = (() => { try { return localStorage.getItem("theme"); } catch { return null; } })();
+  applyTheme(saved || "auto");
+}
+function applyTheme(mode) {
+  const root = document.documentElement;
+  if (mode === "auto") root.removeAttribute("data-theme");
+  else root.setAttribute("data-theme", mode);
+  try { localStorage.setItem("theme", mode); } catch { /* private mode */ }
+  const sw = $("#theme-switch");
+  if (sw) for (const b of sw.querySelectorAll("button"))
+    b.setAttribute("aria-pressed", b.dataset.themeSet === mode);
+}
+
 async function init() {
   const [meta, experiment, cells, judge] = await Promise.all(
     ["meta", "experiment", "cells", "judge"].map((f) => fetch(`data/${f}.json`).then((r) => r.json()))
@@ -69,15 +105,120 @@ async function init() {
 
   $("#t-judged").onchange = (e) => { state.showJudged = e.target.checked; renderCoverage(); syncURL(); };
   $("#t-incomplete").onchange = (e) => { state.showIncomplete = e.target.checked; render(); };
-  $("#tx-close").onclick = () => $("#tx-overlay").classList.remove("open");
-  $("#tx-overlay").onclick = (e) => { if (e.target.id === "tx-overlay") e.target.classList.remove("open"); };
+
+  // free compare (§8, T2.3): pick any two harvested cells with a readable trail.
+  const fcCells = DATA.cells.filter((c) => c.status === "harvested" && c.evidence?.readable)
+    .map((c) => c.id).sort();
+  fillSelect($("#fc-a"), fcCells); fillSelect($("#fc-b"), fcCells);
+  $("#fc-a").onchange = (e) => { state.fcA = e.target.value; renderFreeCompare(); syncURL(); };
+  $("#fc-b").onchange = (e) => { state.fcB = e.target.value; renderFreeCompare(); syncURL(); };
+  // theme switch — re-render so charts re-read the active theme's CSS vars (T3.2)
+  for (const b of $("#theme-switch").querySelectorAll("button"))
+    b.onclick = () => { applyTheme(b.dataset.themeSet); render(); };
+
+  $("#tx-close").onclick = () => closeTranscript();
+  $("#tx-overlay").onclick = (e) => { if (e.target.id === "tx-overlay") closeTranscript(); };
+  // a11y (T3.6): Esc closes the transcript modal and focus returns to its opener
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && $("#tx-overlay").classList.contains("open")) closeTranscript();
+  });
 
   // URL-encoded filter state (§4, T1.6): any view is a shareable link. Read the
   // URL first, reflect it into the controls, then keep the URL in sync on change
   // and respond to back/forward.
   applyURL(); syncControls();
   window.addEventListener("popstate", () => { applyURL(); syncControls(); render(); });
+  renderMethodology();
   render();
+}
+
+// Methodology & provenance (§10): pricing table for the billed model + a
+// data-sources panel listing the exact feed files behind the view. The dollar
+// figures elsewhere are billed total_cost_usd; this list price is reference only.
+const MODEL_ID = { sonnet: "claude-sonnet-4-6" };
+// public list price per million tokens for the model the runs billed against.
+const PRICING = {
+  "claude-sonnet-4-6": [
+    ["Input (fresh)", "$3.00"],
+    ["Output", "$15.00"],
+    ["Cache write — 5 min (1.25× input)", "$3.75"],
+    ["Cache write — 1 hour (2× input)", "$6.00"],
+    ["Cache read (0.1× input)", "$0.30"],
+  ],
+};
+function renderMethodology() {
+  const model = DATA.meta.model;
+  const id = MODEL_ID[model] ?? model;
+  $("#meth-model").textContent = id;
+
+  // cite-link verification summary (T3.5) — aggregate over every harvested cell's
+  // build-time cite resolution against pinned source. Truthbound: located = what
+  // the mechanical checker could pin down; ambiguous/unlocatable are its limits.
+  const ccs = DATA.cells.map((c) => c.cite_check).filter(Boolean);
+  if (ccs.length) {
+    const sum = (k) => ccs.reduce((a, c) => a + (c[k] || 0), 0);
+    const located = sum("located"), resolved = sum("resolved"), oor = sum("out_of_range");
+    const pct = located ? Math.round((resolved / located) * 100) : 0;
+    $("#meth-cites").innerHTML =
+      `<b>${resolved} of ${located}</b> locatable cites resolve in-range at their pinned SHA ` +
+      `(${pct}%${oor ? `, ${oor} out-of-range` : ", none out-of-range"}), across ${ccs.length} harvested cells ` +
+      `(${sum("checked")} unique <code>file:line</code> cites checked). ` +
+      `<span class="caveat">${sum("ambiguous")} ambiguous (bare filename, &gt;1 match) and ${sum("unlocatable")} unlocatable ` +
+      `are limits of the mechanical checker — counted apart, never as failures.</span>`;
+  } else {
+    $("#meth-cites").textContent = "No pinned source available to verify against.";
+  }
+
+  // pricing table — reference list price, clearly not the source of the figures
+  const rows = PRICING[id];
+  const ph = $("#meth-pricing");
+  if (rows) {
+    const tbl = el("table", { className: "meth-price" });
+    tbl.append(el("tr", {}, [el("th", { textContent: "token class" }), el("th", { textContent: "USD / 1M tokens" })]));
+    for (const [k, v] of rows)
+      tbl.append(el("tr", {}, [el("td", { textContent: k }), el("td", { className: "mono", textContent: v })]));
+    ph.replaceChildren(tbl,
+      el("p", { className: "caveat", textContent: `Reference list price for ${id} (\`--model ${model}\`). The figures on this page are billed totals, not derived from this table.` }));
+  } else {
+    ph.replaceChildren(el("p", { className: "caveat", textContent: `No reference price on file for model "${model}"; figures shown are billed totals.` }));
+  }
+
+  // data-sources panel — the exact files the feed is synthesized from
+  const cov = DATA.meta.coverage;
+  const judged = Object.keys(DATA.judge).length;
+  const sources = [
+    ["experiment/state.json", `the cell ledger — ${cov.total} cells; written only via statectl (read-only here)`],
+    ["data/cells.json", `${DATA.cells.length} cells: status, metrics, cost split, tools, engagement`],
+    ["data/judge.json", `${judged} blind judge records: grounding + completeness + verdict prose`],
+    ["data/experiment.json", "rungs, repos (pinned SHAs + owner/repo), purpose"],
+    ["data/series/<cell>.json", "per-turn context-growth curves (build-derived from raw stream-json)"],
+    ["data/transcripts/<cell>.md", `${cov.harvested} readable trails`],
+    ["data/raw/<cell>.jsonl", "raw stream-json per harvested run (the byte-precise source)"],
+    ["experiment/prompts/<repo>/<rung>.reference.md", "reference keys — judge-only, walled off (never in this feed)"],
+  ];
+  const list = el("dl", { className: "meth-sources" });
+  for (const [f, d] of sources) {
+    list.append(el("dt", {}, el("code", { textContent: f })));
+    list.append(el("dd", { textContent: d }));
+  }
+  $("#meth-sources").replaceChildren(list);
+
+  // reproduce-it box (§10.8) — the exact commands that rebuild THIS feed. The SHA
+  // is the build's own git_sha so re-running it regenerates the published data.
+  const sha = DATA.meta.git_sha;
+  $("#meth-repro").textContent = [
+    "# 1. check out the exact commit this page was built from",
+    `git checkout ${sha}`,
+    "",
+    "# 2. regenerate the feed (deterministic over committed evidence)",
+    `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "${DATA.meta.generated_at}"`,
+    "",
+    "# 3. serve it and open the dashboard",
+    "python3 -m http.server -d site 8099   # → http://localhost:8099/",
+  ].join("\n");
+  $("#meth-repro-note").textContent =
+    `This page was generated ${DATA.meta.generated_at} from ${sha}. ` +
+    "site/data/ is gitignored (a build artifact); the Pages Action regenerates it on deploy.";
 }
 
 function fillSelect(sel, vals) { for (const v of vals) sel.append(el("option", { value: v, textContent: v })); }
@@ -92,6 +233,8 @@ function applyURL() {
   else for (const a of ARMS) state.arms[a] = true;
   state.showJudged = p.get("judged") === "1";
   state.showIncomplete = p.get("incomplete") !== "0";
+  const fca = p.get("fca"); state.fcA = DATA.cells.some((c) => c.id === fca) ? fca : "";
+  const fcb = p.get("fcb"); state.fcB = DATA.cells.some((c) => c.id === fcb) ? fcb : "";
 }
 
 // reflect current state into the form controls (after URL load / popstate)
@@ -101,6 +244,8 @@ function syncControls() {
   for (const cb of $("#f-arms").querySelectorAll("input")) cb.checked = state.arms[cb.dataset.arm];
   $("#t-judged").checked = state.showJudged;
   $("#t-incomplete").checked = state.showIncomplete;
+  $("#fc-a").value = state.fcA;
+  $("#fc-b").value = state.fcB;
 }
 
 // serialize state into the query string; only non-default keys are written so a
@@ -113,6 +258,8 @@ function syncURL() {
   if (visibleArms().length !== ARMS.length) p.set("arms", visibleArms().join(","));
   if (state.showJudged) p.set("judged", "1");
   if (!state.showIncomplete) p.set("incomplete", "0");
+  if (state.fcA) p.set("fca", state.fcA);
+  if (state.fcB) p.set("fcb", state.fcB);
   const qs = p.toString();
   history.replaceState(null, "", qs ? `${location.pathname}?${qs}` : location.pathname);
 }
@@ -127,6 +274,7 @@ function render() {
   renderCoverage();
   renderMetrics();
   if (state.cell) renderDetail(state.cell);
+  renderFreeCompare();
   syncURL();
 }
 
@@ -139,7 +287,7 @@ function renderCoverage() {
   const head = el("tr", {}, el("th", { textContent: "repo" }));
   for (const rg of rungs) {
     const th = el("th", { className: "rung", textContent: rg, title: "filter to " + rg });
-    th.onclick = () => { state.rung = state.rung === rg ? "" : rg; $("#f-rung").value = state.rung; render(); };
+    clickable(th, () => { state.rung = state.rung === rg ? "" : rg; $("#f-rung").value = state.rung; render(); }, `filter to rung ${rg}`);
     head.append(th);
   }
   table.append(head);
@@ -147,7 +295,7 @@ function renderCoverage() {
   for (const repo of repos) {
     const tr = el("tr");
     const rc = el("td", { className: "repo", textContent: repo, title: "filter to " + repo });
-    rc.onclick = () => { state.repo = state.repo === repo ? "" : repo; $("#f-repo").value = state.repo; render(); };
+    clickable(rc, () => { state.repo = state.repo === repo ? "" : repo; $("#f-repo").value = state.repo; render(); }, `filter to repo ${repo}`);
     tr.append(rc);
     for (const rg of rungs) {
       const td = el("td");
@@ -172,7 +320,7 @@ function renderCoverage() {
           title: omitted ? `${rg} · ${arm} · ${repo}: hidden (incomplete/DNF)` : `${rg} · ${arm} · ${repo}: ${c?.status ?? "pending"}${flagstr}${reason}`,
         }));
       }
-      mark.onclick = () => { state.cell = cid; renderDetail(cid); $("#detail-section").scrollIntoView({ behavior: "smooth" }); renderCoverage(); syncURL(); };
+      clickable(mark, () => { state.cell = cid; renderDetail(cid); scrollToEl("#detail-section"); renderCoverage(); syncURL(); }, `inspect cell ${cid}`);
       td.append(mark); tr.append(td);
     }
     table.append(tr);
@@ -234,7 +382,7 @@ function renderMetrics() {
         // facet header per rung carrying its honest n (partial rungs read smaller)
         Plot.axisFx({ anchor: "top", label: null, tickSize: 0, fontWeight: 600,
           tickFormat: (rg) => `${rg} · n=${nByRung[rg]?.size ?? 0}` }),
-        Plot.frame({ stroke: "#e3e1dc" }),
+        Plot.frame({ stroke: cssVar("--rule") }),
         // min–max whisker per (arm,rung) — the full spread, never a lone mean
         Plot.ruleX(rows, Plot.groupX({ y1: "min", y2: "max" },
           { fx: "rung", x: "arm", y1: "value", y2: "value", stroke: "arm", strokeOpacity: 0.35, strokeWidth: 1.2 })),
@@ -242,7 +390,7 @@ function renderMetrics() {
         Plot.tickY(rows, Plot.groupX({ y: "median" },
           { fx: "rung", x: "arm", y: "value", stroke: "arm", strokeWidth: 2.5 })),
         Plot.dot(rows.filter((r) => !r.flagged), {
-          fx: "rung", x: "arm", y: "value", fill: "arm", r: 3, fillOpacity: 0.85, stroke: "white", strokeWidth: 0.4,
+          fx: "rung", x: "arm", y: "value", fill: "arm", r: 3, fillOpacity: 0.85, stroke: cssVar("--paper"), strokeWidth: 0.4,
           tip: true, channels: { repo: "repo", rung: "rung", arm: "arm", value: { value: "value", label: m.label } },
         }),
         // DNF points kept but flagged: hollow ring + ✕ so a partial run never
@@ -324,6 +472,17 @@ function renderDetail(cid) {
       }
       col.append(tb);
     }
+    // cite-link verification for this arm's transcript (T3.5)
+    if (c.cite_check) {
+      const cc = c.cite_check;
+      const cite = el("div", { className: "citecheck" });
+      cite.append(el("span", { className: "k", textContent: "cites resolved " }),
+        el("span", { className: "v", textContent: `${cc.resolved}/${cc.located}` }),
+        document.createTextNode(cc.sha ? ` at ${cc.sha.slice(0, 7)}` : ""));
+      if (cc.ambiguous || cc.unlocatable)
+        cite.append(el("span", { className: "lowtag", textContent: ` (${cc.ambiguous} amb · ${cc.unlocatable} unloc)` }));
+      col.append(cite);
+    }
     if (jr?.scores?.[c.arm]) {
       const s = jr.scores[c.arm];
       const jd = el("div", { className: "judge" });
@@ -349,10 +508,181 @@ function renderDetail(cid) {
     head.append(el("div", { className: "prompt", textContent: "(bare prompt not found in feed)" }));
   }
   host.append(head, cols);
+  // spine-coverage strip (§8, T2.2): aligned per-arm Full/Partial/Miss so the
+  // quality comparison is concrete at a glance, not buried in prose.
+  renderSpineStrip(host, jr, arms);
   if (jr?.verdict) host.append(el("p", { className: "note", style: "margin-top:1rem", textContent: "Judge synthesis: " + jr.verdict }));
   for (const kr of jr?.key_revisions ?? [])
     host.append(el("div", { className: "keyrev" }, `Reference key corrected (${kr.level}): ${kr.reason}  [${kr.cite}]`));
+  // side-by-side compare (§8, T2.1): the three readable trails in parallel panes
+  renderCompareTranscripts(host, arms);
   renderCoverage();
+}
+
+// Free cell-vs-cell compare (§8, T2.3): two arbitrary harvested cells side by
+// side — e.g. grove L2 vs L3 redis to see how an arm scales with complexity, or
+// two arms on one task. Aligned metric strip (lower-on-each-cost-axis marked
+// factually, never "winner") + the two readable trails in parallel panes.
+function renderFreeCompare() {
+  const out = $("#fc-out"); if (!out) return;
+  out.replaceChildren();
+  const a = state.fcA && cellById(state.fcA);
+  const b = state.fcB && cellById(state.fcB);
+  if (!a || !b) {
+    out.append(el("p", { className: "caveat", textContent: "pick two harvested cells above to compare." }));
+    return;
+  }
+  if (a.id === b.id) {
+    out.append(el("p", { className: "caveat", textContent: "pick two different cells." }));
+    return;
+  }
+  const pair = [a, b];
+  const AXES = { context: (c) => c.metrics?.context, turns: (c) => c.metrics?.turns,
+                 wall: (c) => c.metrics?.run_wall_s, cost: (c) => c.cost?.usd };
+  const lower = {};
+  for (const [k, get] of Object.entries(AXES)) {
+    const vals = pair.map(get).filter((v) => v != null);
+    lower[k] = vals.length === 2 ? Math.min(...vals) : null;
+  }
+  const fmt = { context: (v) => v?.toLocaleString() ?? "—", turns: (v) => v ?? "—",
+    wall: (v) => v != null ? v + "s" : "—", cost: (v) => v != null ? "$" + v.toFixed(4) : "—" };
+
+  // aligned metric strip: rows = metrics, columns = the two cells
+  const tbl = el("table", { className: "fc-metrics" });
+  const hr = el("tr", {}, el("th", { textContent: "" }));
+  for (const c of pair) hr.append(el("th", {}, [el("span", { className: "bar", style: `background:${ARM_COLOR[c.arm]}` }), document.createTextNode(" " + c.id)]));
+  tbl.append(hr);
+  for (const [k, get] of Object.entries(AXES)) {
+    const tr = el("tr", {}, el("td", { className: "fc-k", textContent: k }));
+    for (const c of pair) {
+      const v = get(c);
+      const td = el("td", { className: "fc-v" });
+      td.append(document.createTextNode(fmt[k](v)));
+      if (lower[k] != null && v === lower[k]) td.append(el("span", { className: "lowtag", textContent: " lower" }));
+      tr.append(td);
+    }
+    tbl.append(tr);
+  }
+  // judge coverage row (the judge's own word per arm), when both cells are judged
+  const covRow = el("tr", {}, el("td", { className: "fc-k", textContent: "coverage" }));
+  for (const c of pair) {
+    const s = DATA.judge[`${c.rung}-${c.repo}`]?.scores?.[c.arm];
+    const cov = s ? coverageOf(s.verdict) : null;
+    covRow.append(el("td", { className: "fc-v", textContent: cov ? `${COV_GLYPH[cov] ?? ""} ${cov}` : "—" }));
+  }
+  tbl.append(covRow);
+  out.append(tbl);
+
+  // the two transcripts in parallel — reuse the compare-pane machinery, labelled
+  // by full cell id (arm alone wouldn't disambiguate L2 vs L3 of the same arm).
+  const bar = el("div", { className: "compare-bar", style: "margin-top:.8rem" });
+  const sync = el("label", { className: "toggle compare-sync" },
+    [el("input", { type: "checkbox" }), document.createTextNode(" sync scroll")]);
+  bar.append(sync); out.append(bar);
+  const panes = el("div", { className: "compare-panes" });
+  panes.style.gridTemplateColumns = "repeat(2, 1fr)";
+  out.append(panes);
+  buildPanes(pair, panes, sync.querySelector("input"), (c) => c.id);
+}
+
+// Spine-coverage strip (§8, T2.2 / §13.5 #5). The reference key's required spine
+// is NOT in the feed and stays judge-only (genesis wall), so a fabricated
+// per-element checklist is off the table. Instead we render the spec's endorsed
+// fallback: the blind judge's own per-arm coverage verdict (Full / Partial /
+// Miss — parsed from the leading word of the verdict prose) aligned side by side,
+// with completeness/grounding. Glyphs encode coverage, never a good/bad hue
+// (truthbound: no verdict coloring). Full prose stays in the arm columns above.
+const COVERAGE_RE = /^\s*(Full|Partial|Miss|None|Incomplete)\b/i;
+const COV_GLYPH = { Full: "●", Partial: "◐", Miss: "○", None: "○", Incomplete: "◐" };
+const coverageOf = (verdict) => {
+  const m = COVERAGE_RE.exec(verdict || "");
+  return m ? m[1][0].toUpperCase() + m[1].slice(1).toLowerCase() : null;
+};
+function renderSpineStrip(host, jr, arms) {
+  if (!jr?.scores) return;
+  const have = arms.filter((c) => jr.scores[c.arm]);
+  if (!have.length) return;
+  const strip = el("section", { className: "spine" });
+  strip.append(el("div", { className: "spine-h",
+    textContent: "Spine coverage — the blind judge's per-arm verdict against the reference key's required spine" }));
+  const row = el("div", { className: "spine-row" });
+  row.style.gridTemplateColumns = `repeat(${have.length}, 1fr)`;
+  for (const c of have) {
+    const s = jr.scores[c.arm];
+    const cov = coverageOf(s.verdict);
+    const cell = el("div", { className: "spine-cell" });
+    cell.append(el("div", { className: "spine-arm" },
+      [el("span", { className: "bar", style: `background:${ARM_COLOR[c.arm]}` }), document.createTextNode(c.arm)]));
+    cell.append(el("div", { className: "spine-cov" },
+      [el("span", { className: "cov-glyph", textContent: COV_GLYPH[cov] ?? "—" }),
+       document.createTextNode(" " + (cov ?? "unverdicted"))]));
+    cell.append(el("div", { className: "spine-score", textContent: `completeness ${s.completeness} · grounding ${s.grounding}` }));
+    row.append(cell);
+  }
+  strip.append(row);
+  strip.append(el("p", { className: "caveat spine-cap",
+    textContent: "Full / Partial / Miss is the blind judge's own coverage word, parsed from the per-arm verdict — " +
+      "not a fabricated per-element checklist. The reference key stays judge-only (genesis wall); the full verdict " +
+      "prose is in each arm column above and the synthesis below (§8, §13.5)." }));
+  host.append(strip);
+}
+
+// Side-by-side arms compare (§8): the same locked cell's transcripts shown in
+// parallel scrolling panes, one per visible arm with a readable trail. Lazy —
+// the (up to ~120 KB) markdown is fetched + parsed only when the reader opens
+// the strip (§11 perf budget). Synchronized scroll is offered but OFF by
+// default: the trails diverge in length, so locked scroll mostly misaligns.
+function renderCompareTranscripts(host, arms) {
+  const withTrail = arms.filter((c) => c.evidence?.readable);
+  if (withTrail.length < 2) return; // nothing to compare against
+  const wrap = el("section", { className: "compare" });
+  const bar = el("div", { className: "compare-bar" });
+  const btn = el("button", { className: "compare-toggle", type: "button",
+    textContent: `compare ${withTrail.length} transcripts side by side ▸` });
+  const sync = el("label", { className: "toggle compare-sync", hidden: true },
+    [el("input", { type: "checkbox" }), document.createTextNode(" sync scroll")]);
+  bar.append(btn, sync);
+  wrap.append(bar);
+  const panes = el("div", { className: "compare-panes", hidden: true });
+  panes.style.gridTemplateColumns = `repeat(${withTrail.length}, 1fr)`;
+  wrap.append(panes);
+  host.append(wrap);
+
+  let built = false;
+  btn.onclick = () => {
+    const open = panes.hidden;
+    panes.hidden = !open; sync.hidden = !open;
+    btn.textContent = `compare ${withTrail.length} transcripts side by side ${open ? "▾" : "▸"}`;
+    if (open && !built) { built = true; buildPanes(withTrail, panes, sync.querySelector("input")); }
+  };
+}
+
+function buildPanes(arms, panes, syncBox, labelFor = (c) => c.arm) {
+  const scrollers = [];
+  for (const c of arms) {
+    const pane = el("div", { className: "cmp-pane" });
+    pane.append(el("div", { className: "cmp-head" },
+      [el("span", { className: "bar", style: `background:${ARM_COLOR[c.arm]}` }),
+       document.createTextNode(labelFor(c)),
+       ...(c.metrics?.turns != null ? [el("span", { className: "cmp-turns", textContent: `${c.metrics.turns} turns` })] : [])]));
+    const scroll = el("div", { className: "cmp-scroll" }, el("p", { className: "caveat", textContent: "loading…" }));
+    pane.append(scroll);
+    panes.append(pane);
+    scrollers.push(scroll);
+    fetch(c.evidence.readable).then((r) => r.text())
+      .then((md) => { scroll.innerHTML = marked.parse(md); linkifyCites(scroll, REPO[c.repo]?.gh, c.sha); })
+      .catch(() => scroll.replaceChildren(el("p", { className: "caveat", textContent: `could not load ${c.evidence.readable}` })));
+  }
+  // optional synchronized scroll — proportional (trails differ in length), with a
+  // reentrancy guard so echoed scroll events don't fight. Off unless box checked.
+  let locked = false;
+  for (const s of scrollers) s.addEventListener("scroll", () => {
+    if (!syncBox.checked || locked) return;
+    locked = true;
+    const frac = s.scrollTop / Math.max(1, s.scrollHeight - s.clientHeight);
+    for (const o of scrollers) if (o !== s) o.scrollTop = frac * (o.scrollHeight - o.clientHeight);
+    requestAnimationFrame(() => { locked = false; });
+  });
 }
 
 // Context-growth sparkline (§5.3): the per-turn input-context curve for one arm
@@ -400,9 +730,17 @@ function renderSparkline(host, c) {
 // transcript modal: readable trail (marked) ↔ raw stream-json. The raw view
 // renders one collapsible row per event (summary cheap, pretty JSON lazy on
 // expand) so a large jsonl never builds a multi-MB <pre> in one shot.
+let txOpener = null; // element to restore focus to when the modal closes (T3.6)
+function closeTranscript() {
+  $("#tx-overlay").classList.remove("open");
+  if (txOpener?.focus) txOpener.focus();
+  txOpener = null;
+}
 async function openTranscript(c) {
   const body = $("#tx-body");
+  txOpener = document.activeElement;
   $("#tx-overlay").classList.add("open");
+  $("#tx-close").focus();
   let view = "readable";
   const cache = {};
 

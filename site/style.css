@@ -17,12 +17,26 @@
   --mono: ui-monospace, "IBM Plex Mono", "SF Mono", Menlo, monospace;
   --sans: system-ui, -apple-system, "IBM Plex Sans", Segoe UI, Roboto, sans-serif;
 }
+/* dark mode — truly neutral warm grey, NOT black (§9). Tokens shared between the
+   OS-auto path and the explicit toggle. Explicit data-theme always wins over the
+   media query so the in-page switch can override the OS preference (T3.2). */
+:root[data-theme="dark"] {
+  --ink:#e8e6e1; --ink-soft:#b3b0a8; --ink-faint:#8a877f; --rule:#34322d;
+  --rule-strong:#46443d; --paper:#1b1a17; --paper-2:#232220;
+}
 @media (prefers-color-scheme: dark) {
-  :root { --ink:#e8e6e1; --ink-soft:#b3b0a8; --ink-faint:#8a877f; --rule:#34322d;
+  :root:not([data-theme]) { --ink:#e8e6e1; --ink-soft:#b3b0a8; --ink-faint:#8a877f; --rule:#34322d;
           --rule-strong:#46443d; --paper:#1b1a17; --paper-2:#232220; }
 }
 
 * { box-sizing: border-box; }
+/* a11y (T3.6): skip link, visible focus ring, no-JS notice */
+.skip-link { position: absolute; left: -999px; top: 0; background: var(--ink); color: var(--paper);
+             padding: .5rem .8rem; z-index: 100; }
+.skip-link:focus { left: .5rem; top: .5rem; border-bottom: 0; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.noscript-note { border: 1px solid var(--rule-strong); background: var(--paper-2); padding: .8rem 1rem;
+                 font-size: .85rem; color: var(--ink-soft); margin: 0 0 1.4rem; }
 html { font-size: 15px; }
 body {
   margin: 0; color: var(--ink); background: var(--paper);
@@ -34,7 +48,13 @@ a:hover { border-bottom-color: var(--ink); }
 code, .mono { font-family: var(--mono); font-size: 0.86em; }
 
 .wrap { max-width: 1060px; margin: 0 auto; padding: 2.2rem 1.4rem 5rem; }
-header.masthead { border-bottom: 1px solid var(--rule-strong); padding-bottom: 1rem; margin-bottom: 1.4rem; }
+header.masthead { border-bottom: 1px solid var(--rule-strong); padding-bottom: 1rem; margin-bottom: 1.4rem; position: relative; }
+/* theme switch — top-right of the masthead, flat hairline buttons */
+.theme-switch { position: absolute; top: 0; right: 0; display: flex; gap: .15rem; }
+.theme-switch button { font-family: var(--sans); font-size: .72rem; background: none; border: 1px solid var(--rule-strong);
+                       color: var(--ink-faint); padding: .12rem .45rem; cursor: pointer; }
+.theme-switch button:hover { color: var(--ink-soft); }
+.theme-switch button[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
 .masthead h1 { font-size: 1.35rem; font-weight: 600; margin: 0 0 .2rem; letter-spacing: -0.01em; }
 .masthead .sub { color: var(--ink-soft); font-size: .92rem; max-width: 70ch; }
 .provenance { color: var(--ink-faint); font-size: .78rem; margin-top: .6rem; font-family: var(--mono); }
@@ -123,18 +143,77 @@ td.repo:hover { color: var(--ink); }
 .metricrow { display: flex; justify-content: space-between; font-size: .82rem; border-top: 1px solid var(--rule); padding: .2rem 0; }
 .metricrow .k { color: var(--ink-faint); }
 .metricrow .v { font-family: var(--mono); }
+.citecheck { font-size: .8rem; margin-top: .4rem; color: var(--ink-soft); border-top: 1px dashed var(--rule-strong); padding-top: .3rem; }
+.citecheck .k { color: var(--ink-faint); } .citecheck .v { font-family: var(--mono); }
 .judge { font-size: .82rem; margin-top: .5rem; }
 .judge .score { font-family: var(--mono); }
 .verdict { font-size: .8rem; color: var(--ink-soft); margin-top: .3rem; max-height: 7.5rem; overflow: auto; }
 .keyrev { font-size: .78rem; color: var(--ink); background: var(--paper-2); border-left: 2px solid var(--ink-faint); padding: .4rem .6rem; margin-top: .5rem; }
 .flag { font-family: var(--mono); font-size: .7rem; color: var(--ink-faint); border: 1px solid var(--rule-strong); padding: 0 .3rem; margin-left: .3rem; }
 
+/* methodology & provenance (§10, T3.3) */
+.meth-h { font-size: .82rem; font-weight: 600; color: var(--ink); margin: 1.4rem 0 .3rem; }
+table.meth-price { border-collapse: collapse; font-size: .82rem; margin: .4rem 0; }
+table.meth-price th { text-align: left; font-weight: 600; color: var(--ink-soft); padding: .25rem 1.4rem .25rem 0; border-bottom: 1px solid var(--rule); }
+table.meth-price td { padding: .2rem 1.4rem .2rem 0; border-top: 1px solid var(--rule); }
+table.meth-price td.mono { text-align: right; }
+.meth-sources { margin: .4rem 0; display: grid; grid-template-columns: auto 1fr; gap: .2rem 1rem; font-size: .82rem; }
+.meth-sources dt { margin: 0; }
+.meth-sources dt code { font-size: .78rem; }
+.meth-sources dd { margin: 0; color: var(--ink-soft); }
+.repro { background: var(--paper-2); border-left: 2px solid var(--ink-faint); padding: .7rem .9rem; margin: .4rem 0 .3rem;
+         font-family: var(--mono); font-size: .78rem; line-height: 1.5; white-space: pre-wrap; overflow-x: auto; color: var(--ink); }
+
+/* free cell-vs-cell compare (§8, T2.3) */
+.fc-pickers { display: flex; gap: 1.4rem; flex-wrap: wrap; align-items: center; font-size: .85rem; margin-bottom: 1rem; }
+.fc-pickers label { color: var(--ink-faint); margin-right: .4rem; }
+.fc-pickers select { font-family: var(--mono); font-size: .82rem; padding: .2rem .4rem; background: var(--paper); color: var(--ink); border: 1px solid var(--rule-strong); }
+table.fc-metrics { border-collapse: collapse; font-size: .82rem; }
+table.fc-metrics th { text-align: left; font-weight: 600; padding: .25rem .8rem .25rem 0; }
+table.fc-metrics th .bar { width: .6rem; height: .6rem; display: inline-block; }
+table.fc-metrics td { padding: .2rem .8rem .2rem 0; border-top: 1px solid var(--rule); }
+table.fc-metrics .fc-k { color: var(--ink-faint); }
+table.fc-metrics .fc-v { font-family: var(--mono); }
+
+/* spine-coverage strip (§8, T2.2): aligned per-arm Full/Partial/Miss verdict */
+.spine { margin-top: 1.2rem; border-top: 1px solid var(--rule); padding-top: .7rem; }
+.spine-h { font-size: .82rem; color: var(--ink-soft); margin-bottom: .5rem; }
+.spine-row { display: grid; gap: .8rem; }
+.spine-cell { border: 1px solid var(--rule); padding: .5rem .7rem; background: var(--paper); }
+.spine-arm { font-size: .85rem; font-weight: 600; display: flex; align-items: center; gap: .4rem; }
+.spine-arm .bar { width: .6rem; height: .6rem; display: inline-block; }
+.spine-cov { font-size: .92rem; margin-top: .35rem; color: var(--ink); }
+.spine-cov .cov-glyph { font-size: 1rem; color: var(--ink-soft); }
+.spine-score { font-family: var(--mono); font-size: .76rem; color: var(--ink-faint); margin-top: .2rem; }
+.spine-cap { display: block; margin-top: .5rem; }
+
+/* side-by-side compare (§8): parallel transcript panes for one locked cell */
+.compare { margin-top: 1.4rem; border-top: 1px solid var(--rule-strong); padding-top: .8rem; }
+.compare-bar { display: flex; align-items: center; gap: 1.2rem; }
+.compare-toggle { font-family: var(--sans); font-size: .82rem; background: none; border: 1px solid var(--rule-strong);
+                  color: var(--ink-soft); padding: .25rem .7rem; cursor: pointer; }
+.compare-toggle:hover { color: var(--ink); border-color: var(--ink); }
+.compare-sync { margin: 0; }
+.compare-panes { display: grid; gap: .8rem; margin-top: .8rem; }
+.cmp-pane { border: 1px solid var(--rule); background: var(--paper); display: flex; flex-direction: column; min-width: 0; }
+.cmp-head { font-size: .85rem; font-weight: 600; display: flex; align-items: center; gap: .4rem;
+            border-bottom: 1px solid var(--rule); padding: .4rem .6rem; position: sticky; top: 0; background: var(--paper); }
+.cmp-head .bar { width: .6rem; height: .6rem; display: inline-block; }
+.cmp-head .cmp-turns { margin-left: auto; font-family: var(--mono); font-size: .72rem; color: var(--ink-faint); font-weight: 400; }
+.cmp-scroll { max-height: 60vh; overflow: auto; padding: .6rem .8rem; font-size: .82rem; line-height: 1.45; word-break: break-word; }
+.cmp-scroll pre { white-space: pre-wrap; word-break: break-word; font-family: var(--mono); font-size: .76rem; background: var(--paper-2); padding: .5rem .6rem; }
+.cmp-scroll table { border-collapse: collapse; }
+.cmp-scroll td, .cmp-scroll th { border: 1px solid var(--rule); padding: .15rem .4rem; font-size: .78rem; }
+.cmp-scroll h1, .cmp-scroll h2, .cmp-scroll h3 { font-size: .9rem; text-transform: none; letter-spacing: 0; border: 0; color: var(--ink); }
+
 /* transcript modal */
 .tx-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: none; }
 .tx-overlay.open { display: block; }
 .tx-panel { position: fixed; inset: 3vh 4vw; background: var(--paper); border: 1px solid var(--rule-strong);
             overflow: auto; padding: 1.6rem 2rem; }
-.tx-panel .close { float: right; cursor: pointer; border: 1px solid var(--rule-strong); padding: .1rem .5rem; }
+.tx-panel .close { float: right; cursor: pointer; border: 1px solid var(--rule-strong); padding: .1rem .5rem;
+                    background: none; color: var(--ink-soft); font-family: var(--sans); font-size: .82rem; }
+.tx-panel .close:hover { color: var(--ink); border-color: var(--ink); }
 .tx-panel { font-size: .9rem; }
 .tx-panel pre { white-space: pre-wrap; word-break: break-word; font-family: var(--mono); font-size: .82rem; }
 .tx-panel table { border-collapse: collapse; }
