@@ -135,6 +135,24 @@ function renderMethodology() {
   const id = MODEL_ID[model] ?? model;
   $("#meth-model").textContent = id;
 
+  // cite-link verification summary (T3.5) — aggregate over every harvested cell's
+  // build-time cite resolution against pinned source. Truthbound: located = what
+  // the mechanical checker could pin down; ambiguous/unlocatable are its limits.
+  const ccs = DATA.cells.map((c) => c.cite_check).filter(Boolean);
+  if (ccs.length) {
+    const sum = (k) => ccs.reduce((a, c) => a + (c[k] || 0), 0);
+    const located = sum("located"), resolved = sum("resolved"), oor = sum("out_of_range");
+    const pct = located ? Math.round((resolved / located) * 100) : 0;
+    $("#meth-cites").innerHTML =
+      `<b>${resolved} of ${located}</b> locatable cites resolve in-range at their pinned SHA ` +
+      `(${pct}%${oor ? `, ${oor} out-of-range` : ", none out-of-range"}), across ${ccs.length} harvested cells ` +
+      `(${sum("checked")} unique <code>file:line</code> cites checked). ` +
+      `<span class="caveat">${sum("ambiguous")} ambiguous (bare filename, &gt;1 match) and ${sum("unlocatable")} unlocatable ` +
+      `are limits of the mechanical checker — counted apart, never as failures.</span>`;
+  } else {
+    $("#meth-cites").textContent = "No pinned source available to verify against.";
+  }
+
   // pricing table — reference list price, clearly not the source of the figures
   const rows = PRICING[id];
   const ph = $("#meth-pricing");
@@ -437,6 +455,17 @@ function renderDetail(cid) {
         tb.append(el("div", { className: "metricrow", }, [el("span", { className: "k", textContent: label }), v]));
       }
       col.append(tb);
+    }
+    // cite-link verification for this arm's transcript (T3.5)
+    if (c.cite_check) {
+      const cc = c.cite_check;
+      const cite = el("div", { className: "citecheck" });
+      cite.append(el("span", { className: "k", textContent: "cites resolved " }),
+        el("span", { className: "v", textContent: `${cc.resolved}/${cc.located}` }),
+        document.createTextNode(cc.sha ? ` at ${cc.sha.slice(0, 7)}` : ""));
+      if (cc.ambiguous || cc.unlocatable)
+        cite.append(el("span", { className: "lowtag", textContent: ` (${cc.ambiguous} amb · ${cc.unlocatable} unloc)` }));
+      col.append(cite);
     }
     if (jr?.scores?.[c.arm]) {
       const s = jr.scores[c.arm];

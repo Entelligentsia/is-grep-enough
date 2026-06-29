@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P3 / T3.5` — **P1 + P2 complete; T3.1–T3.4 done** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P3 / T3.6` — **P1 + P2 complete; T3.1–T3.5 done** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -166,7 +166,19 @@ raw byte in ≤3 clicks.
   interpolated, so re-running regenerates *this* feed; a caveat notes `site/data/`
   is gitignored and Pages rebuilds on deploy. Verified headless: real SHA (3f260b9),
   build command present, deterministic note; no errors.
-- [ ] **T3.5 Cite-link verification** — confirm cited lines resolve at the SHA.
+- [x] **T3.5 Cite-link verification** — confirm cited lines resolve at the SHA.
+  `build.mjs` now re-resolves every transcript `file:line` cite against the repo's
+  **pinned source** (`verifyCites` + a lazy per-repo basename index): a cite is
+  *resolved* when its file is located (exact relative path, or a unique basename
+  match) and the line is within the file; bare names with >1 match are *ambiguous*
+  and unlocatable ones *unlocatable* — both reported apart as mechanical-checker
+  limits, never failures. Each cell carries `cite_check`; the methodology section
+  shows the aggregate and each arm column a `cites resolved R/L at <sha7>` line.
+  Result over all 86 harvested cells: **721/721 locatable cites resolve in-range,
+  0 out-of-range** (1011 unique cites; 194 ambiguous, 96 unlocatable). Reading
+  pinned source is a reporting step (like judging), not shown to any arm — genesis
+  wall intact. Build stays ~0.5s. Verified headless on L1-redis (10/10·1/1·10/10);
+  no errors.
 - [ ] **T3.6 Accessibility + no-JS fallback + reduced-motion** pass (§11).
 
 ## Cross-cutting (do when it unblocks a task above)

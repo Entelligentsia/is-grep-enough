@@ -87,6 +87,10 @@
     <h3 class="meth-h">Blind judging</h3>
     <p class="note">Each cell's three answers are scrubbed to <b>A / B / C</b> with the arm→letter mapping withheld, graded against the reference key on <b>grounding</b> (do the cited <code>file:line</code> anchors resolve in pinned source?) and <b>completeness</b> (does it cover the key's required spine?), and only un-blinded to record the score. Where the key itself was wrong, it is corrected in place and the correction is shown with its cite — proof the grader corrected <i>itself</i>, not the arms.</p>
 
+    <h3 class="meth-h">Cite-link verification</h3>
+    <p class="note">Every <code>file:line</code> in a transcript links to the GitHub blob at that repo's <b>pinned SHA</b>. The build doesn't just link them — it <b>re-resolves them against the pinned source</b>: a cite is confirmed when its file is located (exact path, or a unique basename match in the tree) and the line is within the file. The result across all harvested cells:</p>
+    <p class="note" id="meth-cites">—</p>
+
     <h3 class="meth-h">Pricing</h3>
     <p class="note">Every dollar figure on this page is the <b>billed <code>total_cost_usd</code></b> reported by the run itself — not a recomputed list-price estimate. The table below is the public list price for the model used (<span id="meth-model" class="mono">—</span>), shown so a reader can sanity-check the billed figures against the token split. n=1 per cell; cost is a direction, not a benchmark.</p>
     <div id="meth-pricing"></div>
