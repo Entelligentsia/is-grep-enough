@@ -7,12 +7,14 @@ ledger (experiment/state.json) and the harvested transcripts it points at; never
 writes state. Tool-call counts come from the SAME jq logic as
 experiment/side-metrics.sh so the numbers reconcile with the engagement gate.
 
-Subagents: when an arm calls the `Agent` tool, the subagent's own tool calls live
-in separate transcripts under `<rung>/raw/subagents/<repo>-<rung>.<arm>/agent-*.jsonl`,
-NOT in the parent. Those are folded into the split so the counts are TRUE totals
-(parent + subagents); the `sub` column reports how many calls came from subagents,
-and Notes verifies the harvested transcript count matches the parent's spawn count.
-Turns stays parent-only — subagent transcripts carry no result/num_turns event.
+Subagents: when an arm calls the `Agent` tool, the subagent's own tool calls are
+ALREADY inline in the parent transcript (each subagent turn is an assistant event
+tagged with `parent_tool_use_id`). Counting all assistant tool_use blocks is
+therefore the complete total — parent plus every subagent. The `sub` column
+reports how many of those calls were made inside subagents (the parent_tool_use_id
+subset); it is a breakdown OF the total, not an addition to it. The separate
+evidence/.../subagents/agent-*.jsonl files duplicate these inline events and are
+deliberately NOT read — adding them would double-count.
 
 Usage:
   scripts/report-metrics.py                # all rungs L1..L5
@@ -21,27 +23,27 @@ Usage:
 
 Run from the repo root (where experiment/state.json lives).
 """
-import json, subprocess, sys, os, glob
+import json, subprocess, sys, os
 from collections import Counter
 
 ARMS = ["baseline", "grove", "lsp"]
 STATE = "experiment/state.json"
 
-# jq -> tool_use names + parent num_turns. Mirrors side-metrics.sh: tool_use
-# blocks live in assistant events; num_turns lives in the result event. Subagent
-# transcripts carry no result event, so $r resolves to the parent's when present
-# and turns falls back to 0 (we only read turns from the parent file).
+# jq over the parent stream-json transcript. Mirrors side-metrics.sh: tool_use
+# blocks live in assistant events; num_turns lives in the result event. The
+# parent transcript ALREADY contains every subagent's tool calls inline — a
+# subagent turn is an assistant event tagged with `parent_tool_use_id` (pointing
+# at the spawning Agent call). So counting all assistant tool_use blocks is the
+# COMPLETE total (parent + all subagent depths); we additionally tag the subset
+# that carries `parent_tool_use_id` to report how much was done inside subagents.
+# The separate evidence/.../subagents/agent-*.jsonl files are a duplicate
+# extraction of these same inline events and must NOT be added — that double-counts.
 JQ = r'''
-[ .[]|select(.type=="assistant")|.message.content[]?|select(.type=="tool_use")|.name ] as $names
-| (map(select(.type=="result"))[0]) as $r
-| {turns:($r.num_turns//0), names:$names}
+{ turns: ((map(select(.type=="result"))[0]).num_turns // 0),
+  names: [ .[]|select(.type=="assistant")|.message.content[]?|select(.type=="tool_use")|.name ],
+  sub:   [ .[]|select(.type=="assistant" and .parent_tool_use_id!=null)
+              |.message.content[]?|select(.type=="tool_use")|.name ] }
 '''
-
-
-def _names_and_turns(transcript):
-    out = subprocess.run(["jq", "-s", JQ, transcript], capture_output=True, text=True)
-    d = json.loads(out.stdout)
-    return Counter(d["names"]), d["turns"]
 
 
 def split(counter):
@@ -58,43 +60,26 @@ def split(counter):
                 other=other, ob=ob)
 
 
-def subagent_files(evidence, rung, repo, arm):
-    """Harvested subagent transcripts for a cell (empty list if none)."""
-    grp = os.path.join(os.path.dirname(evidence), "subagents", f"{repo}-{rung}.{arm}")
-    return sorted(glob.glob(os.path.join(grp, "agent-*.jsonl")))
+def tool_counts(evidence):
+    """Complete tool split for a cell from its parent transcript alone.
 
-
-def tool_counts(evidence, rung, repo, arm):
-    """True tool split = parent + every harvested subagent transcript.
-
-    Returns (turns, split_dict, sub_calls, sub_files_n, spawns) where split_dict
-    is over parent+subagents combined, sub_calls is the tool-call count folded in
-    from subagents, sub_files_n is how many subagent transcripts were found, and
-    spawns is the parent's `Agent` tool-call count (what SHOULD have been found).
+    Returns (turns, split_dict, sub_calls). The parent already embeds subagent
+    tool calls inline, so split_dict is the true total; sub_calls is how many of
+    those were made inside subagents (assistant events with parent_tool_use_id).
     """
-    parent, turns = _names_and_turns(evidence)
-    spawns = parent.get("Agent", 0)
-    combined = Counter(parent)
-    sub_calls = 0
-    subs = subagent_files(evidence, rung, repo, arm)
-    for f in subs:
-        c, _ = _names_and_turns(f)
-        combined.update(c)
-        sub_calls += sum(c.values())
-    return turns, split(combined), sub_calls, len(subs), spawns
+    out = subprocess.run(["jq", "-s", JQ, evidence], capture_output=True, text=True)
+    d = json.loads(out.stdout)
+    return d["turns"], split(Counter(d["names"])), len(d["sub"])
 
 
-def notes(sp, arm, sub_calls, sub_files_n, spawns):
-    """Explain the `other` bucket, report folded subagents, flag anomalies."""
+def notes(sp, arm, sub_calls):
+    """Explain the `other` bucket, report subagent share, flag anomalies."""
     parts = []
     ob = sp["ob"]
     if ob:
         parts.append("other=" + ",".join(f"{k}×{v}" for k, v in sorted(ob.items())))
-    if spawns and sub_files_n == spawns:
-        parts.append(f"+{sub_calls} calls from {sub_files_n} subagent(s) folded in")
-    elif spawns:                                 # spawned but transcripts missing
-        parts.append(f"⚠ {spawns - sub_files_n}/{spawns} subagent transcript(s) "
-                     f"missing — split still undercounts")
+    if sub_calls:
+        parts.append(f"incl {sub_calls} subagent call(s)")
     if arm == "grove" and sp["grove"] == 0:
         parts.append("⚠ no grove tool")
     if arm == "lsp" and sp["lsp"] == 0:
@@ -124,15 +109,14 @@ def row(sides, judge, rung, repo, arm):
     assert cells is not None, f"{rung}-{repo} is not fully harvested"
     c = cells[arm]
     sc = judge.get(f"{rung}-{repo}", {}).get("scores", {}).get(arm, {})
-    turns, sp, sub_calls, sub_files_n, spawns = tool_counts(
-        c["evidence"], rung, repo, arm)
+    turns, sp, sub_calls = tool_counts(c["evidence"])
     return {
         "repo": repo, "arm": arm, "turns": turns, "total": sp["total"],
         "bash": sp["bash"], "grove": sp["grove"], "lsp": sp["lsp"],
         "read": sp["read"], "other": sp["other"], "sub": sub_calls,
         "wall_s": round(c["run_wall_s"]), "ctx_k": round(c["context"] / 1000),
         "grounding": sc.get("grounding"), "completeness": sc.get("completeness"),
-        "notes": notes(sp, arm, sub_calls, sub_files_n, spawns),
+        "notes": notes(sp, arm, sub_calls),
     }
 
 

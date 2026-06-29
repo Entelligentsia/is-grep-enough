@@ -1,6 +1,6 @@
 ---
 name: report-metrics
-description: Render per-cell process+quality metric tables for the navigation-3way experiment, one table per rung, including only (rung,repo) cells where all three arms (baseline/grove/lsp) are harvested. Columns are turns, tool-call split (total/bash/grove/lsp/read/other/sub), wall time, context tokens, and blind judge scores. Tool counts fold in subagent transcripts so arms that call the Agent tool report TRUE totals, with the `sub` column showing the folded-in count and Notes verifying transcript completeness. Use when the user wants a metrics report, comparison table, or tool-usage breakdown over completed cells. Argument is empty/"all" (every complete rung), one or more rung ids (e.g. "L2 L3"), or "--json".
+description: Render per-cell process+quality metric tables for the navigation-3way experiment, one table per rung, including only (rung,repo) cells where all three arms (baseline/grove/lsp) are harvested. Columns are turns, tool-call split (total/bash/grove/lsp/read/other/sub), wall time, context tokens, and blind judge scores. Tool totals count all tool_use in the parent transcript, which already includes subagent calls inline (parent_tool_use_id); the `sub` column breaks out how many of those were inside subagents without double-counting. Use when the user wants a metrics report, comparison table, or tool-usage breakdown over completed cells. Argument is empty/"all" (every complete rung), one or more rung ids (e.g. "L2 L3"), or "--json".
 ---
 
 # /report-metrics — per-cell metric tables for navigation-3way
@@ -49,37 +49,38 @@ engagement gate:
 | grove | `name` starts with `mcp__grove__` |
 | lsp | `name=="LSP"` (Claude Code's native LSP tool) |
 | other | Tot − bash − read − grove − lsp |
-| sub | of the tool calls above, how many came from subagent transcripts |
+| sub | of Tot, how many calls were made inside subagents (a subset, NOT additive) |
 | Wall(s) | `run_wall_s`, rounded |
 | Ctx(k) | `context` / 1000, rounded (includes subagent token usage) |
 | Grnd / Cmpl | blind judge `grounding` / `completeness` (`—` if not yet judged) |
 
-### Subagents (the Agent tool) — folded in, not undercounted
+### Subagents (the Agent tool) — already inline, never double-counted
 
-When an arm calls the `Agent` tool it spawns a subagent whose own tool calls live
-in a SEPARATE transcript, not the parent. Those transcripts are harvested under
+When an arm calls the `Agent` tool, the subagent's own tool calls are **already in
+the parent transcript inline**: each subagent turn is an `assistant` event tagged
+with `parent_tool_use_id` (pointing at the spawning `Agent` call). So counting all
+assistant `tool_use` blocks (the side-metrics.sh logic) is the COMPLETE total —
+parent plus every subagent, at any `spawnDepth`. Tot / bash / grove / lsp / read /
+other are already true totals with no extra work.
+
+The `sub` column reports the subset of Tot made inside subagents (the
+`parent_tool_use_id` calls); it is a breakdown OF Tot, not an addition to it. The
+parent's `Agent` spawn calls themselves carry no `parent_tool_use_id`, so they
+count in `other`, not `sub`.
+
+There is also a duplicate extraction of these same events under
 `evidence/nav3/<rung>/raw/subagents/<repo>-<rung>.<arm>/agent-*.jsonl` (one file
-per spawn; a `.meta.json` records `agentType`/`toolUseId`). The script globs that
-group dir and **adds each subagent's tool calls into the split**, so Tot / bash /
-grove / lsp / read / other are true parent+subagent totals. The `sub` column is
-how many of those calls came from subagents (0 for arms that spawn none). The
-parent's `Agent` spawn calls themselves remain counted in `other`.
-
-Turns stays **parent-only** (`result.num_turns`) — subagent transcripts have no
-result event. Subagent tool calls are NOT line-resolved by depth; all spawns for
-a cell (any `spawnDepth`) are flattened into that cell's totals.
+per spawn). The script deliberately **does not read those** — adding them on top
+of the inline events would double-count. Verify reconciliation against
+`experiment/side-metrics.sh <parent.jsonl>` (`tool_calls`/`bash_calls`/`reads`).
 
 ## Reading the Notes column (tool clarity)
 
 - **`other=Name×N`** — itemizes the `other` bucket so Tot fully reconciles.
   `ToolSearch` is the deferred-tool loader (~1 per run, not navigation work);
   `Agent×N` is N subagent spawns.
-- **`+K calls from N subagent(s) folded in`** — confirms the row's split already
-  includes K tool calls from N harvested subagent transcripts (N matches the
-  parent's `Agent` spawn count, so the totals are complete).
-- **`⚠ M/N subagent transcript(s) missing — split still undercounts`** — the arm
-  spawned N subagents but only N−M transcripts were harvested; the split is folded
-  as far as possible but still understates that row. Re-harvest the cell to fix.
+- **`incl K subagent call(s)`** — K of this row's Tot were made inside subagents
+  (already counted in Tot; this is just the breakdown, equal to the `sub` column).
 - **`⚠ no grove tool` / `⚠ no LSP tool`** — a capability arm made zero capability
   calls; flag for an engagement-gate review (it may be a borderline pass).
 
