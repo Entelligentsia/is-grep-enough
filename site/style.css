@@ -129,6 +129,18 @@ td.repo:hover { color: var(--ink); }
 .keyrev { font-size: .78rem; color: var(--ink); background: var(--paper-2); border-left: 2px solid var(--ink-faint); padding: .4rem .6rem; margin-top: .5rem; }
 .flag { font-family: var(--mono); font-size: .7rem; color: var(--ink-faint); border: 1px solid var(--rule-strong); padding: 0 .3rem; margin-left: .3rem; }
 
+/* spine-coverage strip (§8, T2.2): aligned per-arm Full/Partial/Miss verdict */
+.spine { margin-top: 1.2rem; border-top: 1px solid var(--rule); padding-top: .7rem; }
+.spine-h { font-size: .82rem; color: var(--ink-soft); margin-bottom: .5rem; }
+.spine-row { display: grid; gap: .8rem; }
+.spine-cell { border: 1px solid var(--rule); padding: .5rem .7rem; background: var(--paper); }
+.spine-arm { font-size: .85rem; font-weight: 600; display: flex; align-items: center; gap: .4rem; }
+.spine-arm .bar { width: .6rem; height: .6rem; display: inline-block; }
+.spine-cov { font-size: .92rem; margin-top: .35rem; color: var(--ink); }
+.spine-cov .cov-glyph { font-size: 1rem; color: var(--ink-soft); }
+.spine-score { font-family: var(--mono); font-size: .76rem; color: var(--ink-faint); margin-top: .2rem; }
+.spine-cap { display: block; margin-top: .5rem; }
+
 /* side-by-side compare (§8): parallel transcript panes for one locked cell */
 .compare { margin-top: 1.4rem; border-top: 1px solid var(--rule-strong); padding-top: .8rem; }
 .compare-bar { display: flex; align-items: center; gap: 1.2rem; }

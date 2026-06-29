@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P2 / T2.2` — **P1 complete (T1.1–T1.6, TX.1); T2.1 done** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P2 / T2.3` — **P1 complete (T1.1–T1.6, TX.1); T2.1–T2.2 done** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -100,9 +100,18 @@ raw byte in ≤3 clicks.
   but **off by default** per §8 (trails diverge in length). Verified headless
   (Playwright/Chrome) on L1-redis (3 panes, 11/1/10 cites) and L5-spring-boot;
   sync control present + unchecked by default; no data 404s.
-- [ ] **T2.2 Spine-coverage strip.** Per-arm Full/Partial/Miss against the
+- [x] **T2.2 Spine-coverage strip.** Per-arm Full/Partial/Miss against the
   reference key's required spine; if not machine-parseable, render judge per-arm
-  verdicts side by side — never fabricate (§8, §13.5).
+  verdicts side by side — never fabricate (§8, §13.5). The reference key's element
+  list is **not** in the feed and stays judge-only (genesis wall), so a per-element
+  checklist would be fabrication — taken off the table per §13.5 #5. Instead
+  `renderSpineStrip` renders the spec's endorsed fallback: the blind judge's own
+  per-arm coverage word (Full/Partial/Miss), parsed from the leading token of the
+  verdict prose (`COVERAGE_RE`), aligned side by side with completeness/grounding.
+  All 84 arm-verdicts parse cleanly (83 Full, 1 Partial). Glyphs (●/◐/○) encode
+  coverage, never a good/bad hue (truthbound: no verdict coloring). Verified
+  headless: L1-redis all ● Full; L5-bitcoin baseline ◐ Partial vs grove/lsp ●
+  Full; unjudged L4-spring-boot shows no strip; no page errors.
 - [ ] **T2.3 Free cell-vs-cell compare** (e.g. grove L2 vs L3 redis) (§8).
 
 ## Phase 3 — Polish & trust toolkit

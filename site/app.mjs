@@ -349,12 +349,57 @@ function renderDetail(cid) {
     head.append(el("div", { className: "prompt", textContent: "(bare prompt not found in feed)" }));
   }
   host.append(head, cols);
+  // spine-coverage strip (§8, T2.2): aligned per-arm Full/Partial/Miss so the
+  // quality comparison is concrete at a glance, not buried in prose.
+  renderSpineStrip(host, jr, arms);
   if (jr?.verdict) host.append(el("p", { className: "note", style: "margin-top:1rem", textContent: "Judge synthesis: " + jr.verdict }));
   for (const kr of jr?.key_revisions ?? [])
     host.append(el("div", { className: "keyrev" }, `Reference key corrected (${kr.level}): ${kr.reason}  [${kr.cite}]`));
   // side-by-side compare (§8, T2.1): the three readable trails in parallel panes
   renderCompareTranscripts(host, arms);
   renderCoverage();
+}
+
+// Spine-coverage strip (§8, T2.2 / §13.5 #5). The reference key's required spine
+// is NOT in the feed and stays judge-only (genesis wall), so a fabricated
+// per-element checklist is off the table. Instead we render the spec's endorsed
+// fallback: the blind judge's own per-arm coverage verdict (Full / Partial /
+// Miss — parsed from the leading word of the verdict prose) aligned side by side,
+// with completeness/grounding. Glyphs encode coverage, never a good/bad hue
+// (truthbound: no verdict coloring). Full prose stays in the arm columns above.
+const COVERAGE_RE = /^\s*(Full|Partial|Miss|None|Incomplete)\b/i;
+const COV_GLYPH = { Full: "●", Partial: "◐", Miss: "○", None: "○", Incomplete: "◐" };
+const coverageOf = (verdict) => {
+  const m = COVERAGE_RE.exec(verdict || "");
+  return m ? m[1][0].toUpperCase() + m[1].slice(1).toLowerCase() : null;
+};
+function renderSpineStrip(host, jr, arms) {
+  if (!jr?.scores) return;
+  const have = arms.filter((c) => jr.scores[c.arm]);
+  if (!have.length) return;
+  const strip = el("section", { className: "spine" });
+  strip.append(el("div", { className: "spine-h",
+    textContent: "Spine coverage — the blind judge's per-arm verdict against the reference key's required spine" }));
+  const row = el("div", { className: "spine-row" });
+  row.style.gridTemplateColumns = `repeat(${have.length}, 1fr)`;
+  for (const c of have) {
+    const s = jr.scores[c.arm];
+    const cov = coverageOf(s.verdict);
+    const cell = el("div", { className: "spine-cell" });
+    cell.append(el("div", { className: "spine-arm" },
+      [el("span", { className: "bar", style: `background:${ARM_COLOR[c.arm]}` }), document.createTextNode(c.arm)]));
+    cell.append(el("div", { className: "spine-cov" },
+      [el("span", { className: "cov-glyph", textContent: COV_GLYPH[cov] ?? "—" }),
+       document.createTextNode(" " + (cov ?? "unverdicted"))]));
+    cell.append(el("div", { className: "spine-score", textContent: `completeness ${s.completeness} · grounding ${s.grounding}` }));
+    row.append(cell);
+  }
+  strip.append(row);
+  strip.append(el("p", { className: "caveat spine-cap",
+    textContent: "Full / Partial / Miss is the blind judge's own coverage word, parsed from the per-arm verdict — " +
+      "not a fabricated per-element checklist. The reference key stays judge-only (genesis wall); the full verdict " +
+      "prose is in each arm column above and the synthesis below (§8, §13.5)." }));
+  host.append(strip);
 }
 
 // Side-by-side arms compare (§8): the same locked cell's transcripts shown in
