@@ -1,6 +1,6 @@
 ---
 name: report-metrics
-description: Render per-cell process+quality metric tables for the navigation-3way experiment, one table per rung, including only (rung,repo) cells where all three arms (baseline/grove/lsp) are harvested. Columns are turns, tool-call split (total/bash/grove/lsp/read/other), wall time, context tokens, and blind judge scores, with a Notes column explaining the `other` bucket and engagement anomalies. Use when the user wants a metrics report, comparison table, or tool-usage breakdown over completed cells. Argument is empty/"all" (every complete rung), one or more rung ids (e.g. "L2 L3"), or "--json".
+description: Render per-cell process+quality metric tables for the navigation-3way experiment, one table per rung, including only (rung,repo) cells where all three arms (baseline/grove/lsp) are harvested. Columns are turns, tool-call split (total/bash/grove/lsp/read/other/sub), wall time, context tokens, and blind judge scores. Tool counts fold in subagent transcripts so arms that call the Agent tool report TRUE totals, with the `sub` column showing the folded-in count and Notes verifying transcript completeness. Use when the user wants a metrics report, comparison table, or tool-usage breakdown over completed cells. Argument is empty/"all" (every complete rung), one or more rung ids (e.g. "L2 L3"), or "--json".
 ---
 
 # /report-metrics — per-cell metric tables for navigation-3way
@@ -49,19 +49,37 @@ engagement gate:
 | grove | `name` starts with `mcp__grove__` |
 | lsp | `name=="LSP"` (Claude Code's native LSP tool) |
 | other | Tot − bash − read − grove − lsp |
+| sub | of the tool calls above, how many came from subagent transcripts |
 | Wall(s) | `run_wall_s`, rounded |
 | Ctx(k) | `context` / 1000, rounded (includes subagent token usage) |
 | Grnd / Cmpl | blind judge `grounding` / `completeness` (`—` if not yet judged) |
 
+### Subagents (the Agent tool) — folded in, not undercounted
+
+When an arm calls the `Agent` tool it spawns a subagent whose own tool calls live
+in a SEPARATE transcript, not the parent. Those transcripts are harvested under
+`evidence/nav3/<rung>/raw/subagents/<repo>-<rung>.<arm>/agent-*.jsonl` (one file
+per spawn; a `.meta.json` records `agentType`/`toolUseId`). The script globs that
+group dir and **adds each subagent's tool calls into the split**, so Tot / bash /
+grove / lsp / read / other are true parent+subagent totals. The `sub` column is
+how many of those calls came from subagents (0 for arms that spawn none). The
+parent's `Agent` spawn calls themselves remain counted in `other`.
+
+Turns stays **parent-only** (`result.num_turns`) — subagent transcripts have no
+result event. Subagent tool calls are NOT line-resolved by depth; all spawns for
+a cell (any `spawnDepth`) are flattened into that cell's totals.
+
 ## Reading the Notes column (tool clarity)
 
 - **`other=Name×N`** — itemizes the `other` bucket so Tot fully reconciles.
-- **`ToolSearch`** — the deferred-tool loader (loads a tool schema before first
-  use); near-ubiquitous, ~1 per run, not navigation work.
-- **`⚠ subagents — tool counts undercount`** — the arm called `Agent`, spawning a
-  subagent. The subagent's **internal** bash/read/grove calls are NOT in this
-  transcript, so the split UNDERCOUNTS real exploration for that row (context
-  tokens still include the subagent). Common on heavyweight baseline runs.
+  `ToolSearch` is the deferred-tool loader (~1 per run, not navigation work);
+  `Agent×N` is N subagent spawns.
+- **`+K calls from N subagent(s) folded in`** — confirms the row's split already
+  includes K tool calls from N harvested subagent transcripts (N matches the
+  parent's `Agent` spawn count, so the totals are complete).
+- **`⚠ M/N subagent transcript(s) missing — split still undercounts`** — the arm
+  spawned N subagents but only N−M transcripts were harvested; the split is folded
+  as far as possible but still understates that row. Re-harvest the cell to fix.
 - **`⚠ no grove tool` / `⚠ no LSP tool`** — a capability arm made zero capability
   calls; flag for an engagement-gate review (it may be a borderline pass).
 
