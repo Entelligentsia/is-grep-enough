@@ -26,6 +26,7 @@ const METRICS = {
 
 const state = { rung: "", repo: "", metric: "cost", cell: null };
 let DATA;
+let REPO = {}; // id → {id, lang, sha, gh} for cite-link construction
 
 init();
 async function init() {
@@ -33,6 +34,7 @@ async function init() {
     ["meta", "experiment", "cells", "judge"].map((f) => fetch(`data/${f}.json`).then((r) => r.json()))
   );
   DATA = { meta, experiment, cells, judge: Object.fromEntries(judge.map((j) => [j.id, j])) };
+  REPO = Object.fromEntries(experiment.repos.map((r) => [r.id, r]));
 
   $("#purpose").textContent = experiment.purpose ?? "";
   $("#provenance").textContent =
@@ -225,6 +227,7 @@ async function openTranscript(c) {
       }
       content.innerHTML =
         `<p class="caveat">provenance: <code>${c.evidence.raw ?? "—"}</code></p>` + cache.readable;
+      linkifyCites(content, REPO[c.repo]?.gh, c.sha);
     } else {
       if (!cache.raw) {
         content.innerHTML = `<p class="caveat">loading raw…</p>`;
@@ -269,4 +272,47 @@ function rawSummary(obj, line) {
     extra = obj.subtype ?? "";
   }
   return `${type}${extra ? "  —  " + extra : ""}`;
+}
+
+// Detect `path.ext:line` (optionally `:line-line2`) cites in the rendered trail
+// and link each to the GitHub blob at the cell's pinned SHA, opened in a new
+// tab — so a reader can verify grounding the same way the judge did (§7). Walks
+// text nodes only (never inside an existing <a>), so existing markup is intact.
+const CITE_RE = /([A-Za-z0-9._\-]+(?:\/[A-Za-z0-9._\-]+)*\.[A-Za-z]{1,6}):(\d+)(?:[-:](\d+))?/g;
+function linkifyCites(root, gh, sha) {
+  if (!gh || !sha) return;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(n) {
+      if (!n.nodeValue || !n.nodeValue.includes(":")) return NodeFilter.FILTER_REJECT;
+      for (let p = n.parentElement; p && p !== root; p = p.parentElement)
+        if (p.tagName === "A") return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    },
+  });
+  const targets = [];
+  while (walker.nextNode()) targets.push(walker.currentNode);
+  for (const node of targets) {
+    CITE_RE.lastIndex = 0;
+    if (!CITE_RE.test(node.nodeValue)) continue;
+    CITE_RE.lastIndex = 0;
+    const text = node.nodeValue;
+    const frag = document.createDocumentFragment();
+    let last = 0, m;
+    while ((m = CITE_RE.exec(text))) {
+      const [full, path, l1, l2] = m;
+      frag.append(text.slice(last, m.index));
+      const cleanPath = path.replace(/^\.?\//, "");
+      const hash = l2 ? `#L${l1}-L${l2}` : `#L${l1}`;
+      const a = el("a", {
+        href: `https://github.com/${gh}/blob/${sha}/${cleanPath}${hash}`,
+        target: "_blank", rel: "noopener", className: "cite",
+        title: `open at ${gh}@${sha.slice(0, 7)} (new tab)`,
+      });
+      a.textContent = full;
+      frag.append(a);
+      last = m.index + full.length;
+    }
+    frag.append(text.slice(last));
+    node.parentNode.replaceChild(frag, node);
+  }
 }

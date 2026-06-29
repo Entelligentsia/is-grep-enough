@@ -25,12 +25,15 @@ const rj = (p) => JSON.parse(rd(p));
 const state = rj("experiment/state.json");
 const spine = rj("experiment/spine.json");
 
-// ---- manifest: pinned SHA + language per repo --------------------------------
+// ---- manifest: pinned SHA + language + GitHub slug per repo ------------------
+// gh = "owner/repo" derived from the clone url, used to build blob cite links
+// (https://github.com/<gh>/blob/<sha>/<path>#L<n>) at the cell's pinned SHA.
+const ghSlug = (url) => url ? url.replace(/^https?:\/\/github\.com\//, "").replace(/\.git$/, "") : null;
 const manifest = {};
 for (const line of rd("repos.manifest").split("\n")) {
   if (!line.trim() || line.trim().startsWith("#")) continue;
-  const [name, lang, , sha] = line.trim().split(/\s+/);
-  if (name) manifest[name] = { lang, sha };
+  const [name, lang, url, sha] = line.trim().split(/\s+/);
+  if (name) manifest[name] = { lang, sha, gh: ghSlug(url) };
 }
 
 const ARMS = spine.arms; // {baseline,grove,lsp}

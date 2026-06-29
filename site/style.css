@@ -121,4 +121,8 @@ td.repo:hover { color: var(--ink); }
 .rawlist summary:hover { color: var(--ink); }
 .rawlist .rawev[open] summary { color: var(--ink); }
 .rawlist pre { background: var(--paper-2); padding: .6rem .8rem; margin: .2rem 0 .6rem; max-height: 60vh; overflow: auto; }
+
+/* file:line cite links into the pinned GitHub blob */
+a.cite { font-family: var(--mono); font-size: .92em; border-bottom: 1px dotted var(--rule-strong); white-space: nowrap; }
+a.cite:hover { border-bottom: 1px solid var(--ink); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

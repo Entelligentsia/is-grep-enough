@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P0 / T0.2` *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P0 / T0.3` *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -23,9 +23,10 @@ raw byte in ≤3 clicks.
   ↔ raw `*.jsonl`. `build.mjs` copies raw into `data/raw/` (`evidence.raw_local`);
   raw view is a lazy per-event collapsible list (summary cheap, pretty JSON on
   expand) so large files never build a multi-MB `<pre>` (§7, §11 perf budget).
-- [ ] **T0.2 Transcript viewer — cite links.** Detect `file:line` (e.g.
-  `src/db.c:2935`) in the answer/trail; link to the GitHub blob at the cell's
-  pinned SHA (new tab). SHA is already in `cells.json`.
+- [x] **T0.2 Transcript viewer — cite links.** `linkifyCites` walks the rendered
+  trail's text nodes and links `path.ext:line[-line2]` to the GitHub blob at the
+  cell's pinned SHA (new tab). `build.mjs` derives `gh` (owner/repo) from the
+  manifest clone url into `experiment.json`; cell `sha` already present.
 - [ ] **T0.3 Transcript viewer — subagent sub-trails.** Render
   `raw/subagents/<cell>.<arm>/` as nested collapsible trails; build step must
   surface their paths in the feed.
