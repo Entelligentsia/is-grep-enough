@@ -240,13 +240,28 @@
       "ts": "2026-06-29T05:48:16.250Z"
     },
     "L1-baseline-bitcoin": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 46,
+      "context": 88337,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/bitcoin-L1.claude.baseline.jsonl",
+      "ts": "2026-06-29T09:07:34.639Z"
     },
     "L1-grove-bitcoin": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 94,
+      "context": 224243,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/bitcoin-L1.claude.grove.jsonl",
+      "ts": "2026-06-29T09:18:58.235Z"
     },
     "L1-lsp-bitcoin": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 78,
+      "context": 204475,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/bitcoin-L1.claude.lsp.jsonl",
+      "ts": "2026-06-29T09:31:21.872Z"
     },
     "L2-baseline-bitcoin": {
       "status": "harvested",
@@ -330,13 +345,28 @@
       "ts": "2026-06-29T05:45:13.561Z"
     },
     "L1-baseline-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 93,
+      "context": 285010,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/laravel-L1.claude.baseline.jsonl",
+      "ts": "2026-06-29T09:11:38.632Z"
     },
     "L1-grove-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 101,
+      "context": 239309,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/laravel-L1.claude.grove.jsonl",
+      "ts": "2026-06-29T09:23:52.604Z"
     },
     "L1-lsp-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 108,
+      "context": 243349,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/laravel-L1.claude.lsp.jsonl",
+      "ts": "2026-06-29T09:37:08.501Z"
     },
     "L2-baseline-laravel": {
       "status": "harvested",
@@ -405,13 +435,28 @@
       "status": "pending"
     },
     "L1-baseline-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 48,
+      "context": 73963,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/rails-L1.claude.baseline.jsonl",
+      "ts": "2026-06-29T09:10:03.252Z"
     },
     "L1-grove-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 70,
+      "context": 176774,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/rails-L1.claude.grove.jsonl",
+      "ts": "2026-06-29T09:22:09.038Z"
     },
     "L1-lsp-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 96,
+      "context": 250180,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/rails-L1.claude.lsp.jsonl",
+      "ts": "2026-06-29T09:35:18.356Z"
     },
     "L2-baseline-rails": {
       "status": "harvested",
@@ -480,13 +525,28 @@
       "status": "pending"
     },
     "L1-baseline-typescript": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 119,
+      "context": 169592,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/typescript-L1.claude.baseline.jsonl",
+      "ts": "2026-06-29T09:05:23.418Z"
     },
     "L1-grove-typescript": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 81,
+      "context": 185549,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/typescript-L1.claude.grove.jsonl",
+      "ts": "2026-06-29T09:15:55.276Z"
     },
     "L1-lsp-typescript": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 94,
+      "context": 190350,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/typescript-L1.claude.lsp.jsonl",
+      "ts": "2026-06-29T09:28:07.588Z"
     },
     "L2-baseline-typescript": {
       "status": "harvested",
@@ -570,13 +630,28 @@
       "ts": "2026-06-29T06:00:21.519Z"
     },
     "L1-baseline-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 80,
+      "context": 308399,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/webpack-L1.claude.baseline.jsonl",
+      "ts": "2026-06-29T09:06:45.792Z"
     },
     "L1-grove-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 83,
+      "context": 191809,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/webpack-L1.claude.grove.jsonl",
+      "ts": "2026-06-29T09:17:21.392Z"
     },
     "L1-lsp-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 110,
+      "context": 327965,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/webpack-L1.claude.lsp.jsonl",
+      "ts": "2026-06-29T09:30:01.212Z"
     },
     "L2-baseline-webpack": {
       "status": "harvested",
@@ -645,13 +720,28 @@
       "status": "pending"
     },
     "L1-baseline-spring-boot": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 94,
+      "context": 302535,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/spring-boot-L1.claude.baseline.jsonl",
+      "ts": "2026-06-29T09:09:12.344Z"
     },
     "L1-grove-spring-boot": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 115,
+      "context": 364852,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/spring-boot-L1.claude.grove.jsonl",
+      "ts": "2026-06-29T09:20:56.436Z"
     },
     "L1-lsp-spring-boot": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 134,
+      "context": 425414,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/spring-boot-L1.claude.lsp.jsonl",
+      "ts": "2026-06-29T09:33:38.628Z"
     },
     "L2-baseline-spring-boot": {
       "status": "harvested",
@@ -745,13 +835,28 @@
       "ts": "2026-06-29T05:56:12.172Z"
     },
     "L1-baseline-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 154,
+      "context": 401311,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/tokio-L1.claude.baseline.jsonl",
+      "ts": "2026-06-29T09:02:44.465Z"
     },
     "L1-grove-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 110,
+      "context": 273706,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/tokio-L1.claude.grove.jsonl",
+      "ts": "2026-06-29T09:13:32.293Z"
     },
     "L1-lsp-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 92,
+      "context": 214457,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/tokio-L1.claude.lsp.jsonl",
+      "ts": "2026-06-29T09:25:27.670Z"
     },
     "L2-baseline-tokio": {
       "status": "harvested",
@@ -820,13 +925,28 @@
       "status": "pending"
     },
     "L1-baseline-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 35,
+      "context": 74966,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/hugo-L1.claude.baseline.jsonl",
+      "ts": "2026-06-29T09:03:22.381Z"
     },
     "L1-grove-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 56,
+      "context": 216560,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/hugo-L1.claude.grove.jsonl",
+      "ts": "2026-06-29T09:14:31.104Z"
     },
     "L1-lsp-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 60,
+      "context": 238795,
+      "engaged": true,
+      "evidence": "evidence/nav3/L1/raw/hugo-L1.claude.lsp.jsonl",
+      "ts": "2026-06-29T09:26:30.930Z"
     },
     "L2-baseline-hugo": {
       "status": "harvested",
@@ -1618,6 +1738,203 @@
       "key_revisions": [],
       "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full (completeness 1.0). Grounding spanned 0.93-0.99 (sampled load-bearing cites verified line-exact against pinned source). The differentiator is COST, not quality: cheapest on context was baseline (152532 tokens), most expensive was lsp (353694 tokens). Thesis stays a curve — the leanest route to the answer here, not a universal winner.",
       "ts": "2026-06-29T00:45:15.896Z"
+    },
+    "L1-hugo": {
+      "scores": {
+        "baseline": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. Names media.Type (mediaType.go:36) with correct json tags and covers all 6 spine elements: Type (full MIME identity, json:\"-\", re-emitted in MarshalJSON), MainType/SubType decomposition, and the unexported mimeSuffix as the +suffix tail — keeping SubType and mimeSuffix distinct (the distinction the prompt demands). File-suffix group complete: SuffixesCSV (string-for-comparability rationale), Delimiter (DefaultDelimiter '.'), FirstSuffix. Anchors decomposition in FromString (:137), Suffixes() (:170), HasSuffix (:340, sentinel-comma containment) — all line-exact. Grounding 1.0. Process (un-blind): cheapest arm — 75k context / 3 turns, a single grep + Read (1 bash, no structural tool)."
+        },
+        "grove": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. Identifies media.Type (mediaType.go:36) and covers all 6 spine elements: Type as full MIME identity + sort key (String() returns it, Types.Less sorts on it, verified :166/:235), MainType/SubType decomposition, and crucially distinguishes SubType (rss) from the unexported mimeSuffix (the +xml structured-syntax tail). File-suffix group complete: Delimiter, SuffixesCSV (string-not-slice keeps Type comparable), FirstSuffix SuffixInfo (:61, exact). Reproduces init() accurately. Grounding 1.0 — every sampled cite resolves exact. Process: 217k context / 11 turns, pure-structural route (7 grove calls, 0 reads)."
+        },
+        "lsp": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. Walks media.Type (mediaType.go:36) through all 6 spine elements with the densest fully-accurate cite set: Type at :38 (returned by String() :166, sorted by Types.Less :235), the MainType/SubType/mimeSuffix decomposition (mimeSuffix set by newMediaTypeWithMimeSuffix :222), file-suffix group Delimiter/SuffixesCSV/FirstSuffix with SuffixInfo (:61) and init() (:207) line-exact. Distinguishes SubType from mimeSuffix explicitly. Grounding 1.0 — every sampled cite resolves exact. Process: dearest arm — 239k context / 9 turns, native LSP route (2 LSP calls + 4 reads)."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms reached Full on the media.Type spine (mediaType.go:36) — the Type/MainType/SubType decomposition with the required SubType-vs-mimeSuffix distinction, plus the file-suffix group (Delimiter/SuffixesCSV/FirstSuffix). Grounding is a perfect three-way tie at 1.0: every sampled load-bearing cite resolved line-exact across all arms. Quality did not separate them at all; COST did — baseline cheapest on this single-struct L1 lookup (75k / 3 turns, one grep+Read), grove mid (217k / 11 turns, pure structural), the semantic arm dearest (239k / 9 turns). On a bounded single-file struct question, plain text search was both fully correct and cheapest. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T09:42:20.436Z"
+    },
+    "L1-bitcoin": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. All six spine elements: class Coin (coins.h:34-90), CTxOut out with nValue/scriptPubKey (transaction.h:139-168), fCoinBase:1 and nHeight:31 bitfields packed into one 32-bit word, spentness encoded as out.IsNull() with no separate boolean (IsSpent coins.h:83), and the (nHeight<<1)|fCoinBase VARINT packing (Serialize/Unserialize coins.h:64-78) then TxOutCompression. Keeps provenance-vs-spentness clean. Grounding 0.98 — every load-bearing cite resolves exact (coins.h:34, :83, :64-78, CCoinsCacheEntry:109-209, CCoinsMap:219-224); CTxOut range 139-168 a touch short of the true 139-172 but lands on the class; m_flags-as-public is prose simplification, not a cite error. Process (un-blind): cheapest arm — 88k context / 3 turns, grep-led (1 bash, no structural tool)."
+        },
+        "grove": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. All six spine elements: class Coin (coins.h:34), CTxOut out as payload (nValue+scriptPubKey, transaction.h:139), the fCoinBase:1 / nHeight:31 provenance bitfields, spentness-via-out.IsNull() (IsSpent coins.h:83, noting it does not read the provenance bits and Clear nulls out), and the (nHeight<<1)|fCoinBase VARINT packing on disk. Explicitly separates provenance from spentness and explains the coinbase maturity rule. Grounding 0.97 — Coin:34, IsSpent:83, CTxOut transaction.h:139, CCoinsCacheEntry:109 all exact; serialize block cited at :64 is the function start (key uses 66-67); same m_flags prose simplification. Process: 224k context / 10 turns, structural route (5 grove calls)."
+        },
+        "lsp": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. All six spine elements with the most precise per-field line cites: class Coin (coins.h:34-90), CTxOut out at :38 (nValue/scriptPubKey transaction.h:139), spentness as out.IsNull() at :83-85 with the tombstone explanation, fCoinBase:1 / nHeight:31 at :41-44 with the maturity rationale, and (nHeight<<1)|fCoinBase VARINT packing at :64-77 with class-comment cite :31, then TxOutCompression. Nails the required distinction — spentness in out, provenance in the two bits. Grounding 0.99 — all sampled cites resolve line-exact; IsSpent at :83-85 vs key's :83-84 is the closing-brace line, trivially loose. Cleanest-grounded of the three. Process: 204k context / 7 turns, native LSP route (3 LSP calls)."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms reached Full on the Coin spine — CTxOut payload, the fCoinBase:1/nHeight:31 provenance bitfields, spentness-via-out.IsNull() (the required provenance-vs-spentness distinction), and the (nHeight<<1)|fCoinBase VARINT packing. Grounding is a tight near-tie (0.97-0.99): every load-bearing cite resolves, with only closing-brace/one-line-wide looseness separating them; the semantic arm produced the densest, most precise per-field cites. Quality did not separate them; COST did — baseline cheapest on this single-struct L1 lookup (88k / 3 turns, grep), the tooled arms 2-2.5x dearer (grove 224k, lsp 204k) for the same Full answer. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T09:42:46.351Z"
+    },
+    "L1-typescript": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. All five spine elements: Node at types.ts:942 extending ReadonlyTextRange (:33) for pos/end byte offsets; kind:SyntaxKind as the fixed parse-time discriminant; flags:NodeFlags explicitly split into parser-set bits (Let/Const/Using, OptionalChain, Synthesized, context flags) versus binder-written bits (ExportContext, HasImplicitReturn/HasExplicitReturn, HasAsyncFunctions) — the kind-vs-flags distinction cleanly drawn; parent set by binding; and id/transformFlags/original/emitNode each explained, plus a correct phase-by-phase chronology. Grounding 0.98 — the two load-bearing cites (Node :942, ReadonlyTextRange :33) are line-exact; line-light on enum locations but every claim accurate, no wrong turns. Process (un-blind): cheapest arm — 170k context / 3 turns, grep+Read led (5 bash, 5 reads, no structural tool)."
+        },
+        "grove": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. All five spine elements: Node at types.ts:942 (full field block), ReadonlyTextRange :33 with the half-open [pos,end) span; kind:SyntaxKind as construction-time discriminant; flags:NodeFlags :782 framed as parse-context vs binder-semantic bits (required distinction made); parent as sole upward link; id/transformFlags/original/emitNode with roles, plus a bonus on the PR #51682 moved-off fields (symbol/locals/flowNode). Grounding 0.97 — the most precise cites of the three, all resolving exact (NodeFlags :782, transformFlags enum :8212, EmitNode :8312); minor slip: files Let/Const/Using under 'binder-set semantic flags' when they are parser-set variable-declaration bits (:784-786) — a within-flags miscategorization that does not break the spine. Process: 186k context / 14 turns, structural route (8 grove calls, 2 bash)."
+        },
+        "lsp": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. Every spine element with the tightest grounding: Node at types.ts:942, ReadonlyTextRange :33 (pos inclusive/end exclusive), kind from the SyntaxKind enum :40, flags:NodeFlags :782 with a three-cluster breakdown of parser-syntactic vs parser-context vs binder-annotated bits (kind-vs-flags explicit and correct), parent set by the binder, id as the lazy key into the checker's NodeLinks side-table (:6272), original/emitNode (:8312) with roles. Extras well-grounded: transformFlags enum :8212, and LocalsContainer (:967)/FlowContainer (:973) cited line-exact — more accurate than the reference key's own extras offsets. Grounding 1.0 — every sampled cite resolves exact, no wrong turns. Process: dearest arm — 190k context / 11 turns, native LSP route (3 LSP calls + 6 reads)."
+        }
+      },
+      "key_revisions": [
+        {
+          "level": "L1",
+          "reason": "L1 reference key's non-spine 'acceptable extras' line offsets are stale vs pinned source (confirmed line-exact by two independent blind judges via structural nav): LocalsContainer is at types.ts:967 (key said 971), FlowContainer at :973 (key said 981), HasFlowNode at :979 (key said 985). Spine cites (Node :942, ReadonlyTextRange :33, NodeFlags :782, SyntaxKind enum :40, transformFlags enum :8212, emitNode :8312, NodeLinks :6272) all resolve exact — spine unaffected, extras-only correction.",
+          "cite": "src/compiler/types.ts:967 (LocalsContainer), :973 (FlowContainer), :979 (HasFlowNode)",
+          "ts": "2026-06-29"
+        }
+      ],
+      "verdict": "All three arms reached Full on the Node spine (types.ts:942) — the ReadonlyTextRange pos/end base, kind:SyntaxKind discriminant, flags:NodeFlags with the required kind-vs-flags (parser-set vs binder-written) distinction, parent, and the attached id/transformFlags/original/emitNode slots. Grounding is a tight near-tie (0.97-1.0): the semantic arm was cleanest (1.0, densest exact cites), the structural arm most precise on enum locations but with one within-flags miscategorization, baseline line-light but accurate. Quality barely separated them; COST inverted the usual order modestly here — all three landed within 170k-190k context, baseline cheapest (170k / 3 turns) and the tooled arms only slightly dearer for the same Full answer on this big-but-bounded type definition. Blind-judged (anonymized A/B/C, mapping withheld). Note: the key's non-spine extras offsets were found stale and corrected in key_revisions.",
+      "ts": "2026-06-29T09:43:25.721Z"
+    },
+    "L1-tokio": {
+      "scores": {
+        "baseline": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. All seven spine elements with the cleanest grounding in the cell: Cell<T,S> (core.rs:126) repr(C)/cache-line aligned with header/core/trailer; Header (:168) with all four fields and the header_lte_cache_line test correctly placed at core.rs:569; Core<T,S> (:148) scheduler/task_id/stage; the Stage<T> enum (:221) flipping Running(:267)->Finished->Consumed via take_output (:418-424); Trailer (:201) owned/waker/hooks. The vtable-offset bridge is the most rigorously grounded — get_trailer quoted verbatim at core.rs:456-459, Vtable with fn pointers + offset fields (raw.rs:24), OffsetHelper (raw.rs:84-117), INITIAL_STATE at state.rs:61, all verified exact. Grounding 1.0 — every load-bearing cite resolves line-exact. Process (un-blind): DEAREST arm here — 401k context / 12 turns, grep+Read heavy (2 bash, 9 reads, no structural tool)."
+        },
+        "grove": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Entire spine: Cell<T,S> single allocation (core.rs:126), three regions header/core/trailer, type-erased Header with state/queue_next/vtable/owner_id, Core<T,S> scheduler/task_id/stage, the Stage<T> Running/Finished/Consumed flip with the correct transition cite (store_output core.rs:403), and Trailer owned/waker/hooks. Nails the vtable-offset bridge by reproducing the full Vtable struct (seven fn pointers + trailer_offset/scheduler_offset/id_offset) matching raw.rs and the get_scheduler byte-pointer arithmetic. Grounding 0.98 — slightly lighter on file:line cites for the transition machinery, but every cite given resolves exact (Vtable fields, Stage layout, store_output:403). Process: 274k context / 17 turns, structural route (14 grove calls, 0 reads)."
+        },
+        "lsp": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Every spine element: the single Cell<T,S> allocation (core.rs:126) with its three #[repr(C)] regions header/core/trailer (:128/:131/:134), the type-erased Header and all four fields state/queue_next/vtable/owner_id (:168,:170,:173,:176,:189), Core<T,S> scheduler/task_id/stage (:148,:150,:153,:163), the Stage<T> enum flipping Running->Finished->Consumed (:221-224) starting at Running (:267), Trailer owned/waker/hooks (:201,:203,:205,:208), and the vtable-offset bridge from a bare NonNull<Header> (RawTask). Grounding 0.97 — core.rs:38 comment cite exact, all spine line cites resolve, header_lte_cache_line test (:570) exact; minor: narrates the completion sequence as drop_future_or_output->Consumed (:391) before store_output->Finished (:403), a slightly muddled ordering, though the cited lines resolve. Process: CHEAPEST arm here — 214k context / 9 turns, native LSP route (2 LSP calls + 4 reads)."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms reached Full on the tokio task-Cell spine — the single Cell<T,S> allocation with its header/core/trailer repr(C) regions, the type-erased Header, Core<T,S>, the Stage<T> Running->Finished->Consumed flip, Trailer, and the vtable-offset bridge from a bare NonNull<Header>. Grounding is a tight near-tie (0.97-1.0), baseline cleanest. Quality did not separate them; COST did, and it INVERTED the usual order: on this 7-element multi-region Rust cell the text arm was the DEAREST (401k / 12 turns, grep+Read heavy) while the semantic arm was the CHEAPEST (214k / 9 turns) for an equally-Full answer; structural sat in the middle (274k / 17 turns). A counterexample to 'grep is always cheapest' — when the answer spans several files and offset tables, navigation paid off. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T09:44:48.031Z"
+    },
+    "L1-webpack": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Frames the hierarchy DependenciesBlock -> Module -> NormalModule and Module as the universal node (Module extends DependenciesBlock, lib/Module.js:243). All five spine elements: type as the kind discriminant with concrete values; context and layer; the build-output pair with a clear meta-vs-info distinction (buildMeta = exportsType/async/sideEffectFree, buildInfo = strict/assets/hash, both populated after build()); and the edges on the base DependenciesBlock (dependencies as Dependency objects, blocks as AsyncDependenciesBlock splits). Correctly adds that resolved neighbours live externally in ModuleGraph/ModuleGraphConnection. Grounding 0.97 — structural cites (Module.js:243, DependenciesBlock.js:27, NormalModule.js:768, ModuleGraph.js:96, ModuleGraphConnection.js:55) resolve exact; lighter on line cites for the Module base fields (given in prose) but no wrong turns. Process (un-blind): 308k context / 12 turns, grep+Read led (4 bash, 7 reads)."
+        },
+        "grove": {
+          "grounding": 0.94,
+          "completeness": 0.85,
+          "verdict": "Partial. Richest and most field-detailed of the three and correct on four spine elements: Module extends DependenciesBlock; type as the kind discriminator driving parser/generator selection; the build-output pair with a sound meta-vs-info split; and the edges on DependenciesBlock with dependencies, blocks, and parent. Makes the strong v4->v5 point that graph-relative facts live in ModuleGraph/ChunkGraph. The MISS is spine element 3: it never mentions context or layer among the Module fields (jumps from type to resolveOptions/factoryMeta), dropping one required identity element. Grounding 0.94 — sampled cites accurate (identifier() NormalModule.js:955, needBuild :2150 exact); 'deprecated compat getters lines 301-619' is loose (actual BACKWARD-COMPAT block 295-627), and it leans on code blocks with few file:line anchors. Process: CHEAPEST arm — 192k context / 9 turns, structural route (6 grove calls) — but the only L1 arm to drop a required spine element."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full and the most precisely cited. Lays out the hierarchy then walks all five spine elements with exact anchors: edges on DependenciesBlock (dependencies/blocks/parent, DependenciesBlock.js:28-34); type as the kind field (Module.js:254); context and layer plus other identity fields; and the build-output pair with the sharpest meta-vs-info distinction — buildMeta (KnownBuildMeta, Module.js:168) versus buildInfo (KnownBuildInfo, Module.js:180), explicitly populated after build(). Adds the correct separation that dependency objects sit on the module but resolved targets live in ModuleGraph (_moduleMap/_dependencyMap) as ModuleGraphModule + ModuleGraphConnection. Grounding 0.98 — every sampled cite resolves exact (Module.js:254/168/180, NormalModule.js:857-886/955, ModuleGraph.js:140 and :97-119, ModuleGraphConnection.js:55), no wrong turns. Process: DEAREST arm — 328k context / 15 turns, native LSP route (5 LSP calls + 8 reads)."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "The one L1 cell where QUALITY separated the arms, not just cost. The required spine was the Module identity (type, context, layer), the build-output buildMeta-vs-buildInfo pair, and the DependenciesBlock edges. The text and semantic arms both reached Full — semantic tightest-grounded (0.98) but dearest (328k / 15 turns), text solid (0.97) at 308k. The STRUCTURAL arm, while cheapest (192k / 9 turns), dropped a required spine element (context/layer) and lands Partial (completeness 0.85) — so on this 5-field hierarchy question the cheap arm was NOT the fully-correct arm. A clean counterpoint to a cost-only reading: here paying more (text or semantic) bought completeness. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T09:44:48.766Z"
+    },
+    "L1-rails": {
+      "scores": {
+        "baseline": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full despite a 'four instance variables' header — the body enumerates all five slots (@name/@value_before_type_cast/@type/@original_attribute/@value) from initialize. Cleanly separates raw @value_before_type_cast from the lazily memoised @value (def value :43, correct defined? trick), names @type as a Type::Value subclass owning deserialize/cast/serialize, and explains @original_attribute provenance + the changed? (:66-68) -> changed_from_assignment? (:161-163) -> original_value (:47-53) chain-walk, plus changed_in_place? (:70-72) and forgetting_assignment (:74-76). Adds the subclass type_cast table and the from_database/with_value_from_user factory illustration. Grounding 1.0 — every sampled cite resolves line-exact, using the CORRECT current line numbers where the key's late-file cites are stale. Process (un-blind): CHEAPEST arm by far — 74k context / 4 turns, two greps (2 bash, no structural tool)."
+        },
+        "grove": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. Quotes initialize (:33-39) to enumerate the five slots, distinguishes raw @value_before_type_cast from the lazily memoized @value (def value :41-45, correct defined? rationale), describes @type as the conversion authority owning cast/deserialize/serialize/changed?, and explains @original_attribute as the provenance pointer driving changed? = changed_from_assignment? || changed_in_place? with the assigned?-alias and original_value chain-walk. Adds the full subclass hierarchy (FromDatabase/FromUser/WithCastValue/Null/Uninitialized), came_from_user? (:202), has_been_read? guard, and the with_value_from_user immutable-rebuild (original_attribute || self, depth-1). Grounding 1.0 — sampled cites (33-39, 41-45, 70, 161, 202) all resolve line-exact. Process: 177k context / 20 turns, pure-structural route (18 grove calls, 0 reads)."
+        },
+        "lsp": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full. Names ActiveModel::Attribute, lists @name/@value_before_type_cast/@type/@original_attribute/@value, nails the raw-in (:29, set :35) vs lazy-memoized cast-out (def value :43, defined?-not-||= rationale) distinction, identifies @type as a Type::Value instance owning deserialize/cast/serialize/changed?/changed_in_place?, and explains original_attribute as the change-detection anchor with the full with_value_from_user (:78-81, original_attribute || self) and changed?/changed_from_assignment? (:66/:161) flow. Adds the subclass type_cast table, came_from_user? (:202), FromDatabase#_original_value_for_database (:192), has_been_read? (:111), original_value_for_database (:143-149). Grounding 1.0 — every sampled cite resolves line-exact, more accurate than the key's stale late-file numbers. Process: 250k context / 9 turns, native LSP route (4 LSP calls)."
+        }
+      },
+      "key_revisions": [
+        {
+          "level": "L1",
+          "reason": "L1 reference key's late-file line numbers (from ~line 99 onward in attribute.rb) are stale by ~8 lines vs the pinned source at the pinned SHA; verified by reading activemodel/lib/active_model/attribute.rb via structural nav. Corrections: type_cast abstract :99-101 (key :107); private attr_reader :original_attribute / alias assigned? :152/:153 (key :160/:161); FromDatabase :173 + type.deserialize :175 (key :181/:183); FromUser :197 + type.cast :199 + came_from_user? :202 (key :205/:207/:210); WithCastValue :212 + identity :214 (key :220/:221); Null :222 (key :230); Uninitialized :242 (key :250); _value_for_database/type.serialize :165-167 (key :173). Early-file cites (<= :55) are exact. All three graded answers used the correct actual numbers, so none were docked.",
+          "cite": "activemodel/lib/active_model/attribute.rb:99,152-153,173-175,197-209,212-214,222,242",
+          "ts": "2026-06-29"
+        }
+      ],
+      "verdict": "All three arms reached Full on the ActiveModel::Attribute spine — the five slots, the raw-vs-lazily-memoized value distinction (def value with the defined? trick), @type as the Type::Value conversion authority, and @original_attribute as the change-detection anchor. Grounding is a perfect three-way tie at 1.0: every sampled cite resolved line-exact, and notably all three arms used the CORRECT current line numbers where the reference key's late-file cites had drifted ~+8 lines (recorded in key_revisions). Quality did not separate them; COST did, strongly — baseline dramatically cheapest (74k / 4 turns, two greps) vs structural (177k / 20 turns, 18 grove calls) and semantic (250k / 9 turns). The strongest cost-only separation in L1, favoring text on this single-file class lookup. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T09:45:52.344Z"
+    },
+    "L1-spring-boot": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Identifies Bindable<T> as the immutable target descriptor and walks all six fields — type vs boxedType (box() helper :320, boxedTypeIsInstanceOf :204), value as a lazy Supplier, annotations, bindRestrictions/NO_DIRECT_PROPERTY, and bindMethod with the JAVA_BEAN/VALUE_OBJECT distinction. Nails the invariant both ways (withExistingValue asserts !VALUE_OBJECT then forces JAVA_BEAN at :201; withBindMethod asserts value==null at :240/241) and adds correct extras (withAnnotations resetting bindRestrictions :185). Grounding 0.97 — box(320), boxedTypeIsInstanceOf(204), withExistingValue(194), withSuppliedValue(214), BindConverter.convert(95) exact; notably CORRECT where the key is loose, stating conversion uses target.getType() not boxedType (BindConverter.java:96 confirms). Minor: DataObjectBinder list 219-223 (actual puts 220-222), findProperty :476 (check :478). Process (un-blind): CHEAPEST arm — 303k context / 10 turns (5 bash, no structural tool)."
+        },
+        "grove": {
+          "grounding": 0.92,
+          "completeness": 1,
+          "verdict": "Full. Cleanest structural layout — Bindable.java:46 and all six fields by line (52/54/56/58/60/62), BindMethod.java:25, the dataObjectBinders map, the bidirectional invariant (Assert.state on withExistingValue/withBindMethod quoted verbatim, JAVA_BEAN forced, value==null required), good extras (equals/hashCode excluding value and boxedType). Most cites resolve: findProperty(478), boxedTypeIsInstanceOf(204), withSuppliedValue(216), convert(result,target) call sites 388/403/406 exact. The one real grounding DEFECT: claims the converter 'resolves the target type through boxedType' at those sites — source shows BindConverter.convert(source,target) at :96 uses target.getType(), so boxedType is NOT the conversion path; line cites exact but the semantic attribution on the central type-vs-boxedType point is wrong. Grounding 0.92. Process: 365k context / 17 turns, mixed route (5 grove calls + 6 bash)."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Identifies Bindable<T> by path and covers all six fields (type 52, boxedType 54 with box() 320-331, value 56, annotations 58, bindRestrictions 60, bindMethod 62) plus the bidirectional invariant (withExistingValue forces JAVA_BEAN at :201; withBindMethod asserts value==null at :241), a clear JAVA_BEAN/VALUE_OBJECT distinction and lifecycle summary. Grounding 0.98 — tightest of the three: BindConverter.convert at :96 shown correctly using target.getType() (handling the nuance accurately), boxedType.resolve().isInstance at :205, withExistingValue ()->existingValue at :199, findProperty NO_DIRECT_PROPERTY at :478, of()/box at 315-317, and the cross-file ValidationBindHandler.java:117 all exact. Only soft spot a slightly loose semantic gloss ('instantiate a validator') on that line, but the location resolves. Process: DEAREST arm — 425k context / 16 turns, native LSP route (4 LSP calls + 5 bash)."
+        }
+      },
+      "key_revisions": [
+        {
+          "level": "L1",
+          "reason": "L1 reference key frames boxedType (spine element 3) as 'the boxed type used for conversion' / 'the form the converter actually works against.' Source verification shows BindConverter.convert(source, Bindable) at BindConverter.java:96 passes target.getType(), NOT boxedType; boxedType's actual consumers are boxedTypeIsInstanceOf (existing-value validation, Bindable.java:205) and ValidationBindHandler.java:117. The type-vs-boxedType distinction itself is real and required, but attributing boxedType to the conversion path is imprecise; an answer should not be docked for correcting it (and the structural arm was correctly docked for asserting the key's imprecise framing).",
+          "cite": "core/spring-boot/src/main/java/org/springframework/boot/context/properties/bind/BindConverter.java:96",
+          "ts": "2026-06-29"
+        }
+      ],
+      "verdict": "All three arms reached Full completeness on the Bindable<T> spine — the six fields, the type-vs-boxedType distinction, value as a lazy Supplier, and the JAVA_BEAN/VALUE_OBJECT bindMethod invariant. Here GROUNDING separated them: semantic tightest (0.98) and correct on the type-vs-boxedType conversion nuance, baseline strong (0.97, also correct that conversion uses target.getType()), structural weakest (0.92 — line cites exact but mis-attributed the conversion path to boxedType, echoing the key's own imprecise framing, corrected in key_revisions). COST ordered baseline cheapest (303k) < structural (365k) < semantic (425k). On this cell both quality AND cost favored the non-structural arms. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T09:45:53.061Z"
+    },
+    "L1-laravel": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.95,
+          "completeness": 1,
+          "verdict": "Full. Covers the whole spine: class Illuminate\\Http\\Request extends SymfonyRequest (:29) with inherited Symfony bags flagged as inherited, all five added fields line-exact (:43/:50/:57/:64/:71), the getInputSource() (:480) JSON/GET/form selector, and both resolver closures with their installation sites; adds correct bonus depth on the createFromBase JSON-promotion (sets $json to the same bag, :548-550) and on session/precognition. Grounding 0.95 — solid but a notch looser: several supporting cites off by a line or two (json() cited :464 vs decl :462; input() InteractsWithInput.php:111 vs actual :110; AuthServiceProvider.php:87 vs setUserResolver :88). All claims conceptually correct and resolve within a line; the density of off-by-one cites is the only deduction. Process (un-blind): DEAREST arm here — 285k context / 13 turns (6 bash, no structural tool)."
+        },
+        "grove": {
+          "grounding": 0.99,
+          "completeness": 1,
+          "verdict": "Full. Hits the entire required spine: class Request extends SymfonyRequest (:29) with inherited Symfony bags named as inherited; all five Laravel-added fields with exact declarations — $json (:43), $convertedFiles (:50), $userResolver (:57), $routeResolver (:64), $cachedAcceptHeader (:71); the JSON-vs-form/query distinction via getInputSource() (:480) with the lazy json() build (:462); and both resolver closures as deferred recipes (user :669/getUserResolver :729/setUserResolver :742; route :681/setRouteResolver :767). Trait composition covered. Grounding 0.99 — essentially exact: getAcceptableContentTypes :370, allFiles InteractsWithInput.php:183, setJson :717, capture :78, createFrom :496 all confirmed; only soft spot a verbal gloss that route() extracts 'one URI segment' (it returns a route parameter), interpretive not a cite error. Process: CHEAPEST arm here — 239k context / 18 turns, pure-structural route (15 grove calls)."
+        },
+        "lsp": {
+          "grounding": 1,
+          "completeness": 1,
+          "verdict": "Full and the tightest-grounded of the three. Names class :29 with a complete inherited-bag table flagged as inherited, all five added fields (range :38-71, individually :43/:50/:57/:64/:71), getInputSource() (:480) selector, the lazy json() build (:462), and both resolver closures as deferred callbacks (user :669, route :681, setUserResolver :742). Grounding 1.0 — every sampled cite line-exact, including ones others miss or round: createFromBase at :537 with the JSON-promotion at :548-550 (and the noted ->post() side-effect is real), input() InteractsWithInput.php:110 exact, __get :851 verbatim, getAcceptableContentTypes :370. Trait composition correct. No loose or fabricated cites, no structural wrong turns. Process: 243k context / 11 turns, native LSP route (1 LSP call + 7 reads)."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "All three arms reached Full on the Illuminate\\Http\\Request spine — extends SymfonyRequest with inherited bags, the five Laravel-added fields ($json/$convertedFiles/$userResolver/$routeResolver/$cachedAcceptHeader), the getInputSource() JSON-vs-form selector, and the deferred user/route resolver closures. Grounding is tight (0.95-1.0): semantic cleanest (1.0), structural near-exact (0.99), baseline loosest (0.95, a cluster of off-by-one cites). COST is the notable inversion: the tooled arms were BOTH cheaper than text here — structural cheapest (239k / 18 turns) ~ semantic (243k / 11 turns) < baseline (285k / 13 turns) — and also better-grounded, on this large multi-trait class where grep had to read wide. Quality and cost both favored navigation. Blind-judged (anonymized A/B/C, mapping withheld).",
+      "ts": "2026-06-29T09:45:53.789Z"
     }
   }
 }
