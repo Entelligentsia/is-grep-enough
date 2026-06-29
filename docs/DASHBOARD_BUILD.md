@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P1 / T1.4` — **T1.1, TX.1, T1.2, T1.3 done** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P1 / T1.5` — **T1.1, TX.1, T1.2, T1.3, T1.4 done** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -67,7 +67,12 @@ raw byte in ≤3 clicks.
   median tick, so no aggregate shows as a lone mark. Per-rung `n` is printed on
   each facet header (`Plot.axisFx` top, `L2 · n=10`, `L4 · n=2`) so partial rungs
   self-report a smaller n; caption restates whisker/tick/n + the n=1 caveat (§5.3).
-- [ ] **T1.4 Arm-visibility toggle** in the global filter bar (§4).
+- [x] **T1.4 Arm-visibility toggle** in the global filter bar (§4). Three arm
+  checkboxes (swatch-labelled) in `.filters`; `state.arms` + `visibleArms()` gate
+  every view: coverage marks render only visible segments, metric small-multiples
+  filter rows and set `x`/`color` domains to the shown arms (y-axis rescales), and
+  the cell-detail columns drop hidden arms (grid reflows to the visible count).
+  All-off shows an explicit "no arms selected" note.
 - [ ] **T1.5 DNF / incomplete toggle** (default: shown, flagged) (§5.3).
 - [ ] **T1.6 URL-encoded filter state.** rung·repo·arm·cell encoded in the URL so
   any view is a shareable link (§4) — essential for "look at *this* cell".

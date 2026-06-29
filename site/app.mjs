@@ -27,7 +27,9 @@ const METRICS = {
 // metric families rendered as small-multiple rows (§5.3), in this order
 const METRIC_FAMILIES = ["context", "turns", "wall", "cache", "cost"];
 
-const state = { rung: "", repo: "", cell: null, showJudged: false };
+const state = { rung: "", repo: "", cell: null, showJudged: false,
+  arms: { baseline: true, grove: true, lsp: true } };
+const visibleArms = () => ARMS.filter((a) => state.arms[a]);
 let DATA;
 let REPO = {}; // id → {id, lang, sha, gh} for cite-link construction
 
@@ -52,6 +54,14 @@ async function init() {
   fillSelect($("#f-repo"), experiment.repos.map((r) => r.id));
   $("#f-rung").onchange = (e) => { state.rung = e.target.value; render(); };
   $("#f-repo").onchange = (e) => { state.repo = e.target.value; render(); };
+
+  // arm-visibility toggle — global across coverage grid, metrics, and detail (§4)
+  for (const a of ARMS) {
+    const cb = el("input", { type: "checkbox", checked: true });
+    cb.onchange = () => { state.arms[a] = cb.checked; render(); };
+    $("#f-arms").append(el("label", { className: "armchk" },
+      [cb, el("span", { className: `swatch ${a}` }), document.createTextNode(a)]));
+  }
 
   $("#t-judged").onchange = (e) => { state.showJudged = e.target.checked; renderCoverage(); };
   $("#tx-close").onclick = () => $("#tx-overlay").classList.remove("open");
@@ -98,7 +108,7 @@ function renderCoverage() {
       const mark = el("div", { className: "cellmark" });
       const cid = `${rg}-${repo}`;
       if (state.cell === cid) mark.classList.add("active");
-      for (const arm of ARMS) {
+      for (const arm of visibleArms()) {
         const c = byId[`${rg}-${arm}-${repo}`];
         // status by shape/fill, never good/bad color: filled=harvested,
         // empty=pending, hatched=blocked/DNF. DNF reason tooltipped when known.
@@ -129,7 +139,13 @@ function renderCoverage() {
 function renderMetrics() {
   const host = $("#metrics-grid"); host.replaceChildren();
   const rungsShown = DATA.experiment.rungs.filter((r) => !state.rung || r === state.rung);
-  const base = filtered().filter((c) => c.status === "harvested");
+  const armsShown = visibleArms();
+  const base = filtered().filter((c) => c.status === "harvested" && state.arms[c.arm]);
+
+  if (!armsShown.length) {
+    host.append(el("p", { className: "caveat", textContent: "no arms selected — enable an arm in the filter bar above." }));
+    return;
+  }
 
   for (const key of METRIC_FAMILIES) {
     const m = METRICS[key];
@@ -160,9 +176,9 @@ function renderMetrics() {
       width, height: 224, marginLeft: 58, marginBottom: 42, marginTop: 26,
       style: { fontFamily: "system-ui, sans-serif", fontSize: "11px", background: "transparent" },
       fx: { label: null, domain: rungsShown },
-      x: { label: null, domain: ARMS, tickRotate: 0 },
+      x: { label: null, domain: armsShown, tickRotate: 0 },
       y: { label: null, grid: true, zero: true, nice: true, tickFormat: "~s" },
-      color: { domain: ARMS, range: ARMS.map((a) => ARM_COLOR[a]) },
+      color: { domain: armsShown, range: armsShown.map((a) => ARM_COLOR[a]) },
       marks: [
         // facet header per rung carrying its honest n (partial rungs read smaller)
         Plot.axisFx({ anchor: "top", label: null, tickSize: 0, fontWeight: 600,
@@ -194,13 +210,15 @@ function renderMetrics() {
 function renderDetail(cid) {
   state.cell = cid;
   const [rung, ...rest] = cid.split("-"); const repo = rest.join("-");
-  const arms = ARMS.map((a) => DATA.cells.find((c) => c.id === `${rung}-${a}-${repo}`)).filter(Boolean);
+  // respect the global arm-visibility toggle (§4) — hidden arms drop their column
+  const arms = visibleArms().map((a) => DATA.cells.find((c) => c.id === `${rung}-${a}-${repo}`)).filter(Boolean);
   const jr = DATA.judge[cid];
   const sec = $("#detail-section"); sec.hidden = false;
   $("#detail-id").textContent = `${rung} · ${repo}`;
 
   const host = $("#detail"); host.replaceChildren();
   const cols = el("div", { className: "armcols" });
+  cols.style.gridTemplateColumns = `repeat(${Math.max(1, arms.length)}, 1fr)`;
 
   // cheapest-on-each-axis, stated factually (never "winner"): the lowest value
   // across arms on a cost-like axis, only when ≥2 arms have data (§6).

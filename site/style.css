@@ -57,6 +57,10 @@ h2 { font-size: .82rem; font-weight: 600; text-transform: uppercase; letter-spac
 .filters { display: flex; gap: 1.4rem; flex-wrap: wrap; align-items: center; font-size: .85rem; }
 .filters label { color: var(--ink-faint); margin-right: .4rem; }
 .filters select { font-family: var(--sans); font-size: .85rem; padding: .2rem .4rem; background: var(--paper); color: var(--ink); border: 1px solid var(--rule-strong); }
+.armtoggle #f-arms { display: inline-flex; gap: .7rem; }
+.armchk { display: inline-flex; align-items: center; gap: .25rem; cursor: pointer; color: var(--ink-soft); }
+.armchk .swatch { display: inline-block; width: .7rem; height: .7rem; }
+.armchk input { margin: 0; cursor: pointer; }
 
 /* coverage grid */
 table.coverage { border-collapse: collapse; font-size: .82rem; }
