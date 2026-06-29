@@ -228,6 +228,7 @@ async function openTranscript(c) {
       content.innerHTML =
         `<p class="caveat">provenance: <code>${c.evidence.raw ?? "—"}</code></p>` + cache.readable;
       linkifyCites(content, REPO[c.repo]?.gh, c.sha);
+      if (c.subagents?.length) content.append(renderSubagents(c));
     } else {
       if (!cache.raw) {
         content.innerHTML = `<p class="caveat">loading raw…</p>`;
@@ -272,6 +273,59 @@ function rawSummary(obj, line) {
     extra = obj.subtype ?? "";
   }
   return `${type}${extra ? "  —  " + extra : ""}`;
+}
+
+// Subagents (sidechain Task/Agent sessions) — the only copy of that fanned-out
+// work (§7). Each is a nested collapsible sub-trail, parsed lazily on first open.
+function renderSubagents(c) {
+  const wrap = el("div", { className: "subagents" });
+  wrap.append(el("div", { className: "sub-h" },
+    `Subagents (${c.subagents.length}) — nested sessions this run spawned; the only copy of that work.`));
+  for (const s of c.subagents) {
+    const d = el("details", { className: "subagent" });
+    const desc = s.description ?? s.id;
+    d.append(el("summary", {}, `↳ ${s.agentType ?? "agent"} · ${desc} · ${s.turns} turns · ${s.tools} tools`));
+    const sbody = el("div", { className: "sub-body" });
+    let loaded = false;
+    d.ontoggle = async () => {
+      if (!d.open || loaded) return;
+      loaded = true;
+      sbody.innerHTML = `<p class="caveat">loading…</p>`;
+      try {
+        const txt = await fetch(s.file).then((r) => r.text());
+        sbody.replaceChildren(renderSessionTrail(txt));
+        linkifyCites(sbody, REPO[c.repo]?.gh, c.sha);
+      } catch { sbody.textContent = `could not load subagent: ${s.file}`; }
+    };
+    d.append(sbody);
+    wrap.append(d);
+  }
+  return wrap;
+}
+
+// Parse a Claude Code session jsonl (agent-<id>.jsonl) into a legible trail:
+// reasoning text blocks + `▸ tool(args)` calls, in order.
+function renderSessionTrail(text) {
+  const trail = el("div", { className: "trail" });
+  const events = text.split("\n").filter((l) => l.trim())
+    .map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+  for (const e of events) {
+    if (e.type !== "assistant" && e.type !== "user") continue;
+    for (const part of e.message?.content ?? []) {
+      if (part.type === "text" && part.text?.trim())
+        trail.append(el("div", { className: "t-reason" }, part.text));
+      else if (part.type === "tool_use")
+        trail.append(el("div", { className: "t-tool" }, `▸ ${part.name}(${summarizeArgs(part.input)})`));
+    }
+  }
+  if (!trail.children.length) trail.append(el("p", { className: "caveat" }, "no readable steps in this session."));
+  return trail;
+}
+
+function summarizeArgs(input) {
+  if (!input || typeof input !== "object") return "";
+  const s = input.command ?? input.file_path ?? input.pattern ?? input.path ?? input.query ?? JSON.stringify(input);
+  return String(s).replace(/\s+/g, " ").slice(0, 140);
 }
 
 // Detect `path.ext:line` (optionally `:line-line2`) cites in the rendered trail

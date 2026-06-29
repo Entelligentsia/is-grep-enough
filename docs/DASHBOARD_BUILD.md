@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P0 / T0.3` *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P0 / T0.4` *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -27,9 +27,12 @@ raw byte in ≤3 clicks.
   trail's text nodes and links `path.ext:line[-line2]` to the GitHub blob at the
   cell's pinned SHA (new tab). `build.mjs` derives `gh` (owner/repo) from the
   manifest clone url into `experiment.json`; cell `sha` already present.
-- [ ] **T0.3 Transcript viewer — subagent sub-trails.** Render
-  `raw/subagents/<cell>.<arm>/` as nested collapsible trails; build step must
-  surface their paths in the feed.
+- [x] **T0.3 Transcript viewer — subagent sub-trails.** `build.mjs` copies
+  `raw/subagents/<repo>-<rung>.<arm>/agent-*.jsonl` into `data/subagents/` and
+  surfaces each session's `{agentType, description, turns, tools, file}` on the
+  cell. The modal renders them as nested collapsible sub-trails (lazy-parsed
+  Claude Code session → reasoning + `▸ tool(args)`), cite-linked. 22 sessions
+  across 16 cells (all baseline `Explore` fan-outs).
 - [ ] **T0.4 Transcript viewer — header context strip.** Model, turns, wall,
   final cost framing the trail (§7).
 - [ ] **T0.5 Coverage grid — DNF/blocked rendering.** Hatch/fill by shape not

@@ -125,4 +125,14 @@ td.repo:hover { color: var(--ink); }
 /* file:line cite links into the pinned GitHub blob */
 a.cite { font-family: var(--mono); font-size: .92em; border-bottom: 1px dotted var(--rule-strong); white-space: nowrap; }
 a.cite:hover { border-bottom: 1px solid var(--ink); }
+
+/* subagent nested sub-trails */
+.subagents { margin-top: 1.4rem; border-top: 1px solid var(--rule-strong); padding-top: .8rem; }
+.subagents .sub-h { font-size: .82rem; color: var(--ink-soft); margin-bottom: .5rem; }
+.subagent { border-left: 2px solid var(--rule-strong); padding-left: .8rem; margin: .4rem 0; }
+.subagent > summary { font-family: var(--mono); font-size: .8rem; color: var(--ink-soft); cursor: pointer; padding: .2rem 0; }
+.subagent[open] > summary { color: var(--ink); }
+.sub-body { margin: .4rem 0 .6rem; }
+.trail .t-reason { font-size: .85rem; color: var(--ink); margin: .35rem 0; white-space: pre-wrap; }
+.trail .t-tool { font-family: var(--mono); font-size: .78rem; color: var(--ink-soft); margin: .2rem 0; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

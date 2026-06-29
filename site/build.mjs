@@ -121,6 +121,33 @@ for (const rung of RUNGS) {
         rawLocal = `data/${dest}`;
       }
 
+      // subagents: sidechain Task/Agent sessions captured under
+      // raw/subagents/<repo>-<rung>.<arm>/agent-<id>.jsonl (+ .meta.json). These
+      // are the ONLY copy of that fanned-out work (§7) — copy them in and surface
+      // each one's type/description + tool/turn counts.
+      const subDir = join(ROOT, `evidence/nav3/${rung}/raw/subagents/${repo}-${rung}.${arm}`);
+      const subagents = [];
+      if (existsSync(subDir)) {
+        for (const fn of readdirSync(subDir)) {
+          if (!fn.endsWith(".jsonl")) continue;
+          const id = fn.replace(/^agent-/, "").replace(/\.jsonl$/, "");
+          const metaPath = join(subDir, fn.replace(/\.jsonl$/, ".meta.json"));
+          const m = existsSync(metaPath) ? JSON.parse(readFileSync(metaPath, "utf8")) : {};
+          const destDir = `subagents/${repo}-${rung}.${arm}`;
+          mkdirSync(join(OUT, destDir), { recursive: true });
+          copyFileSync(join(subDir, fn), join(OUT, destDir, fn));
+          let tools = 0, turns = 0;
+          for (const e of readFileSync(join(subDir, fn), "utf8").split("\n").filter((l) => l.trim())
+            .map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean)) {
+            if (e.type !== "assistant") continue;
+            turns++;
+            for (const c of e.message?.content ?? []) if (c.type === "tool_use") tools++;
+          }
+          subagents.push({ id, agentType: m.agentType ?? null, description: m.description ?? null,
+                           spawnDepth: m.spawnDepth ?? null, turns, tools, file: `data/${destDir}/${fn}` });
+        }
+      }
+
       const engageKey = ENGAGE_KEY[arm];
       const engageVal = run?.tools?.[engageKey] ?? null;
       const flags = [];
@@ -148,6 +175,7 @@ for (const rung of RUNGS) {
         tools: run?.tools ?? null,
         series: run?.series ?? null,
         evidence: { raw: existsSync(rawPath) ? `evidence/nav3/${rung}/raw/${repo}-${rung}.claude.${arm}.jsonl` : null, raw_local: rawLocal, readable: transcript },
+        subagents,
         dnf_reason: side?.note ?? side?.reason ?? null,
         flags,
       });
@@ -194,4 +222,5 @@ writeFileSync(join(OUT, "experiment.json"), JSON.stringify(experiment, null, 2))
 writeFileSync(join(OUT, "cells.json"), JSON.stringify(cells, null, 2));
 writeFileSync(join(OUT, "judge.json"), JSON.stringify(judge, null, 2));
 
-console.error(`feed → ${OUT}  | cells: ${cells.length} (${nHarvested} harvested, ${nDnf} dnf/blocked, ${nPending} pending) | judged: ${judge.length} | transcripts: ${readdirSync(join(OUT, "transcripts")).length} | raw: ${readdirSync(join(OUT, "raw")).length}`);
+const nSub = cells.reduce((a, c) => a + c.subagents.length, 0);
+console.error(`feed → ${OUT}  | cells: ${cells.length} (${nHarvested} harvested, ${nDnf} dnf/blocked, ${nPending} pending) | judged: ${judge.length} | transcripts: ${readdirSync(join(OUT, "transcripts")).length} | raw: ${readdirSync(join(OUT, "raw")).length} | subagents: ${nSub}`);
