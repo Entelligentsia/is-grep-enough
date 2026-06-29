@@ -323,11 +323,11 @@
     },
     "L5-lsp-bitcoin": {
       "status": "harvested",
-      "run_wall_s": 269,
-      "context": 1441623,
+      "run_wall_s": 327,
+      "context": 1355451,
       "engaged": true,
       "evidence": "evidence/nav3/L5/raw/bitcoin-L5.claude.lsp.jsonl",
-      "ts": "2026-06-27T18:12:18.685Z"
+      "ts": "2026-06-29T05:45:13.561Z"
     },
     "L1-baseline-laravel": {
       "status": "pending"
