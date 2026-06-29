@@ -142,6 +142,17 @@ td.repo:hover { color: var(--ink); }
 .keyrev { font-size: .78rem; color: var(--ink); background: var(--paper-2); border-left: 2px solid var(--ink-faint); padding: .4rem .6rem; margin-top: .5rem; }
 .flag { font-family: var(--mono); font-size: .7rem; color: var(--ink-faint); border: 1px solid var(--rule-strong); padding: 0 .3rem; margin-left: .3rem; }
 
+/* methodology & provenance (§10, T3.3) */
+.meth-h { font-size: .82rem; font-weight: 600; color: var(--ink); margin: 1.4rem 0 .3rem; }
+table.meth-price { border-collapse: collapse; font-size: .82rem; margin: .4rem 0; }
+table.meth-price th { text-align: left; font-weight: 600; color: var(--ink-soft); padding: .25rem 1.4rem .25rem 0; border-bottom: 1px solid var(--rule); }
+table.meth-price td { padding: .2rem 1.4rem .2rem 0; border-top: 1px solid var(--rule); }
+table.meth-price td.mono { text-align: right; }
+.meth-sources { margin: .4rem 0; display: grid; grid-template-columns: auto 1fr; gap: .2rem 1rem; font-size: .82rem; }
+.meth-sources dt { margin: 0; }
+.meth-sources dt code { font-size: .78rem; }
+.meth-sources dd { margin: 0; color: var(--ink-soft); }
+
 /* free cell-vs-cell compare (§8, T2.3) */
 .fc-pickers { display: flex; gap: 1.4rem; flex-wrap: wrap; align-items: center; font-size: .85rem; margin-bottom: 1rem; }
 .fc-pickers label { color: var(--ink-faint); margin-right: .4rem; }

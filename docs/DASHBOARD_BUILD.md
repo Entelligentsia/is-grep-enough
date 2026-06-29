@@ -10,7 +10,7 @@ See [Resume protocol](#resume-protocol) and [Engagement protocol](#engagement-pr
 
 - **Live:** https://entelligentsia.github.io/is-grep-enough/
 - **Build locally:** `node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "<iso>"` then `python3 -m http.server -d site 8099`
-- **Checkpoint:** `P3 / T3.3` — **P1 + P2 complete; T3.1–T3.2 done** *(update this line each session to the next unchecked task)*
+- **Checkpoint:** `P3 / T3.4` — **P1 + P2 complete; T3.1–T3.3 done** *(update this line each session to the next unchecked task)*
 
 ---
 
@@ -147,8 +147,18 @@ raw byte in ≤3 clicks.
   default=light tokens, dark click → paper `#1b1a17` + frame stroke `#34322d`
   (recolored, not the old light value), persists across reload (dark button still
   pressed), light click forces light; no page errors.
-- [ ] **T3.3 Methodology & provenance page** — genesis wall, blind judging,
-  pricing table, data-sources panel (§10).
+- [x] **T3.3 Methodology & provenance page** — genesis wall, blind judging,
+  pricing table, data-sources panel (§10). New `#methodology` section with all four
+  trust panels: the **genesis wall** (running arms see only the bare prompt; keys
+  are judge-only, surfaced only as post-hoc key revisions), **blind judging**
+  (A/B/C scrub, grounding + completeness, self-correcting keys), a **pricing table**
+  (`renderMethodology` maps `meta.model` "sonnet" → `claude-sonnet-4-6` and shows its
+  public list price — input $3 / output $15 / cache-write $3.75 (5m) · $6 (1h) /
+  cache-read $0.30 per MTok — explicitly labelled reference-only since figures are
+  billed `total_cost_usd`), and a **data-sources panel** (`<dl>` of the 8 exact feed
+  files with live counts, incl. the walled-off `*.reference.md` keys and the
+  statectl-only ledger). Pricing confirmed against the claude-api reference. Verified
+  headless: model label, all 5 price rows, 8 sources, dynamic judge count; no errors.
 - [ ] **T3.4 Reproduce-it box** — exact commands to rebuild the feed (§10.8).
 - [ ] **T3.5 Cite-link verification** — confirm cited lines resolve at the SHA.
 - [ ] **T3.6 Accessibility + no-JS fallback + reduced-motion** pass (§11).

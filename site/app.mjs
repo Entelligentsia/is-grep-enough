@@ -112,7 +112,62 @@ async function init() {
   // and respond to back/forward.
   applyURL(); syncControls();
   window.addEventListener("popstate", () => { applyURL(); syncControls(); render(); });
+  renderMethodology();
   render();
+}
+
+// Methodology & provenance (§10): pricing table for the billed model + a
+// data-sources panel listing the exact feed files behind the view. The dollar
+// figures elsewhere are billed total_cost_usd; this list price is reference only.
+const MODEL_ID = { sonnet: "claude-sonnet-4-6" };
+// public list price per million tokens for the model the runs billed against.
+const PRICING = {
+  "claude-sonnet-4-6": [
+    ["Input (fresh)", "$3.00"],
+    ["Output", "$15.00"],
+    ["Cache write — 5 min (1.25× input)", "$3.75"],
+    ["Cache write — 1 hour (2× input)", "$6.00"],
+    ["Cache read (0.1× input)", "$0.30"],
+  ],
+};
+function renderMethodology() {
+  const model = DATA.meta.model;
+  const id = MODEL_ID[model] ?? model;
+  $("#meth-model").textContent = id;
+
+  // pricing table — reference list price, clearly not the source of the figures
+  const rows = PRICING[id];
+  const ph = $("#meth-pricing");
+  if (rows) {
+    const tbl = el("table", { className: "meth-price" });
+    tbl.append(el("tr", {}, [el("th", { textContent: "token class" }), el("th", { textContent: "USD / 1M tokens" })]));
+    for (const [k, v] of rows)
+      tbl.append(el("tr", {}, [el("td", { textContent: k }), el("td", { className: "mono", textContent: v })]));
+    ph.replaceChildren(tbl,
+      el("p", { className: "caveat", textContent: `Reference list price for ${id} (\`--model ${model}\`). The figures on this page are billed totals, not derived from this table.` }));
+  } else {
+    ph.replaceChildren(el("p", { className: "caveat", textContent: `No reference price on file for model "${model}"; figures shown are billed totals.` }));
+  }
+
+  // data-sources panel — the exact files the feed is synthesized from
+  const cov = DATA.meta.coverage;
+  const judged = Object.keys(DATA.judge).length;
+  const sources = [
+    ["experiment/state.json", `the cell ledger — ${cov.total} cells; written only via statectl (read-only here)`],
+    ["data/cells.json", `${DATA.cells.length} cells: status, metrics, cost split, tools, engagement`],
+    ["data/judge.json", `${judged} blind judge records: grounding + completeness + verdict prose`],
+    ["data/experiment.json", "rungs, repos (pinned SHAs + owner/repo), purpose"],
+    ["data/series/<cell>.json", "per-turn context-growth curves (build-derived from raw stream-json)"],
+    ["data/transcripts/<cell>.md", `${cov.harvested} readable trails`],
+    ["data/raw/<cell>.jsonl", "raw stream-json per harvested run (the byte-precise source)"],
+    ["experiment/prompts/<repo>/<rung>.reference.md", "reference keys — judge-only, walled off (never in this feed)"],
+  ];
+  const list = el("dl", { className: "meth-sources" });
+  for (const [f, d] of sources) {
+    list.append(el("dt", {}, el("code", { textContent: f })));
+    list.append(el("dd", { textContent: d }));
+  }
+  $("#meth-sources").replaceChildren(list);
 }
 
 function fillSelect(sel, vals) { for (const v of vals) sel.append(el("option", { value: v, textContent: v })); }
