@@ -50,7 +50,9 @@ Block (with reason) and stop if any fail; do NOT harvest:
 - **Engagement** — the arm used its capability:
   - baseline → `bash_calls > 0` (used shell search, not degenerate Read-only)
   - grove → `grove_tools > 0`
-  - lsp → `mcp_nongrove_tools > 0`
+  - lsp → `lsp_tools > 0` (the lsp arm uses Claude Code's NATIVE LSP tool,
+    `name=="LSP"` in the transcript, counted as `lsp_tools`. `mcp_nongrove_tools`
+    is legacy/bridge-era only and is always 0 on current lsp runs — do NOT gate on it.)
   else "no engagement: <arm> did not use its capability".
 
 ### 4. Harvest (only after the gate passes)
