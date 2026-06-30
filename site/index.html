@@ -5,8 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>is grep enough? — code navigation for agents, measured</title>
 <meta name="description" content="When a coding agent explores a large codebase, is text search enough — or does it need fast-light structural (tree-sitter) or authoritative semantic (LSP) navigation? Evidence, not opinion.">
+<meta name="theme-color" content="#ffffff">
+<link rel="canonical" href="https://entelligentsia.github.io/is-grep-enough/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://entelligentsia.github.io/is-grep-enough/">
+<meta property="og:title" content="is grep enough? — code navigation for agents, measured">
+<meta property="og:description" content="When a coding agent explores a large codebase, is text search enough — or does it need fast-light structural (tree-sitter) or authoritative semantic (LSP) navigation? Evidence, not opinion.">
+<meta property="og:image" content="https://entelligentsia.github.io/is-grep-enough/assets/og_banner_1200.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="is grep enough? Benchmark">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="is grep enough?">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://entelligentsia.github.io/is-grep-enough/">
+<meta property="twitter:title" content="is grep enough? — code navigation for agents, measured">
+<meta property="twitter:description" content="When a coding agent explores a large codebase, is text search enough — or does it need fast-light structural (tree-sitter) or authoritative semantic (LSP) navigation? Evidence, not opinion.">
+<meta property="twitter:image" content="https://entelligentsia.github.io/is-grep-enough/assets/og_banner_1200.png">
+<meta name="twitter:site" content="@Entelligentsia">
+<meta name="twitter:creator" content="@Entelligentsia">
+<meta name="twitter:image:alt" content="is grep enough? Benchmark">
+
+<!-- Structured Data (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "is grep enough?",
+  "description": "When a coding agent explores a large codebase, is text search enough — or does it need fast-light structural (tree-sitter) or authoritative semantic (LSP) navigation? Evidence, not opinion.",
+  "url": "https://entelligentsia.github.io/is-grep-enough/",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Entelligentsia",
+    "url": "https://entelligentsia.in"
+  }
+}
+</script>
+
+<!-- Icons & Manifest -->
 <!-- favicon: the three-segment coverage motif (baseline · grove · lsp), arm colors -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='1' y='5' width='4' height='6' fill='%230072b2'/><rect x='6' y='5' width='4' height='6' fill='%23e69f00'/><rect x='11' y='5' width='4' height='6' fill='%23009e73'/></svg>">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -60,26 +104,17 @@
     <div class="codebases" id="codebases-grid"></div>
   </section>
 
-  <section id="filter-section">
-    <h2>Filter</h2>
-    <div class="filters">
+  <section id="metrics-section">
+    <h2>Metrics</h2>
+    
+    <div class="metrics-toolbar filters" style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--rule-strong);">
       <span><label>rung</label><select id="f-rung"><option value="">all</option></select></span>
       <span><label>repo</label><select id="f-repo"><option value="">all</option></select></span>
       <span class="armtoggle"><label>arms</label><span id="f-arms"></span></span>
-      <span class="caveat" id="coverage-tally">—</span>
+      <label class="toggle" style="margin-bottom: 0;"><input type="checkbox" id="t-incomplete" checked> show incomplete / DNF</label>
+      <span class="caveat" id="coverage-tally" style="margin-left: auto;">—</span>
     </div>
-  </section>
 
-  <section id="coverage-section">
-    <h2>Coverage &amp; integrity</h2>
-    <p class="note">Run status per cell — three segments are baseline · grove · lsp. Filled = harvested, empty = pending, hatched = blocked/DNF. Click a cell to inspect; click a repo or rung to filter. This is the honest state of completeness, shown before any chart.</p>
-    <label class="toggle"><input type="checkbox" id="t-judged"> overlay judged <span class="caveat">(ink tick = this arm has a blind judge score)</span></label>
-    <label class="toggle"><input type="checkbox" id="t-incomplete" checked> show incomplete / DNF <span class="caveat">(default on, shown flagged; uncheck to see only completed runs — here and in the metrics)</span></label>
-    <div id="coverage"></div>
-  </section>
-
-  <section id="metrics-section">
-    <h2>Metrics</h2>
     <p class="note">One metric at a time — select a tab to compare arms across rungs. Each bar is one repo; bars are grouped by arm within each rung panel. The <em>token economy</em> tab stacks context, cache, and cost together since they are causally linked.</p>
     <div class="legend metrics-legend">
       <span><span class="swatch baseline"></span>baseline</span>

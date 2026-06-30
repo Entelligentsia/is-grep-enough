@@ -44,7 +44,7 @@ const METRIC_FAMILIES = ["context", "turns", "wall", "cache", "cost"];
 const METRIC_TABS = [...METRIC_FAMILIES, "economy"];
 const METRIC_TAB_LABELS = { context: "context", turns: "turns", wall: "wall clock", cache: "cache", cost: "cost", economy: "token economy" };
 
-const state = { rung: "", repo: "", cell: null, showJudged: false, showIncomplete: true,
+const state = { rung: "", repo: "", cell: null, showIncomplete: true,
   arms: { baseline: true, grove: true, lsp: true }, fcA: "", fcB: "", metric: "context" };
 const cellById = (id) => DATA.cells.find((c) => c.id === id);
 const visibleArms = () => ARMS.filter((a) => state.arms[a]);
@@ -106,7 +106,6 @@ async function init() {
       [cb, el("span", { className: `swatch ${a}` }), document.createTextNode(a)]));
   }
 
-  $("#t-judged").onchange = (e) => { state.showJudged = e.target.checked; renderCoverage(); syncURL(); };
   $("#t-incomplete").onchange = (e) => { state.showIncomplete = e.target.checked; render(); };
 
   // free compare (§8, T2.3): pick any two harvested cells with a readable trail.
@@ -312,7 +311,6 @@ function applyURL() {
   const cell = p.get("cell"); state.cell = cell && DATA.cells.some((c) => `${c.rung}-${c.repo}` === cell) ? cell : null;
   if (p.has("arms")) { const vis = new Set(p.get("arms").split(",").filter(Boolean)); for (const a of ARMS) state.arms[a] = vis.has(a); }
   else for (const a of ARMS) state.arms[a] = true;
-  state.showJudged = p.get("judged") === "1";
   state.showIncomplete = p.get("incomplete") !== "0";
   const fca = p.get("fca"); state.fcA = DATA.cells.some((c) => c.id === fca) ? fca : "";
   const fcb = p.get("fcb"); state.fcB = DATA.cells.some((c) => c.id === fcb) ? fcb : "";
@@ -324,7 +322,6 @@ function syncControls() {
   $("#f-rung").value = state.rung;
   $("#f-repo").value = state.repo;
   for (const cb of $("#f-arms").querySelectorAll("input")) cb.checked = state.arms[cb.dataset.arm];
-  $("#t-judged").checked = state.showJudged;
   $("#t-incomplete").checked = state.showIncomplete;
   $("#fc-a").value = state.fcA;
   $("#fc-b").value = state.fcB;
@@ -343,7 +340,6 @@ function syncURL() {
   if (state.repo) p.set("repo", state.repo);
   if (state.cell) p.set("cell", state.cell);
   if (visibleArms().length !== ARMS.length) p.set("arms", visibleArms().join(","));
-  if (state.showJudged) p.set("judged", "1");
   if (!state.showIncomplete) p.set("incomplete", "0");
   if (state.fcA) p.set("fca", state.fcA);
   if (state.fcB) p.set("fcb", state.fcB);
@@ -359,62 +355,13 @@ function filtered() {
 function render() {
   const cov = DATA.meta.coverage;
   $("#coverage-tally").textContent = `${cov.harvested} harvested · ${cov.pending} pending · ${cov.blocked_dnf} dnf/blocked of ${cov.total}`;
-  renderCoverage();
   renderMetrics();
   if (state.cell) renderDetail(state.cell);
   renderFreeCompare();
   syncURL();
 }
 
-function renderCoverage() {
-  const repos = DATA.experiment.repos.map((r) => r.id).filter((r) => !state.repo || r === state.repo);
-  const rungs = DATA.experiment.rungs.filter((r) => !state.rung || r === state.rung);
-  const byId = Object.fromEntries(DATA.cells.map((c) => [c.id, c]));
 
-  const table = el("table", { className: "coverage" });
-  const head = el("tr", {}, el("th", { textContent: "repo" }));
-  for (const rg of rungs) {
-    const th = el("th", { className: "rung", textContent: rg, title: "filter to " + rg });
-    clickable(th, () => { state.rung = state.rung === rg ? "" : rg; $("#f-rung").value = state.rung; render(); }, `filter to rung ${rg}`);
-    head.append(th);
-  }
-  table.append(head);
-
-  for (const repo of repos) {
-    const tr = el("tr");
-    const rc = el("td", { className: "repo", textContent: repo, title: "filter to " + repo });
-    clickable(rc, () => { state.repo = state.repo === repo ? "" : repo; $("#f-repo").value = state.repo; render(); }, `filter to repo ${repo}`);
-    tr.append(rc);
-    for (const rg of rungs) {
-      const td = el("td");
-      const mark = el("div", { className: "cellmark" });
-      const cid = `${rg}-${repo}`;
-      if (state.cell === cid) mark.classList.add("active");
-      for (const arm of visibleArms()) {
-        const c = byId[`${rg}-${arm}-${repo}`];
-        // status by shape/fill, never good/bad color: filled=harvested,
-        // empty=pending, hatched=blocked/DNF. DNF reason tooltipped when known.
-        let st = "pending";
-        if (c?.status === "harvested") st = c.flags?.includes("dnf") ? "dnf" : "harvested";
-        else if (c?.status === "blocked") st = "blocked";
-        const judged = state.showJudged && DATA.judge[`${rg}-${repo}`]?.scores?.[arm] ? " judged" : "";
-        const reason = c?.dnf_reason ? ` — ${c.dnf_reason}` : "";
-        const flagstr = c?.flags?.length ? ` [${c.flags.join(",")}]` : "";
-        // DNF/incomplete toggle (§5.3): default shows them flagged; when off, the
-        // segment is held as a blank placeholder so only completed runs read.
-        const omitted = !state.showIncomplete && isIncomplete(c) ? " omitted" : "";
-        mark.append(el("span", {
-          className: `seg ${st} ${arm}${judged}${omitted}`,
-          title: omitted ? `${rg} · ${arm} · ${repo}: hidden (incomplete/DNF)` : `${rg} · ${arm} · ${repo}: ${c?.status ?? "pending"}${flagstr}${reason}`,
-        }));
-      }
-      clickable(mark, () => { state.cell = cid; renderDetail(cid); scrollToEl("#detail-section"); renderCoverage(); syncURL(); }, `inspect cell ${cid}`);
-      td.append(mark); tr.append(td);
-    }
-    table.append(tr);
-  }
-  const host = $("#coverage"); host.replaceChildren(table);
-}
 
 // Metric tabs (§5.3 reimagined): one metric at a time, switchable by tab.
 // Grouped bar charts replace dot clouds for clearer per-repo comparison.
@@ -668,7 +615,6 @@ function renderDetail(cid) {
     host.append(el("div", { className: "keyrev" }, `Reference key corrected (${kr.level}): ${kr.reason}  [${kr.cite}]`));
   // side-by-side compare (§8, T2.1): the three readable trails in parallel panes
   renderCompareTranscripts(host, arms);
-  renderCoverage();
 }
 
 // Free cell-vs-cell compare (§8, T2.3): two arbitrary harvested cells side by

@@ -1,0 +1,15 @@
+{
+  "name": "is grep enough?",
+  "short_name": "grep vs AST",
+  "description": "Code navigation for agents, measured",
+  "icons": [
+    {
+      "src": "assets/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
