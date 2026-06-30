@@ -102,7 +102,7 @@ async function init() {
       [cb, el("span", { className: `swatch ${a}` }), document.createTextNode(a)]));
   }
 
-  $("#t-incomplete").onchange = (e) => { state.showIncomplete = e.target.checked; render(); };
+
 
   // free compare (§8, T2.3): pick any two harvested cells with a readable trail.
   const fcCells = DATA.cells.filter((c) => c.status === "harvested" && c.evidence?.readable)
@@ -293,7 +293,11 @@ function renderToggleFilters() {
     repoHost.replaceChildren();
     const allRepoBtn = el("button", { type: "button", className: "repo-toggle" });
     allRepoBtn.dataset.val = "";
-    allRepoBtn.append(el("span", { className: "cb-name", textContent: "all" }));
+    allRepoBtn.append(
+      el("span", { className: "cb-meta" }, [
+        el("span", { className: "cb-name", textContent: "all" })
+      ])
+    );
     allRepoBtn.onclick = () => { state.repo = ""; state.cell = null; syncControls(); render(); };
     repoHost.append(allRepoBtn);
 
@@ -301,9 +305,11 @@ function renderToggleFilters() {
       const btn = el("button", { type: "button", className: "repo-toggle" });
       btn.dataset.val = r.id;
       btn.append(
-        el("img", { className: "cb-logo", src: `assets/logos/${r.id}.svg`, width: 16, height: 16, alt: "", loading: "lazy" }),
-        el("span", { className: "cb-name", textContent: r.id }),
-        el("span", { className: "cb-lang", textContent: `(${LANG_NAME[r.lang] ?? r.lang})` })
+        el("img", { className: "cb-logo", src: `assets/logos/${r.id}.svg`, width: 32, height: 32, alt: "", loading: "lazy" }),
+        el("span", { className: "cb-meta" }, [
+          el("span", { className: "cb-name", textContent: r.id }),
+          el("span", { className: "cb-lang", textContent: LANG_NAME[r.lang] ?? r.lang })
+        ])
       );
       btn.onclick = () => { state.repo = state.repo === r.id ? "" : r.id; state.cell = null; syncControls(); render(); };
       repoHost.append(btn);
@@ -319,7 +325,7 @@ function applyURL() {
   const cell = p.get("cell"); state.cell = cell && DATA.cells.some((c) => `${c.rung}-${c.repo}` === cell) ? cell : null;
   if (p.has("arms")) { const vis = new Set(p.get("arms").split(",").filter(Boolean)); for (const a of ARMS) state.arms[a] = vis.has(a); }
   else for (const a of ARMS) state.arms[a] = true;
-  state.showIncomplete = p.get("incomplete") !== "0";
+  // state.showIncomplete is always true now, unused in URL
   const fca = p.get("fca"); state.fcA = DATA.cells.some((c) => c.id === fca) ? fca : "";
   const fcb = p.get("fcb"); state.fcB = DATA.cells.some((c) => c.id === fcb) ? fcb : "";
   const metric = p.get("metric"); state.metric = METRIC_TABS.includes(metric) ? metric : "context";
@@ -333,6 +339,10 @@ function syncControls() {
   for (const b of document.querySelectorAll("#f-repo-toggles button")) {
     b.setAttribute("aria-pressed", String(b.dataset.val === state.repo));
   }
+  for (const cb of $("#f-arms").querySelectorAll("input")) cb.checked = state.arms[cb.dataset.arm];
+
+  $("#fc-a").value = state.fcA;
+  $("#fc-b").value = state.fcB;
 }
 
 // serialize state into the query string; only non-default keys are written so a
@@ -343,7 +353,7 @@ function syncURL() {
   if (state.repo) p.set("repo", state.repo);
   if (state.cell) p.set("cell", state.cell);
   if (visibleArms().length !== ARMS.length) p.set("arms", visibleArms().join(","));
-  if (!state.showIncomplete) p.set("incomplete", "0");
+
   if (state.fcA) p.set("fca", state.fcA);
   if (state.fcB) p.set("fcb", state.fcB);
   if (state.metric !== "context") p.set("metric", state.metric);
