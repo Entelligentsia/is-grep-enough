@@ -463,3 +463,6 @@ a.cite:hover { border-bottom: 1px solid var(--ink); }
 }
 .more-btn:hover { opacity: 1; }
 .spark-prov code { word-break: break-all; }
+
+/* Ensure HTML hidden attribute is always respected */
+[hidden] { display: none !important; }
