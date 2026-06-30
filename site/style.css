@@ -56,13 +56,13 @@ header.masthead { border-bottom: 1px solid var(--rule-strong); padding-bottom: 1
 .theme-switch button:hover { color: var(--ink-soft); }
 .theme-switch button[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
 .masthead h1 { font-size: 1.35rem; font-weight: 600; margin: 0 0 .2rem; letter-spacing: -0.01em; }
-.masthead .sub { color: var(--ink-soft); font-size: .92rem; max-width: 70ch; }
+.masthead .sub { color: var(--ink-soft); font-size: .92rem; max-width: 980px; }
 .provenance { color: var(--ink-faint); font-size: .78rem; margin-top: .6rem; font-family: var(--mono); }
 
 section { margin: 2.2rem 0; }
 h2 { font-size: .82rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
      color: var(--ink-soft); border-bottom: 1px solid var(--rule); padding-bottom: .35rem; margin: 0 0 1rem; }
-.note { color: var(--ink-soft); font-size: .85rem; max-width: 74ch; }
+.note { color: var(--ink-soft); font-size: .85rem; max-width: 980px; }
 .caveat { color: var(--ink-faint); font-size: .8rem; font-style: italic; }
 .tldr { border: 1px solid var(--rule-strong); background: var(--paper-2);
         padding: 1rem 1.2rem; border-radius: 4px; }
@@ -87,6 +87,12 @@ h2 { font-size: .82rem; font-weight: 600; text-transform: uppercase; letter-spac
 .armchk { display: inline-flex; align-items: center; gap: .25rem; cursor: pointer; color: var(--ink-soft); }
 .armchk .swatch { display: inline-block; width: .7rem; height: .7rem; }
 .armchk input { margin: 0; cursor: pointer; }
+
+#coverage {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1.4rem;
+}
 
 /* coverage grid */
 table.coverage { border-collapse: collapse; font-size: .82rem; }
@@ -265,3 +271,27 @@ a.cite:hover { border-bottom: 1px solid var(--ink); }
 .trail .t-reason { font-size: .85rem; color: var(--ink); margin: .35rem 0; white-space: pre-wrap; }
 .trail .t-tool { font-family: var(--mono); font-size: .78rem; color: var(--ink-soft); margin: .2rem 0; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* Responsive layout adjustments for tablet and mobile viewports */
+@media (max-width: 768px) {
+  .armcols {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+  }
+  
+  .compare-panes {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+  }
+
+  .spine-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.8rem;
+  }
+  
+  .theme-switch {
+    position: static;
+    margin-bottom: 1rem;
+    justify-content: flex-start;
+  }
+}
