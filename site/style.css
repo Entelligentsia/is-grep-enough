@@ -37,7 +37,7 @@
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .noscript-note { border: 1px solid var(--rule-strong); background: var(--paper-2); padding: .8rem 1rem;
                  font-size: .85rem; color: var(--ink-soft); margin: 0 0 1.4rem; }
-html { font-size: 15px; }
+html { font-size: 16.5px; }
 body {
   margin: 0; color: var(--ink); background: var(--paper);
   font-family: var(--sans); line-height: 1.5;
@@ -48,14 +48,23 @@ a:hover { border-bottom-color: var(--ink); }
 code, .mono { font-family: var(--mono); font-size: 0.86em; }
 
 .wrap { max-width: 1060px; margin: 0 auto; padding: 2.2rem 1.4rem 5rem; }
-header.masthead { border-bottom: 1px solid var(--rule-strong); padding-bottom: 1rem; margin-bottom: 1.4rem; position: relative; }
-/* theme switch — top-right of the masthead, flat hairline buttons */
-.theme-switch { position: absolute; top: 0; right: 0; display: flex; gap: .15rem; }
+header.masthead { border-bottom: 1px solid var(--rule-strong); padding-bottom: 1rem; margin-bottom: 1.4rem; }
+/* top utility strip: project links (left) + theme switch (right), above the title */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem 1.4rem;
+          flex-wrap: wrap; margin-bottom: 1.3rem; }
+.meta-links { display: flex; align-items: center; gap: .55rem; font-size: .8rem; }
+.meta-links a { color: var(--ink-soft); border-bottom: 1px solid transparent; padding-bottom: 1px; }
+.meta-links a:hover { color: var(--ink); border-bottom-color: var(--rule-strong); }
+.meta-links .sep { color: var(--rule-strong); }
+.meta-grove { display: inline-flex; align-items: center; gap: .35rem; }
+.meta-grove img { display: block; }
+/* theme switch — flat hairline buttons, right of the top strip */
+.theme-switch { display: flex; gap: .15rem; }
 .theme-switch button { font-family: var(--sans); font-size: .72rem; background: none; border: 1px solid var(--rule-strong);
                        color: var(--ink-faint); padding: .12rem .45rem; cursor: pointer; }
 .theme-switch button:hover { color: var(--ink-soft); }
 .theme-switch button[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
-.masthead h1 { font-size: 1.35rem; font-weight: 600; margin: 0 0 .2rem; letter-spacing: -0.01em; }
+.masthead h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 .25rem; letter-spacing: -0.015em; }
 .masthead .sub { color: var(--ink-soft); font-size: .92rem; max-width: 980px; }
 .provenance { color: var(--ink-faint); font-size: .78rem; margin-top: .6rem; font-family: var(--mono); }
 
@@ -75,6 +84,29 @@ h2 { font-size: .82rem; font-weight: 600; text-transform: uppercase; letter-spac
 .legend { display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: .85rem; margin: .4rem 0 0; }
 .legend .swatch { display: inline-block; width: .7rem; height: .7rem; margin-right: .35rem; vertical-align: baseline; }
 .swatch.baseline { background: var(--baseline); } .swatch.grove { background: var(--grove); } .swatch.lsp { background: var(--lsp); }
+
+/* codebases roster — pinned corpus; each logo is a click-to-filter control.
+   Flat hairline tiles, no radius/shadow (per STYLE.md). Brand color lives here,
+   never in the charts. */
+.codebases { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .6rem; }
+.codebase { display: flex; align-items: center; gap: .5rem; border: 1px solid var(--rule);
+            padding: .5rem .55rem; background: var(--paper); }
+.codebase:hover { border-color: var(--rule-strong); }
+.codebase.active { border-color: var(--ink); }
+.cb-pick { display: flex; align-items: center; gap: .55rem; flex: 1 1 auto; min-width: 0;
+           background: none; border: 0; padding: 0; margin: 0; cursor: pointer;
+           font-family: var(--sans); color: var(--ink); text-align: left; }
+/* seat every logo on a fixed warm-light chip so dark-marked logos (django, tokio,
+   spring-boot) stay legible in dark mode too — flat, no radius (per STYLE.md) */
+.cb-logo { width: 28px; height: 28px; padding: 4px; flex: none; object-fit: contain; background: #efece6; }
+.cb-meta { display: flex; flex-direction: column; min-width: 0; line-height: 1.18; }
+.cb-name { font-size: .9rem; font-weight: 600; }
+.cb-lang { font-size: .72rem; color: var(--ink-faint); }
+.cb-pick:hover .cb-name { color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule-strong); text-underline-offset: 2px; }
+.codebase.active .cb-name { text-decoration: underline; text-decoration-color: var(--ink); text-underline-offset: 2px; }
+.cb-sha { font-family: var(--mono); font-size: .72rem; color: var(--ink-faint); flex: none;
+          border-bottom: 1px solid transparent; }
+.cb-sha:hover { color: var(--ink); border-bottom-color: var(--rule-strong); }
 
 /* toggles */
 .toggle { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; color: var(--ink-soft); margin-bottom: .6rem; cursor: pointer; }
@@ -279,6 +311,10 @@ a.cite:hover { border-bottom: 1px solid var(--ink); }
 .sub-body { margin: .4rem 0 .6rem; }
 .trail .t-reason { font-size: .85rem; color: var(--ink); margin: .35rem 0; white-space: pre-wrap; }
 .trail .t-tool { font-family: var(--mono); font-size: .78rem; color: var(--ink-soft); margin: .2rem 0; }
+/* closing strip — a single quiet line, no duplicate nav (links live in the topbar) */
+.site-foot { margin-top: 3.5rem; border-top: 1px solid var(--rule); padding-top: 1rem; }
+.site-foot p { margin: 0; font-size: .8rem; color: var(--ink-faint); max-width: 74ch; }
+
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
 /* Responsive layout adjustments for tablet and mobile viewports */
@@ -297,10 +333,10 @@ a.cite:hover { border-bottom: 1px solid var(--ink); }
     grid-template-columns: 1fr !important;
     gap: 0.8rem;
   }
-  
-  .theme-switch {
-    position: static;
-    margin-bottom: 1rem;
-    justify-content: flex-start;
-  }
+
+  /* data-sources list: stack the term/definition pairs and let long file paths
+     wrap instead of forcing the page wider than the viewport */
+  .meth-sources { grid-template-columns: 1fr; gap: .05rem .5rem; }
+  .meth-sources dt { margin-top: .4rem; }
+  .meth-sources dt code, .meth-sources dd { overflow-wrap: anywhere; }
 }

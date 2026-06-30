@@ -41,11 +41,12 @@ everywhere (`font-variant-numeric: tabular-nums`) so metric columns align.
 
 - `--sans`: `system-ui, -apple-system, "IBM Plex Sans", Segoe UI, Roboto, sans-serif`
 - `--mono`: `ui-monospace, "IBM Plex Mono", "SF Mono", Menlo, monospace` — code, cites, tool calls, **all numbers/metrics**
-- Root: `html { font-size: 15px }`, `body { line-height: 1.5 }`
+- Root: `html { font-size: 16.5px }`, `body { line-height: 1.5 }`
 
 | Role | Size | Weight | Notes |
 |---|---|---|---|
-| masthead `h1` | `1.35rem` | 600 | letter-spacing `-0.01em` |
+| masthead `h1` | `1.5rem` | 600 | letter-spacing `-0.015em` |
+| topbar links `.meta-links` | `.8rem` | 400 | `--ink-soft`; project/author links above the title, hairline-underline on hover |
 | section `h2` | `.82rem` | 600 | UPPERCASE, letter-spacing `.08em`, `--ink-soft` |
 | body / `.sub` | `.92rem` | 400 | `--ink-soft`, max measure ~70ch |
 | `.note` | `.85rem` | 400 | `--ink-soft`, max measure ~74ch |
@@ -53,8 +54,8 @@ everywhere (`font-variant-numeric: tabular-nums`) so metric columns align.
 | `.provenance` | `.78rem` | 400 | mono, `--ink-faint` |
 | `code` / `.mono` | `.86em` | 400 | mono |
 | metric value | `.82rem` | 400 (600 when "lowest"/"lower") | mono |
-| chart labels | `11px` | — | small-multiples |
-| sparkline labels | `9px` | — | drilled context curve |
+| chart labels | `12px` | — | per-rung dumbbell axes (`13px` rung header) |
+| sparkline labels | `10px` | — | drilled context curve |
 
 ## Spacing & layout
 

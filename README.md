@@ -12,9 +12,10 @@ of task complexity, over 10 large real-world codebases.
 | **grove** | structural | tree-sitter via the [grove](https://github.com/Entelligentsia/grove) MCP server |
 | **lsp** | semantic | Claude Code's native `LSP` tool + official language plugins |
 
-The thesis we expect is a **curve, not a verdict**: which regime wins depends on
-*task type and complexity*, and the experiment says **which, where, and why** —
-bounded to what one fair pass reveals (n=1 per cell, reported honestly).
+The answer is a **curve, not a verdict**: which regime wins depends on *task type
+and complexity*, and the experiment pins down **which, where, and why** — bounded
+to what one fair pass reveals (n=1 per cell, reported honestly). Jump to
+[**Findings**](#findings) for the result, or read on for how it's kept fair.
 
 ## The matrix
 
@@ -30,6 +31,43 @@ run, fully isolated in a container, on a frozen prompt.
   blind **answer-quality** grade (completeness + grounding) against a pre-registered
   reference key — plus, for the lsp arm, the per-repo **`setup_s`** (the cost of
   warming a language server enough to answer correctly).
+
+## Findings
+
+The grid is complete: **150 / 150 cells harvested, all 50 (rung, repo) trios
+blind-judged.** Explore every cell — coverage, metrics, and the raw transcript
+behind each number — in the [live dashboard](https://entelligentsia.github.io/is-grep-enough/).
+The headline, in three parts.
+
+**On answer quality, the three arms tie.** Grep is enough to be *correct*: across
+the 50 judged tasks, mean grounding is ~0.97 and completeness ~0.99 for every arm.
+All three reach the right answer almost everywhere — quality is not where they
+separate.
+
+**They separate on how much context they push through the model, and the gap
+widens with task complexity.** Structural navigation (grove) reaches the same
+answer on the fewest tokens — ~395k on average, against ~567k for lsp and ~780k
+for baseline (grep + read, which fans out and re-reads). At the easy rungs every
+arm is light; by the hardest rung (`L5`) baseline pushes ~1.5M tokens of context
+against grove's ~534k — **2.8× as many** — while grove stays tightest on quality.
+This is *token throughput*, not the billed bill: most of baseline's volume is
+cheap cache reads, so in dollars the arms are far closer. The lean-context win
+matters most for context-window pressure, latency, and any setting without
+aggressive prompt caching.
+
+**The lsp arm's real cost is operational, and it tracks compilation.**
+Dynamically-typed languages (Python, PHP, JS/TS) — and Java via an
+invisible-project trick — resolve **cold**; compiled languages (C/C++, Go, Rust)
+need a build/index warm spanning **0 → 46 min** plus a multi-GB image. Semantic
+precision is real, but bought with a large, uneven, per-language setup cost the
+other two arms never pay. The per-language record — exact steps, costs, failure
+modes — is in [`docs/LSP_COMPLEXITY.md`](docs/LSP_COMPLEXITY.md).
+
+So the thesis held: **a curve, not a verdict.** Grep suffices for shallow lookups;
+structural tools pay off — in tokens first — as code gets harder to navigate; and
+semantic precision is available, but front-loads a per-language toll. All of it is
+checkable: blind judgements in [`reports/`](reports), raw + readable transcripts in
+[`evidence/nav3/`](evidence/nav3).
 
 ## What makes it fair
 
@@ -48,25 +86,6 @@ run, fully isolated in a container, on a frozen prompt.
 - **One writer of truth.** The cell ledger (`experiment/state.json`) is only ever
   written through the validated `statectl` CLI — never hand-edited.
 
-## Status & early signal
-
-In progress. **26 arm-cells harvested** across `L1`, `L4`, `L5` (redis, django,
-bitcoin, typescript, spring-boot); judgements in
-[`reports/nav3-judgement.md`](reports/nav3-judgement.md); raw + readable
-transcripts in [`evidence/nav3/`](evidence/nav3).
-
-The sharpest finding so far is on the lsp arm's **operational cost**, and it
-**tracks compilation**: dynamically-typed languages (Python, PHP, JS/TS) — and
-Java via an invisible-project trick — resolve **cold**, while compiled languages
-(C/C++, Go, Rust) need a build/index warm spanning **0 → 46 min** plus a +7 GB
-image. Semantic precision is real, but bought with a large, uneven, per-language
-setup cost the other two arms don't pay. The full per-language record — exact
-steps, costs, and failure modes — is the publishing data in
-[`docs/LSP_COMPLEXITY.md`](docs/LSP_COMPLEXITY.md).
-
-> The lsp arm is being standardized onto the **official Claude Code LSP plugins**
-> (`clangd-lsp`, `jdtls-lsp`, …); see [`docs/LSP_SETUP.md`](docs/LSP_SETUP.md).
-
 ## Reproduce
 
 ```bash
@@ -80,6 +99,10 @@ containers/build/build-lsp.sh                               # servers + official
 
 # 3. judge a completed (rung,repo) once all three arms are harvested
 /judge-arm L4-redis
+
+# 4. view the results — metric tables in-terminal, or rebuild the dashboard feed
+/report-metrics L4
+node site/build.mjs --sha "$(git rev-parse --short HEAD)" --at "$(date -u +%FT%TZ)"
 ```
 
 ## Layout
@@ -91,9 +114,10 @@ experiment/   the engine: statectl (validated ledger CLI) + state.json + spine.j
 containers/   Dockerfile.{base,grove,lsp} + build/
 steering/     per-repo agent steering baked into images (base + lsp)
 scripts/      run-side.sh (one isolated arm run) + clone-repos + extract-transcript
-.claude/      skills: runarm, judge-arm, exp-prep, lsp-setup
+.claude/      skills: runarm, judge-arm, exp-prep, lsp-setup, report-metrics
 evidence/     harvested raw + readable transcripts (the definitive run data)
 reports/      blind judgements + draft findings
+site/         self-contained results dashboard (build.mjs feed + static viewer)
 ```
 
 ## Caveats
