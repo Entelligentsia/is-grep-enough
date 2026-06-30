@@ -224,7 +224,7 @@ table.meth-price td.mono { text-align: right; }
 .tx-overlay.open { display: block; }
 .tx-panel { position: fixed; inset: 3vh 4vw; background: var(--paper); border: 1px solid var(--rule-strong);
             overflow: auto; padding: 1.6rem 2rem; }
-.tx-panel .close { float: right; cursor: pointer; border: 1px solid var(--rule-strong); padding: .1rem .5rem;
+.tx-panel .close {  cursor: pointer; border: 1px solid var(--rule-strong); padding: .1rem .5rem;
                     background: none; color: var(--ink-soft); font-family: var(--sans); font-size: .82rem; }
 .tx-panel .close:hover { color: var(--ink); border-color: var(--ink); }
 .tx-panel { font-size: .9rem; }
@@ -306,3 +306,160 @@ a.cite:hover { border-bottom: 1px solid var(--ink); }
   .meth-sources dt { margin-top: .4rem; }
   .meth-sources dt code, .meth-sources dd { overflow-wrap: anywhere; }
 }
+
+.dpad {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  
+  
+}
+.dpad-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.dpad button {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+.dpad button:hover:not(:disabled) {
+  background: var(--paper-2);
+  color: var(--ink);
+  border-color: var(--ink-faint);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+}
+.dpad button:disabled {
+  opacity: 0.2;
+  cursor: default;
+  background: transparent;
+}
+
+.dpad-center {
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dpad-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+.dpad-icon-wrap img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+.dpad-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 10px;
+  letter-spacing: 0.05em;
+  font-family: var(--sans);
+  border: 2px solid var(--paper);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.detail {
+
+  transition: opacity 0.2s ease-in-out;
+  opacity: 1;
+}
+
+
+/* Fix for dark SVGs on dark backgrounds (like Django) */
+:root[data-theme="dark"] .cb-logo,
+:root[data-theme="dark"] .dpad-icon-wrap img {
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .cb-logo,
+  :root:not([data-theme]) .dpad-icon-wrap img {
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+  }
+}
+
+/* Explicitly invert exceptionally dark logos in dark mode for a cleaner look */
+:root[data-theme="dark"] img[src*="django"],
+:root[data-theme="dark"] img[src*="tokio"] {
+  filter: brightness(0) invert(0.9);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) img[src*="django"],
+  :root:not([data-theme]) img[src*="tokio"] {
+    filter: brightness(0) invert(0.9);
+  }
+}
+
+/* Verdict Modal & Truncation */
+.native-modal {
+  padding: 1.5rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  max-width: 600px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.native-modal::backdrop {
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(2px);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.5rem;
+}
+.modal-header h3 { margin: 0; font-size: 1.1rem; }
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+.close-btn:hover { color: var(--ink); }
+.modal-body { overflow-wrap: anywhere;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.more-btn {
+  background: none; border: none; color: inherit; 
+  text-decoration: underline; cursor: pointer; padding: 0; font-size: inherit;
+  opacity: 0.8;
+}
+.more-btn:hover { opacity: 1; }
+.spark-prov code { word-break: break-all; }

@@ -334,7 +334,8 @@ function applyURL() {
   const p = new URLSearchParams(location.search);
   const rung = p.get("rung"); state.rung = DATA.experiment.rungs.includes(rung) ? rung : "";
   const repo = p.get("repo"); state.repo = DATA.experiment.repos.some((r) => r.id === repo) ? repo : "";
-  const cell = p.get("cell"); state.cell = cell && DATA.cells.some((c) => `${c.rung}-${c.repo}` === cell) ? cell : null;
+  const cell = p.get("cell"); 
+  state.cell = cell && DATA.cells.some((c) => `${c.rung}-${c.repo}` === cell) ? cell : (!p.has("cell") ? "L4-tokio" : null);
   if (p.has("arms")) { const vis = new Set(p.get("arms").split(",").filter(Boolean)); for (const a of ARMS) state.arms[a] = vis.has(a); }
   else for (const a of ARMS) state.arms[a] = true;
   // state.showIncomplete is always true now, unused in URL
@@ -565,6 +566,84 @@ function renderDetail(cid) {
   const sec = $("#detail-section"); sec.hidden = false;
   $("#detail-id").textContent = `${rung} · ${repo}`;
 
+  // wire up D-pad navigation
+  const rungs = DATA.experiment.rungs;
+  const repos = DATA.experiment.repos.map(r => r.id);
+  const isValid = (r, rp) => DATA.cells.some(c => c.rung === r && c.repo === rp);
+  
+  const currRungIdx = rungs.indexOf(rung);
+  const currRepoIdx = repos.indexOf(repo);
+  
+  let upCell = null, downCell = null, leftCell = null, rightCell = null;
+  for (let i = currRungIdx + 1; i < rungs.length; i++) {
+    if (isValid(rungs[i], repo)) { upCell = `${rungs[i]}-${repo}`; break; }
+  }
+  for (let i = currRungIdx - 1; i >= 0; i--) {
+    if (isValid(rungs[i], repo)) { downCell = `${rungs[i]}-${repo}`; break; }
+  }
+
+  const taskIds = [];
+  for (const r of rungs) {
+    for (const rp of repos) {
+      if (isValid(r, rp)) taskIds.push(`${r}-${rp}`);
+    }
+  }
+  const idx = taskIds.indexOf(cid);
+  leftCell = idx > 0 ? taskIds[idx - 1] : null;
+  rightCell = idx < taskIds.length - 1 ? taskIds[idx + 1] : null;
+
+  const makeBtn = (tgt, icon, title) => {
+    const b = el("button", { title: title || tgt, disabled: !tgt });
+    b.innerHTML = icon;
+    if (tgt) b.onclick = () => { 
+      const host = $("#detail");
+      host.style.opacity = 0; // Trigger CSS fade out
+      const st = window.scrollY; // Save scroll position
+      
+      setTimeout(() => {
+        state.cell = tgt; 
+        syncURL(); 
+        render(); 
+        
+        // Restore scroll position instantly after render
+        window.scrollTo(0, st);
+        
+        // Trigger CSS fade in
+        const newHost = $("#detail");
+        if (newHost) newHost.style.opacity = 1;
+      }, 200); // Wait for fade out to complete
+    };
+    return b;
+  };
+
+  const dpad = $("#dpad-container");
+  if (dpad) {
+    const upSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
+    const downSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+    const leftSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>`;
+    const rightSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+
+    const upBtn = makeBtn(upCell, upSVG, upCell ? `Go to ${upCell}` : "");
+    const downBtn = makeBtn(downCell, downSVG, downCell ? `Go to ${downCell}` : "");
+    const leftBtn = makeBtn(leftCell, leftSVG, leftCell ? `Go to ${leftCell}` : "");
+    const rightBtn = makeBtn(rightCell, rightSVG, rightCell ? `Go to ${rightCell}` : "");
+    
+    dpad.replaceChildren(
+      el("div", { className: "dpad-row", style: "justify-content: center;" }, [upBtn]),
+      el("div", { className: "dpad-row" }, [
+        leftBtn, 
+        el("div", { className: "dpad-center" }, [
+          el("div", { className: "dpad-icon-wrap" }, [
+            el("img", { src: `assets/logos/${repo}.svg`, width: 32, height: 32, alt: repo }),
+            el("span", { className: "dpad-badge", textContent: rung })
+          ])
+        ]), 
+        rightBtn
+      ]),
+      el("div", { className: "dpad-row", style: "justify-content: center;" }, [downBtn])
+    );
+  }
+
   const host = $("#detail"); host.replaceChildren();
   const cols = el("div", { className: "armcols" });
   cols.style.gridTemplateColumns = `repeat(${Math.max(1, arms.length)}, 1fr)`;
@@ -629,7 +708,26 @@ function renderDetail(cid) {
       const s = jr.scores[c.arm];
       const jd = el("div", { className: "judge" });
       jd.append(el("div", {}, el("span", { className: "score", textContent: `grounding ${s.grounding} · completeness ${s.completeness}` })));
-      jd.append(el("div", { className: "verdict", textContent: s.verdict ?? "" }));
+      
+      const vText = s.verdict ?? "";
+      let snippet = vText;
+      let needsModal = false;
+      if (vText.length > 120) {
+        snippet = vText.slice(0, 120) + "…";
+        needsModal = true;
+      }
+      
+      const vDiv = el("div", { className: "verdict", textContent: snippet });
+      if (needsModal) {
+        const moreBtn = el("button", { type: "button", className: "more-btn", textContent: " [more]" });
+        moreBtn.onclick = () => {
+          $("#generic-modal-title").textContent = `Verdict: ${c.arm}`;
+          $("#generic-modal-content").textContent = vText;
+          $("#generic-modal").showModal();
+        };
+        vDiv.append(moreBtn);
+      }
+      jd.append(vDiv);
       col.append(jd);
     }
     if (c.evidence?.readable) {

@@ -142,7 +142,10 @@
   </section>
 
   <section id="detail-section" hidden>
-    <h2>Cell detail <span class="caveat" id="detail-id"></span></h2>
+    <h2 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <span>Cell detail <span class="caveat" id="detail-id"></span></span>
+      <div id="dpad-container" class="dpad"></div>
+    </h2>
     <div class="detail" id="detail"></div>
   </section>
 
@@ -184,6 +187,14 @@
       <li id="caveats"></li>
     </ul>
   </section>
+
+<dialog id="generic-modal" class="native-modal">
+  <div class="modal-header">
+    <h3 id="generic-modal-title"></h3>
+    <button class="close-btn" onclick="document.getElementById('generic-modal').close()">✕</button>
+  </div>
+  <div id="generic-modal-content" class="modal-body"></div>
+</dialog>
 
   <footer class="site-foot">
     <p>A controlled, reproducible benchmark of agent code navigation. Every figure recomputes from committed evidence — nothing here is asserted that you cannot check.</p>
