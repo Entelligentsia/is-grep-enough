@@ -91,11 +91,7 @@ async function init() {
   $("#caveats").innerHTML = "<b>Caveats:</b> " + meta.caveats.join(" ");
   renderTldr();
 
-  // filters
-  fillSelect($("#f-rung"), experiment.rungs);
-  fillSelect($("#f-repo"), experiment.repos.map((r) => r.id));
-  $("#f-rung").onchange = (e) => { state.rung = e.target.value; state.cell = null; render(); };
-  $("#f-repo").onchange = (e) => { state.repo = e.target.value; state.cell = null; render(); };
+  // filters will be populated by renderToggleFilters()
 
   // arm-visibility toggle — global across coverage grid, metrics, and detail (§4)
   for (const a of ARMS) {
@@ -136,7 +132,7 @@ async function init() {
   let _resizeT; window.addEventListener("resize", () => {
     clearTimeout(_resizeT); _resizeT = setTimeout(renderMetrics, 150);
   });
-  renderCodebases();
+  renderToggleFilters();
   renderMethodology();
   render();
 }
@@ -276,30 +272,42 @@ const LANG_NAME = { c: "C", cpp: "C++", python: "Python", typescript: "TypeScrip
 // Built once (repos don't change with filters); active state is synced in
 // syncControls(). Logos stay OUT of the charts so brand color never competes
 // with arm-identity color in the data marks.
-function renderCodebases() {
-  const host = $("#codebases-grid"); if (!host) return;
-  host.replaceChildren();
-  for (const r of DATA.experiment.repos) {
-    const tile = el("div", { className: "codebase" }); tile.dataset.repo = r.id;
-    const pick = el("button", { className: "cb-pick", type: "button" });
-    pick.setAttribute("aria-label", `filter to ${r.id}`);
-    pick.append(
-      el("img", { className: "cb-logo", src: `assets/logos/${r.id}.svg`, width: 24, height: 24, alt: "", loading: "lazy" }),
-      el("span", { className: "cb-meta" }, [
+function renderToggleFilters() {
+  const rungHost = $("#f-rung-toggles");
+  if (rungHost) {
+    rungHost.replaceChildren();
+    const allRungBtn = el("button", { type: "button", textContent: "all" });
+    allRungBtn.dataset.val = "";
+    allRungBtn.onclick = () => { state.rung = ""; state.cell = null; syncControls(); render(); };
+    rungHost.append(allRungBtn);
+    for (const rg of DATA.experiment.rungs) {
+      const btn = el("button", { type: "button", textContent: rg });
+      btn.dataset.val = rg;
+      btn.onclick = () => { state.rung = state.rung === rg ? "" : rg; state.cell = null; syncControls(); render(); };
+      rungHost.append(btn);
+    }
+  }
+
+  const repoHost = $("#f-repo-toggles");
+  if (repoHost) {
+    repoHost.replaceChildren();
+    const allRepoBtn = el("button", { type: "button", className: "repo-toggle" });
+    allRepoBtn.dataset.val = "";
+    allRepoBtn.append(el("span", { className: "cb-name", textContent: "all" }));
+    allRepoBtn.onclick = () => { state.repo = ""; state.cell = null; syncControls(); render(); };
+    repoHost.append(allRepoBtn);
+
+    for (const r of DATA.experiment.repos) {
+      const btn = el("button", { type: "button", className: "repo-toggle" });
+      btn.dataset.val = r.id;
+      btn.append(
+        el("img", { className: "cb-logo", src: `assets/logos/${r.id}.svg`, width: 16, height: 16, alt: "", loading: "lazy" }),
         el("span", { className: "cb-name", textContent: r.id }),
-        el("span", { className: "cb-lang", textContent: LANG_NAME[r.lang] ?? r.lang }),
-      ]),
-    );
-    pick.onclick = () => {
-      state.repo = state.repo === r.id ? "" : r.id; state.cell = null;
-      render(); syncControls();
-      document.getElementById("coverage-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-    const sha = el("a", { className: "cb-sha", href: `https://github.com/${r.gh}/tree/${r.sha}`,
-      textContent: r.sha.slice(0, 7), title: `pinned: ${r.gh}@${r.sha.slice(0, 7)}`, target: "_blank", rel: "noopener" });
-    sha.onclick = (e) => e.stopPropagation();
-    tile.append(pick, sha);
-    host.append(tile);
+        el("span", { className: "cb-lang", textContent: `(${LANG_NAME[r.lang] ?? r.lang})` })
+      );
+      btn.onclick = () => { state.repo = state.repo === r.id ? "" : r.id; state.cell = null; syncControls(); render(); };
+      repoHost.append(btn);
+    }
   }
 }
 
@@ -319,16 +327,11 @@ function applyURL() {
 
 // reflect current state into the form controls (after URL load / popstate)
 function syncControls() {
-  $("#f-rung").value = state.rung;
-  $("#f-repo").value = state.repo;
-  for (const cb of $("#f-arms").querySelectorAll("input")) cb.checked = state.arms[cb.dataset.arm];
-  $("#t-incomplete").checked = state.showIncomplete;
-  $("#fc-a").value = state.fcA;
-  $("#fc-b").value = state.fcB;
-  for (const t of document.querySelectorAll(".codebase")) {
-    const on = t.dataset.repo === state.repo;
-    t.classList.toggle("active", on);
-    t.querySelector(".cb-pick")?.setAttribute("aria-pressed", String(on));
+  for (const b of document.querySelectorAll("#f-rung-toggles button")) {
+    b.setAttribute("aria-pressed", String(b.dataset.val === state.rung));
+  }
+  for (const b of document.querySelectorAll("#f-repo-toggles button")) {
+    b.setAttribute("aria-pressed", String(b.dataset.val === state.repo));
   }
 }
 
