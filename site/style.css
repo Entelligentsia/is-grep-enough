@@ -131,13 +131,22 @@ td.repo:hover { color: var(--ink); }
 g[aria-label="tip"] path { fill: var(--paper-2) !important; stroke: var(--rule-strong) !important; }
 g[aria-label="tip"] text { fill: var(--ink) !important; }
 
-/* metric small-multiples: one row (family) per figure, stacked */
+/* metric tabs: pill-button row + single visible panel */
 .metrics-legend { margin: .3rem 0 .8rem; }
-#metrics-grid { display: flex; flex-direction: column; gap: 1rem; }
+.metrics-tabs { display: flex; gap: .25rem; flex-wrap: wrap; margin-bottom: .8rem; }
+.metrics-tabs button { font-family: var(--sans); font-size: .78rem; background: none; border: 1px solid var(--rule-strong);
+                       color: var(--ink-faint); padding: .2rem .6rem; cursor: pointer; }
+.metrics-tabs button:hover { color: var(--ink-soft); }
+.metrics-tabs button[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
+#metrics-panel { min-height: 200px; }
 .metric-family { padding: .7rem 1rem 1rem; overflow-x: auto; }
 .metric-family .mf-label { font-family: var(--sans); font-size: .92rem; font-weight: 600;
                            color: var(--ink); margin: 0 0 .3rem; }
 .metric-family .mf-cap { font-size: .76rem; color: var(--ink-faint); margin-top: .4rem; }
+/* token economy composite: three mini-charts stacked tightly */
+.token-economy { display: flex; flex-direction: column; gap: .4rem; }
+.token-economy .metric-family { padding: .4rem 1rem .6rem; }
+.token-economy .metric-family .mf-cap { display: none; }
 
 /* detail / compare */
 .detail { border: 1px solid var(--rule-strong); padding: 1.1rem 1.2rem; background: var(--paper); }
@@ -166,7 +175,7 @@ g[aria-label="tip"] text { fill: var(--ink) !important; }
 .citecheck .k { color: var(--ink-faint); } .citecheck .v { font-family: var(--mono); }
 .judge { font-size: .82rem; margin-top: .5rem; }
 .judge .score { font-family: var(--mono); }
-.verdict { font-size: .8rem; color: var(--ink-soft); margin-top: .3rem; max-height: 7.5rem; overflow: auto; }
+.verdict { font-size: .8rem; color: var(--ink-soft); margin-top: .3rem; }
 .keyrev { font-size: .78rem; color: var(--ink); background: var(--paper-2); border-left: 2px solid var(--ink-faint); padding: .4rem .6rem; margin-top: .5rem; }
 .flag { font-family: var(--mono); font-size: .7rem; color: var(--ink-faint); border: 1px solid var(--rule-strong); padding: 0 .3rem; margin-left: .3rem; }
 

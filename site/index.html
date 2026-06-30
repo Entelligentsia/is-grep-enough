@@ -63,14 +63,15 @@
 
   <section id="metrics-section">
     <h2>Metrics</h2>
-    <p class="note">Five metric families, each a row of small charts — one per rung, the three arms side by side within each. Small-multiples, not one busy chart: every panel keeps the same honest y-axis from zero, with one dot per repo and a tick at the per-rung median. Filter above to focus a rung or repo.</p>
+    <p class="note">One metric at a time — select a tab to compare arms across rungs. Each bar is one repo; bars are grouped by arm within each rung panel. The <em>token economy</em> tab stacks context, cache, and cost together since they are causally linked.</p>
     <div class="legend metrics-legend">
       <span><span class="swatch baseline"></span>baseline</span>
       <span><span class="swatch grove"></span>grove</span>
       <span><span class="swatch lsp"></span>lsp</span>
-      <span class="caveat">dot = one repo · tick = per-rung median · n=1 per cell</span>
+      <span class="caveat">bar = one repo · tick = per-rung median · n=1 per cell</span>
     </div>
-    <div id="metrics-grid"></div>
+    <div class="metrics-tabs" id="metrics-tabs"></div>
+    <div id="metrics-panel"></div>
   </section>
 
   <section id="detail-section" hidden>
@@ -125,6 +126,15 @@
       <li id="caveats"></li>
     </ul>
   </section>
+
+  <footer class="site-foot" style="margin-top: 4rem; border-top: 1px solid var(--rule-strong); padding-top: 1.5rem; display: flex; gap: 2rem; font-size: 0.85rem; color: var(--ink-soft); align-items: center; flex-wrap: wrap;">
+    <a href="https://github.com/devasur" style="color: var(--ink); text-decoration: none;">author (@devasur)</a>
+    <a href="https://github.com/Entelligentsia/is-grep-enough" style="color: var(--ink); text-decoration: none;">experiment source</a>
+    <a href="https://github.com/Entelligentsia/grove" style="color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
+      <img src="assets/logos/grove.png" width="16" height="16" alt="Grove" style="border-radius: 2px;">
+      grove
+    </a>
+  </footer>
 </main>
 
 <div class="tx-overlay" id="tx-overlay" role="dialog" aria-modal="true" aria-label="transcript">

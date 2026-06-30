@@ -39,11 +39,13 @@ const METRICS = {
   cost: { label: "Cost (billed USD)", get: (c) => c.cost?.usd, fmt: (v) => v != null ? "$" + v.toFixed(3) : "—" },
 };
 
-// metric families rendered as small-multiple rows (§5.3), in this order
+// metric families shown as tabs; 'economy' is a composite view
 const METRIC_FAMILIES = ["context", "turns", "wall", "cache", "cost"];
+const METRIC_TABS = [...METRIC_FAMILIES, "economy"];
+const METRIC_TAB_LABELS = { context: "context", turns: "turns", wall: "wall clock", cache: "cache", cost: "cost", economy: "token economy" };
 
 const state = { rung: "", repo: "", cell: null, showJudged: false, showIncomplete: true,
-  arms: { baseline: true, grove: true, lsp: true }, fcA: "", fcB: "" };
+  arms: { baseline: true, grove: true, lsp: true }, fcA: "", fcB: "", metric: "context" };
 const cellById = (id) => DATA.cells.find((c) => c.id === id);
 const visibleArms = () => ARMS.filter((a) => state.arms[a]);
 // a cell counts as incomplete/DNF if it never reached harvested OR a harvested
@@ -272,6 +274,7 @@ function applyURL() {
   state.showIncomplete = p.get("incomplete") !== "0";
   const fca = p.get("fca"); state.fcA = DATA.cells.some((c) => c.id === fca) ? fca : "";
   const fcb = p.get("fcb"); state.fcB = DATA.cells.some((c) => c.id === fcb) ? fcb : "";
+  const metric = p.get("metric"); state.metric = METRIC_TABS.includes(metric) ? metric : "context";
 }
 
 // reflect current state into the form controls (after URL load / popstate)
@@ -297,6 +300,7 @@ function syncURL() {
   if (!state.showIncomplete) p.set("incomplete", "0");
   if (state.fcA) p.set("fca", state.fcA);
   if (state.fcB) p.set("fcb", state.fcB);
+  if (state.metric !== "context") p.set("metric", state.metric);
   const qs = p.toString();
   history.replaceState(null, "", qs ? `${location.pathname}?${qs}` : location.pathname);
 }
@@ -365,90 +369,113 @@ function renderCoverage() {
   const host = $("#coverage"); host.replaceChildren(table);
 }
 
-// Metric small-multiples (§5.3): five metric families stacked as rows, each a
-// row of small charts faceted by rung, the three arms as the series within each
-// panel. One dot per repo, a tick at the per-rung-per-arm median; y-axis always
-// from zero. Replaces the single tabbed chart — small-multiples over one busy
-// chart keeps it legible and neutral.
+// Metric tabs (§5.3 reimagined): one metric at a time, switchable by tab.
+// Grouped bar charts replace dot clouds for clearer per-repo comparison.
+// A composite "token economy" tab stacks context + cache + cost tightly.
 function renderMetrics() {
-  const host = $("#metrics-grid"); host.replaceChildren();
-  const rungsShown = DATA.experiment.rungs.filter((r) => !state.rung || r === state.rung);
+  // --- tab bar (only rebuilt when tabs need to change) ---
+  const tabHost = $("#metrics-tabs");
+  if (!tabHost.children.length) {
+    for (const key of METRIC_TABS) {
+      const btn = el("button", { textContent: METRIC_TAB_LABELS[key] });
+      btn.dataset.metric = key;
+      btn.onclick = () => { state.metric = key; renderMetrics(); syncURL(); };
+      tabHost.append(btn);
+    }
+  }
+  for (const btn of tabHost.children) btn.setAttribute("aria-pressed", btn.dataset.metric === state.metric);
+
+  const host = $("#metrics-panel"); host.replaceChildren();
   const armsShown = visibleArms();
-  const base = filtered().filter((c) => c.status === "harvested" && state.arms[c.arm]);
 
   if (!armsShown.length) {
     host.append(el("p", { className: "caveat", textContent: "no arms selected — enable an arm in the filter bar above." }));
     return;
   }
 
-  for (const key of METRIC_FAMILIES) {
-    const m = METRICS[key];
-    const rows = base
-      .filter((c) => m.get(c) != null)
-      // DNF toggle (§5.3): drop harvested-but-DNF points when off; keep+flag when on
-      .filter((c) => state.showIncomplete || !(c.flags ?? []).includes("dnf"))
-      .map((c) => ({ rung: c.rung, arm: c.arm, repo: c.repo, value: m.get(c), id: `${c.rung}-${c.repo}`, flagged: (c.flags ?? []).includes("dnf") }));
-
-    const fig = el("figure", { className: "figure metric-family" });
-    fig.append(el("figcaption", { className: "mf-label", textContent: m.label }));
-
-    if (!rows.length) {
-      fig.append(el("p", { className: "caveat", textContent: "no harvested data for this metric in the current filter." }));
-      host.append(fig);
-      continue;
+  if (state.metric === "economy") {
+    // composite: context + cache + cost stacked tightly
+    const wrap = el("div", { className: "token-economy" });
+    for (const key of ["context", "cache", "cost"]) {
+      wrap.append(renderMetricChart(key, 160));
     }
-
-    // honest aggregation (§5.3, T1.3): per-rung n printed on the facet axis, and
-    // a min–max whisker behind the dots so no aggregate is shown as a lone tick.
-    // n here = distinct repos contributing a value in that rung (partial rungs
-    // self-report a smaller n).
-    const nByRung = {};
-    for (const r of rows) (nByRung[r.rung] ??= new Set()).add(r.repo);
-
-    // one small chart per rung; arms (x) side by side within each.
-    const nFacets = rungsShown.length;
-    const width = Math.min(980, Math.max(360, nFacets * 200));
-    const plot = Plot.plot({
-      width, height: 224, marginLeft: 58, marginBottom: 42, marginTop: 26,
-      style: { fontFamily: "system-ui, sans-serif", fontSize: "11px", background: "transparent" },
-      fx: { label: null, domain: rungsShown },
-      x: { label: null, domain: armsShown, tickRotate: 0 },
-      y: { label: null, grid: true, zero: true, nice: true, tickFormat: "~s" },
-      color: { domain: armsShown, range: armsShown.map((a) => ARM_COLOR[a]) },
-      marks: [
-        // facet header per rung carrying its honest n (partial rungs read smaller)
-        Plot.axisFx({ anchor: "top", label: null, tickSize: 0, fontWeight: 600,
-          tickFormat: (rg) => `${rg} · n=${nByRung[rg]?.size ?? 0}` }),
-        Plot.frame({ stroke: cssVar("--rule") }),
-        // min–max whisker per (arm,rung) — the full spread, never a lone mean
-        Plot.ruleX(rows, Plot.groupX({ y1: "min", y2: "max" },
-          { fx: "rung", x: "arm", y1: "value", y2: "value", stroke: "arm", strokeOpacity: 0.35, strokeWidth: 1.2 })),
-        // per-(arm,rung) median tick — central tendency beside the raw spread
-        Plot.tickY(rows, Plot.groupX({ y: "median" },
-          { fx: "rung", x: "arm", y: "value", stroke: "arm", strokeWidth: 2.5 })),
-        Plot.dot(rows.filter((r) => !r.flagged), {
-          fx: "rung", x: "arm", y: "value", fill: "arm", r: 3, fillOpacity: 0.85, stroke: cssVar("--paper"), strokeWidth: 0.4,
-          tip: true, channels: { repo: "repo", rung: "rung", arm: "arm", value: { value: "value", label: m.label } },
-        }),
-        // DNF points kept but flagged: hollow ring + ✕ so a partial run never
-        // passes as a clean measurement (§5.3, truthbound).
-        Plot.dot(rows.filter((r) => r.flagged), {
-          fx: "rung", x: "arm", y: "value", r: 4.5, fill: "none", stroke: "arm", strokeWidth: 1.4, symbol: "times",
-          tip: true, channels: { repo: "repo", rung: "rung", arm: "arm", value: { value: "value", label: m.label }, flag: { value: () => "DNF", label: "flag" } },
-        }),
-      ],
-    });
-    fig.append(plot);
-
-    const nFlagged = rows.filter((r) => r.flagged).length;
-    const n = new Set(rows.map((r) => r.id)).size;
-    fig.append(el("figcaption", { className: "mf-cap" },
-      `${m.label} — one dot per repo; whisker = min–max, tick = median (per rung × arm). ` +
-      `Per-rung n is on the axis (partial rungs self-report a smaller n); ${n} task${n === 1 ? "" : "s"} shown total` +
-      `${nFlagged ? `, incl. ${nFlagged} DNF point${nFlagged === 1 ? "" : "s"} ringed (✕)` : ""}. ` +
-      `Axis from zero. n=1 per cell — a direction, not a measurement.`));
-    host.append(fig);
+    host.append(wrap);
+  } else {
+    host.append(renderMetricChart(state.metric, 280));
   }
+}
+// render a single metric family chart as a <figure>. height is configurable
+// so the token-economy composite can use shorter panels.
+function renderMetricChart(key, chartHeight) {
+  const m = METRICS[key];
+  const rungsShown = DATA.experiment.rungs.filter((r) => !state.rung || r === state.rung);
+  const armsShown = visibleArms();
+  const base = filtered().filter((c) => c.status === "harvested" && state.arms[c.arm]);
+
+  const rows = base
+    .filter((c) => m.get(c) != null)
+    .filter((c) => state.showIncomplete || !(c.flags ?? []).includes("dnf"))
+    .map((c) => ({ rung: c.rung, arm: c.arm, repo: c.repo, value: m.get(c), id: `${c.rung}-${c.repo}`, flagged: (c.flags ?? []).includes("dnf") }));
+
+  const fig = el("figure", { className: "figure metric-family" });
+  fig.append(el("figcaption", { className: "mf-label", textContent: m.label }));
+
+  if (!rows.length) {
+    fig.append(el("p", { className: "caveat", textContent: "no harvested data for this metric in the current filter." }));
+    return fig;
+  }
+
+  // honest n per rung
+  const nByRung = {};
+  for (const r of rows) (nByRung[r.rung] ??= new Set()).add(r.repo);
+
+  // repos shown (for x-axis domain)
+  const reposShown = [...new Set(rows.map((r) => r.repo))];
+
+  const nFacets = rungsShown.length;
+  const width = Math.min(980, Math.max(360, nFacets * 200));
+  const plot = Plot.plot({
+    width, height: chartHeight, marginLeft: 58, marginBottom: 44, marginTop: 26,
+    style: { fontFamily: "system-ui, sans-serif", fontSize: "11px", background: "transparent" },
+    fx: { label: null, domain: rungsShown },
+    x: { label: null, domain: reposShown, tickRotate: nFacets > 1 ? 45 : 0, axis: nFacets === 1 ? "bottom" : null },
+    y: { label: null, grid: true, zero: true, nice: true, tickFormat: "~s" },
+    color: { domain: armsShown, range: armsShown.map((a) => ARM_COLOR[a]) },
+    marks: [
+      Plot.axisFx({ anchor: "top", label: null, tickSize: 0, fontWeight: 600,
+        tickFormat: (rg) => `${rg} · n=${nByRung[rg]?.size ?? 0}` }),
+      Plot.frame({ stroke: cssVar("--rule") }),
+      // Cleveland dot plot:
+      // 1. Vertical range line for each repo
+      Plot.ruleX(rows, Plot.groupX({ y1: "min", y2: "max" }, {
+        fx: "rung", x: "repo", y1: "value", y2: "value", stroke: cssVar("--rule-strong"), strokeWidth: 1.5
+      })),
+      // 2. Normal dots (one per arm)
+      Plot.dot(rows.filter((r) => !r.flagged), {
+        fx: "rung", x: "repo", y: "value", fill: "arm", r: 4.5, fillOpacity: 0.85, stroke: cssVar("--paper"), strokeWidth: 0.8,
+        tip: true, channels: { repo: "repo", arm: "arm", value: { value: "value", label: m.label } },
+      }),
+      // 3. DNF dots (cross instead of solid fill)
+      Plot.dot(rows.filter((r) => r.flagged), {
+        fx: "rung", x: "repo", y: "value", r: 4.5, fill: "none", stroke: "arm", strokeWidth: 1.4, symbol: "times",
+        tip: true, channels: { repo: "repo", arm: "arm", value: { value: "value", label: m.label }, flag: { value: () => "DNF", label: "flag" } },
+      }),
+      // 4. Horizontal median reference line for each arm across all repos in the rung
+      Plot.ruleY(rows, Plot.groupZ({ y: "median" }, {
+        fx: "rung", y: "value", stroke: "arm", strokeWidth: 1.2, strokeDasharray: "3,3"
+      })),
+    ],
+  });
+  fig.append(plot);
+
+  const nFlagged = rows.filter((r) => r.flagged).length;
+  const n = new Set(rows.map((r) => r.id)).size;
+  fig.append(el("figcaption", { className: "mf-cap" },
+    `${m.label} — dumbbell plot: vertical line shows repo range; dots = arms; dashed line = per-rung arm median. ` +
+    `Per-rung n is on the axis (partial rungs self-report a smaller n); ${n} task${n === 1 ? "" : "s"} shown total` +
+    `${nFlagged ? `, incl. ${nFlagged} DNF points (✕)` : ""}. ` +
+    `Axis from zero. n=1 per cell — a direction, not a measurement.`));
+  return fig;
 }
 
 function renderDetail(cid) {
@@ -529,7 +556,7 @@ function renderDetail(cid) {
     }
     if (c.evidence?.readable) {
       const link = el("a", { href: "#", textContent: "read transcript →" });
-      link.onclick = (e) => { e.preventDefault(); openTranscript(c); };
+      link.onclick = (e) => { e.preventDefault(); openTranscript(c, arms); };
       col.append(el("div", { style: "margin-top:.5rem;font-size:.82rem" }, link));
     }
     cols.append(col);
@@ -774,9 +801,11 @@ function closeTranscript() {
   if (txOpener?.focus) txOpener.focus();
   txOpener = null;
 }
-async function openTranscript(c) {
+async function openTranscript(c, allArms) {
   const body = $("#tx-body");
-  txOpener = document.activeElement;
+  if (!$("#tx-overlay").classList.contains("open")) {
+    txOpener = document.activeElement;
+  }
   $("#tx-overlay").classList.add("open");
   $("#tx-close").focus();
   let view = "readable";
@@ -795,11 +824,26 @@ async function openTranscript(c) {
     c.engagement ? `${c.engagement.key}=${c.engagement.value} ${c.engagement.passed ? "✓" : "✗"}` : null,
   ].filter(Boolean).join("  ·  ");
   left.append(el("div", { className: "tx-meta" }, bits));
+  const rightControls = el("div", { style: "display: flex; gap: 1rem; align-items: center;" });
+
+  const armToggle = el("div", { className: "tx-toggle" });
+  if (allArms) {
+    for (const a of allArms) {
+      if (!a.evidence?.readable) continue;
+      const btn = el("button", { textContent: a.arm });
+      if (a.arm === c.arm) btn.setAttribute("aria-pressed", "true");
+      else btn.onclick = () => openTranscript(a, allArms);
+      armToggle.append(btn);
+    }
+  }
+
   const toggle = el("div", { className: "tx-toggle" });
   const bReadable = el("button", { textContent: "readable", onclick: () => switchTo("readable") });
   const bRaw = el("button", { textContent: "raw json", onclick: () => switchTo("raw"), disabled: !c.evidence.raw_local });
   toggle.append(bReadable, bRaw);
-  head.append(left, toggle);
+
+  rightControls.append(armToggle, toggle);
+  head.append(left, rightControls);
   const content = el("div", { className: "tx-content" });
   body.replaceChildren(head, content);
 
