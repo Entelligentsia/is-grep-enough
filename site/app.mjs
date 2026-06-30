@@ -32,7 +32,7 @@ const ARM_COLOR = { baseline: "#0072B2", grove: "#E69F00", lsp: "#009E73" };
 const ARMS = ["baseline", "grove", "lsp"];
 
 const METRICS = {
-  context: { label: "Context (peak tokens)", get: (c) => c.metrics?.context, fmt: (v) => v?.toLocaleString() },
+  context: { label: "Context (total tokens: input + cache)", get: (c) => c.metrics?.context, fmt: (v) => v?.toLocaleString() },
   turns: { label: "Turns", get: (c) => c.metrics?.turns, fmt: (v) => v },
   wall: { label: "Wall clock (s)", get: (c) => c.metrics?.run_wall_s, fmt: (v) => v != null ? v + "s" : "—" },
   cache: { label: "Cache tokens (read+create)", get: (c) => c.cost ? (c.cost.cache_read + c.cost.cache_create) : null, fmt: (v) => v?.toLocaleString() },
@@ -87,6 +87,7 @@ async function init() {
   $("#finding-text").textContent =
     "The same exploration task, given to an agent with three rungs of navigation power: plain text search (baseline), fast-light structural (grove/tree-sitter), and authoritative semantic (lsp/LSP) — across a task-complexity ladder. The question is where on that ladder the extra power stops paying for itself. Where rungs are fully run and judged, answer quality is a near-tie; the arms separate on cost and route, not correctness. Everything below links to the raw run that produced it — check it.";
   $("#caveats").innerHTML = "<b>Caveats:</b> " + meta.caveats.join(" ");
+  renderTldr();
 
   // filters
   fillSelect($("#f-rung"), experiment.rungs);
@@ -130,6 +131,42 @@ async function init() {
   window.addEventListener("popstate", () => { applyURL(); syncControls(); render(); });
   renderMethodology();
   render();
+}
+
+// TL;DR headline numbers — recomputed from the feed, never hand-typed, so the
+// summary can never drift from the evidence below it. Quality is the mean blind
+// score per arm over judged cells; cost is the mean context-tokens per arm (total
+// input+cache across all models/turns, overall and at the hardest rung L5).
+// Spans left as "—" if their inputs are absent.
+function renderTldr() {
+  const judged = Object.values(DATA.judge);
+  if (!judged.length) return;
+  const mean = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+  const ctxK = (n) => n == null ? "—"
+    : n >= 1_000_000 ? (n / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M"
+    : Math.round(n / 1000) + "k";
+  const cellCtx = (rung, arm, repo) =>
+    DATA.cells.find((c) => c.rung === rung && c.arm === arm && c.repo === repo)?.metrics?.context;
+  const set = (id, v) => { const n = $("#" + id); if (n) n.textContent = v; };
+
+  const grAll = [], cmAll = [], ctx = {}, l5 = {};
+  for (const a of ARMS) { ctx[a] = []; l5[a] = []; }
+  for (const j of judged) for (const a of ARMS) {
+    const s = j.scores?.[a];
+    if (s) { grAll.push(s.grounding); cmAll.push(s.completeness); }
+    const c = cellCtx(j.rung, a, j.repo);
+    if (c != null) { ctx[a].push(c); if (j.rung === "L5") l5[a].push(c); }
+  }
+  const mctx = Object.fromEntries(ARMS.map((a) => [a, mean(ctx[a])]));
+  set("tl-grnd", mean(grAll)?.toFixed(2) ?? "—");
+  set("tl-cmpl", mean(cmAll)?.toFixed(2) ?? "—");
+  set("tl-ctx-grove", ctxK(mctx.grove));
+  set("tl-ctx-lsp", ctxK(mctx.lsp));
+  set("tl-ctx-base", ctxK(mctx.baseline));
+  const l5b = mean(l5.baseline), l5g = mean(l5.grove);
+  set("tl-l5-base", ctxK(l5b));
+  set("tl-l5-grove", ctxK(l5g));
+  set("tl-l5-x", (l5b && l5g) ? (l5b / l5g).toFixed(1).replace(/\.0$/, "") + "×" : "—");
 }
 
 // Methodology & provenance (§10): pricing table for the billed model + a
@@ -688,7 +725,8 @@ function buildPanes(arms, panes, syncBox, labelFor = (c) => c.arm) {
 // Context-growth sparkline (§5.3): the per-turn input-context curve for one arm
 // run, lazy-fetched from series/<cell>.json. Truthbound provenance — the curve
 // is build-derived from the run's raw stream-json, NOT the ledger (whose
-// `context` is a single peak scalar, not the growth, §3.1). Axis from zero.
+// `context` is a single cumulative scalar — total input+cache tokens across all
+// models/turns — not the per-turn growth, §3.1). Axis from zero.
 const sparkCache = {};
 function renderSparkline(host, c) {
   if (!c.series_local) return;
@@ -753,7 +791,7 @@ async function openTranscript(c) {
     c.metrics?.turns != null ? `${c.metrics.turns} turns` : null,
     c.metrics?.run_wall_s != null ? `${c.metrics.run_wall_s}s wall` : null,
     c.cost?.usd != null ? `$${c.cost.usd.toFixed(4)}` : null,
-    c.metrics?.context != null ? `${c.metrics.context.toLocaleString()} peak ctx` : null,
+    c.metrics?.context != null ? `${c.metrics.context.toLocaleString()} ctx tokens` : null,
     c.engagement ? `${c.engagement.key}=${c.engagement.value} ${c.engagement.passed ? "✓" : "✗"}` : null,
   ].filter(Boolean).join("  ·  ");
   left.append(el("div", { className: "tx-meta" }, bits));
