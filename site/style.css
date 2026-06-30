@@ -186,15 +186,7 @@ table.meth-price td.mono { text-align: right; }
          font-family: var(--mono); font-size: .78rem; line-height: 1.5; white-space: pre-wrap; overflow-x: auto; color: var(--ink); }
 
 /* free cell-vs-cell compare (§8, T2.3) */
-.fc-pickers { display: flex; gap: 1.4rem; flex-wrap: wrap; align-items: center; font-size: .85rem; margin-bottom: 1rem; }
-.fc-pickers label { color: var(--ink-faint); margin-right: .4rem; }
-.fc-pickers select { font-family: var(--mono); font-size: .82rem; padding: .2rem .4rem; background: var(--paper); color: var(--ink); border: 1px solid var(--rule-strong); }
-table.fc-metrics { border-collapse: collapse; font-size: .82rem; }
-table.fc-metrics th { text-align: left; font-weight: 600; padding: .25rem .8rem .25rem 0; }
-table.fc-metrics th .bar { width: .6rem; height: .6rem; display: inline-block; }
-table.fc-metrics td { padding: .2rem .8rem .2rem 0; border-top: 1px solid var(--rule); }
-table.fc-metrics .fc-k { color: var(--ink-faint); }
-table.fc-metrics .fc-v { font-family: var(--mono); }
+
 
 /* spine-coverage strip (§8, T2.2): aligned per-arm Full/Partial/Miss verdict */
 .spine { margin-top: 1.2rem; border-top: 1px solid var(--rule); padding-top: .7rem; }
@@ -272,6 +264,19 @@ a.cite:hover { border-bottom: 1px solid var(--ink); }
 .sub-body { margin: .4rem 0 .6rem; }
 .trail .t-reason { font-size: .85rem; color: var(--ink); margin: .35rem 0; white-space: pre-wrap; }
 .trail .t-tool { font-family: var(--mono); font-size: .78rem; color: var(--ink-soft); margin: .2rem 0; }
+/* prompt viewer */
+.prompt-viewer { margin-top: 0.8rem; border: 1px solid var(--rule); background: var(--paper); }
+.prompt-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--rule); background: var(--paper-2); }
+.prompt-tabs button { font-family: var(--sans); font-size: .8rem; background: none; border: none; padding: .4rem .8rem; color: var(--ink-faint); cursor: pointer; border-right: 1px solid var(--rule); border-bottom: 2px solid transparent; }
+.prompt-tabs button:hover { color: var(--ink-soft); }
+.prompt-tabs button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--ink); background: var(--paper); font-weight: 500; }
+.prompt-content { padding: 1rem; max-height: 400px; overflow-y: auto; font-size: 0.85rem; line-height: 1.5; }
+.prompt-content h1, .prompt-content h2, .prompt-content h3 { margin-top: 0; font-size: 1rem; margin-bottom: 0.5rem; }
+.prompt-content p:last-child, .prompt-content ul:last-child { margin-bottom: 0; }
+.prompt-content code { font-family: var(--mono); background: var(--paper-2); padding: 0.1rem 0.2rem; border-radius: 2px; }
+.prompt-content pre code { background: none; padding: 0; }
+.prompt-content pre { background: var(--paper-2); padding: 0.5rem; overflow-x: auto; font-size: 0.8rem; }
+
 /* closing strip — a single quiet line, no duplicate nav (links live in the topbar) */
 .site-foot { margin-top: 3.5rem; border-top: 1px solid var(--rule); padding-top: 1rem; }
 .site-foot p { margin: 0; font-size: .8rem; color: var(--ink-faint); max-width: 74ch; }

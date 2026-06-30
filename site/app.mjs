@@ -45,7 +45,7 @@ const METRIC_TABS = [...METRIC_FAMILIES, "economy"];
 const METRIC_TAB_LABELS = { context: "context", turns: "turns", wall: "wall clock", cache: "cache", cost: "cost", economy: "token economy" };
 
 const state = { rung: "", repo: "", cell: null, showIncomplete: true,
-  arms: { baseline: true, grove: true, lsp: true }, fcA: "", fcB: "", metric: "context" };
+  arms: { baseline: true, grove: true, lsp: true }, metric: "context" };
 const cellById = (id) => DATA.cells.find((c) => c.id === id);
 const visibleArms = () => ARMS.filter((a) => state.arms[a]);
 // a cell counts as incomplete/DNF if it never reached harvested OR a harvested
@@ -104,12 +104,7 @@ async function init() {
 
 
 
-  // free compare (§8, T2.3): pick any two harvested cells with a readable trail.
-  const fcCells = DATA.cells.filter((c) => c.status === "harvested" && c.evidence?.readable)
-    .map((c) => c.id).sort();
-  fillSelect($("#fc-a"), fcCells); fillSelect($("#fc-b"), fcCells);
-  $("#fc-a").onchange = (e) => { state.fcA = e.target.value; renderFreeCompare(); syncURL(); };
-  $("#fc-b").onchange = (e) => { state.fcB = e.target.value; renderFreeCompare(); syncURL(); };
+
   // theme switch — re-render so charts re-read the active theme's CSS vars (T3.2)
   for (const b of $("#theme-switch").querySelectorAll("button"))
     b.onclick = () => { applyTheme(b.dataset.themeSet); render(); };
@@ -180,11 +175,18 @@ const MODEL_ID = { sonnet: "claude-sonnet-4-6" };
 // public list price per million tokens for the model the runs billed against.
 const PRICING = {
   "claude-sonnet-4-6": [
-    ["Input (fresh)", "$3.00"],
-    ["Output", "$15.00"],
-    ["Cache write — 5 min (1.25× input)", "$3.75"],
-    ["Cache write — 1 hour (2× input)", "$6.00"],
-    ["Cache read (0.1× input)", "$0.30"],
+    { section: "Claude Sonnet 4.6 (Main Agent)" },
+    { k: "Input (fresh)", v: "$3.00" },
+    { k: "Output", v: "$15.00" },
+    { k: "Cache write — 5 min (1.25× input)", v: "$3.75" },
+    { k: "Cache write — 1 hour (2× input)", v: "$6.00" },
+    { k: "Cache read (0.1× input)", v: "$0.30" },
+    { section: "Claude Haiku 4.5 (Subagents)" },
+    { k: "Input (fresh)", v: "$1.00" },
+    { k: "Output", v: "$5.00" },
+    { k: "Cache write — 5 min (1.25× input)", v: "$1.25" },
+    { k: "Cache write — 1 hour (2× input)", v: "$2.00" },
+    { k: "Cache read (0.1× input)", v: "$0.10" },
   ],
 };
 function renderMethodology() {
@@ -215,9 +217,19 @@ function renderMethodology() {
   const ph = $("#meth-pricing");
   if (rows) {
     const tbl = el("table", { className: "meth-price" });
-    tbl.append(el("tr", {}, [el("th", { textContent: "token class" }), el("th", { textContent: "USD / 1M tokens" })]));
-    for (const [k, v] of rows)
-      tbl.append(el("tr", {}, [el("td", { textContent: k }), el("td", { className: "mono", textContent: v })]));
+    tbl.append(el("tr", {}, [el("th", { textContent: "Token Class" }), el("th", { textContent: "USD / 1M tokens" })]));
+    for (const r of rows) {
+      if (r.section) {
+        const tr = el("tr");
+        const th = el("th", { textContent: r.section, colSpan: 2 });
+        th.style.paddingTop = "1rem";
+        th.style.color = "var(--ink)";
+        tr.append(th);
+        tbl.append(tr);
+      } else {
+        tbl.append(el("tr", {}, [el("td", { textContent: r.k }), el("td", { className: "mono", textContent: r.v })]));
+      }
+    }
     ph.replaceChildren(tbl,
       el("p", { className: "caveat", textContent: `Reference list price for ${id} (\`--model ${model}\`). The figures on this page are billed totals, not derived from this table.` }));
   } else {
@@ -326,8 +338,7 @@ function applyURL() {
   if (p.has("arms")) { const vis = new Set(p.get("arms").split(",").filter(Boolean)); for (const a of ARMS) state.arms[a] = vis.has(a); }
   else for (const a of ARMS) state.arms[a] = true;
   // state.showIncomplete is always true now, unused in URL
-  const fca = p.get("fca"); state.fcA = DATA.cells.some((c) => c.id === fca) ? fca : "";
-  const fcb = p.get("fcb"); state.fcB = DATA.cells.some((c) => c.id === fcb) ? fcb : "";
+
   const metric = p.get("metric"); state.metric = METRIC_TABS.includes(metric) ? metric : "context";
 }
 
@@ -341,8 +352,7 @@ function syncControls() {
   }
   for (const cb of $("#f-arms").querySelectorAll("input")) cb.checked = state.arms[cb.dataset.arm];
 
-  $("#fc-a").value = state.fcA;
-  $("#fc-b").value = state.fcB;
+
 }
 
 // serialize state into the query string; only non-default keys are written so a
@@ -354,8 +364,7 @@ function syncURL() {
   if (state.cell) p.set("cell", state.cell);
   if (visibleArms().length !== ARMS.length) p.set("arms", visibleArms().join(","));
 
-  if (state.fcA) p.set("fca", state.fcA);
-  if (state.fcB) p.set("fcb", state.fcB);
+
   if (state.metric !== "context") p.set("metric", state.metric);
   const qs = p.toString();
   history.replaceState(null, "", qs ? `${location.pathname}?${qs}` : location.pathname);
@@ -370,7 +379,7 @@ function render() {
   $("#coverage-tally").textContent = `${cov.harvested} harvested · ${cov.pending} pending · ${cov.blocked_dnf} dnf/blocked of ${cov.total}`;
   renderMetrics();
   if (state.cell) renderDetail(state.cell);
-  renderFreeCompare();
+
   syncURL();
 }
 
@@ -410,6 +419,25 @@ function renderMetrics() {
   } else {
     renderMetricChart(state.metric, 280, host);
   }
+
+  // Intercept chart dot clicks for SPA navigation to cell detail
+  host.onclick = (e) => {
+    const a = e.target.closest("a");
+    if (a) {
+      const href = a.getAttribute("href");
+      if (href && href.includes("?cell=")) {
+        e.preventDefault();
+        const url = new URL(href, window.location.href);
+        const cid = url.searchParams.get("cell");
+        if (cid) {
+          state.cell = cid;
+          syncURL();
+          render();
+          document.getElementById("detail-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    }
+  };
 }
 // Render one metric family chart into `mount` (which MUST already be in the DOM,
 // so the flex container's real width can be measured — the per-rung charts are
@@ -497,11 +525,13 @@ function renderMetricChart(key, chartHeight, mount) {
         // 2. Normal dots (one per arm)
         Plot.dot(rungRows.filter((r) => !r.flagged), {
           x: "repo", y: "value", fill: "arm", r: 4.5, fillOpacity: 0.85, stroke: cssVar("--paper"), strokeWidth: 0.8,
+          href: (d) => `?cell=${d.id}`,
           tip: true, channels: { repo: "repo", arm: "arm", value: { value: "value", label: m.label } },
         }),
         // 3. DNF dots (cross instead of solid fill)
         Plot.dot(rungRows.filter((r) => r.flagged), {
           x: "repo", y: "value", r: 4.5, fill: "none", stroke: "arm", strokeWidth: 1.4, symbol: "times",
+          href: (d) => `?cell=${d.id}`,
           tip: true, channels: { repo: "repo", arm: "arm", value: { value: "value", label: m.label }, flag: { value: () => "DNF", label: "flag" } },
         }),
         // 4. Horizontal median reference line for each arm across all repos in the rung
@@ -565,7 +595,7 @@ function renderDetail(cid) {
     ];
     for (const [k, v, axis] of rowsM) {
       const valSpan = el("span", { className: "v", textContent: String(v) });
-      if (axis && lowest(c, axis)) { valSpan.classList.add("low"); valSpan.append(el("span", { className: "lowtag", textContent: " lowest" })); }
+      if (axis && lowest(c, axis)) { valSpan.classList.add("low"); valSpan.append(el("span", { className: "lowtag", innerHTML: ` <svg title="lowest" aria-label="lowest" width="12" height="12" viewBox="0 0 24 24" fill="#F5C518" xmlns="http://www.w3.org/2000/svg" style="vertical-align:-2px; margin-left:4px;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>` })); }
       col.append(el("div", { className: "metricrow" }, [el("span", { className: "k", textContent: k }), valSpan]));
     }
     // per-turn context-growth sparkline (§5.3) — drilled here, lazy-fetched from
@@ -612,10 +642,36 @@ function renderDetail(cid) {
 
   // prompt verbatim + judge synthesis + key revisions (judge transparency is first-class)
   const head = el("div");
-  const prompt = arms.find((a) => a.prompt)?.prompt;
-  if (prompt) {
-    head.append(el("div", { className: "genesis", textContent: "The prompt shown to all three arms — the only thing they saw. Reference keys were judge-only (genesis wall); they are not on this page except as post-hoc key revisions below." }));
-    head.append(el("pre", { className: "prompt-text", textContent: prompt }));
+  const baseC = arms[0];
+  const pData = DATA.experiment.prompts?.[`${baseC.repo}-${baseC.rung}`];
+  if (pData?.prompt) {
+    head.append(el("div", { className: "genesis", textContent: "The task definition (prompt), rationale, and reference key. Arms saw only the bare prompt." }));
+    
+    const viewer = el("div", { className: "prompt-viewer" });
+    const tabs = el("div", { className: "prompt-tabs" });
+    const content = el("div", { className: "prompt-content" });
+    
+    const views = [
+      { id: "prompt", label: "Prompt", raw: pData.prompt },
+      { id: "rationale", label: "Rationale", html: pData.rationale ? marked.parse(pData.rationale) : "<em>No rationale available</em>" },
+      { id: "key", label: "Answer Key", html: pData.reference ? marked.parse(pData.reference) : "<em>No reference key available</em>" }
+    ];
+    
+    for (const [i, v] of views.entries()) {
+      const btn = el("button", { type: "button", textContent: v.label });
+      if (i === 0) btn.setAttribute("aria-pressed", "true");
+      btn.onclick = () => {
+        for (const b of tabs.querySelectorAll("button")) b.removeAttribute("aria-pressed");
+        btn.setAttribute("aria-pressed", "true");
+        if (v.raw) content.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit; margin: 0; background: none; padding: 0; font-size: inherit; overflow: visible;">${v.raw}</pre>`;
+        else content.innerHTML = v.html;
+      };
+      tabs.append(btn);
+    }
+    viewer.append(tabs, content);
+    // initialize first tab
+    content.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit; margin: 0; background: none; padding: 0; font-size: inherit; overflow: visible;">${views[0].raw}</pre>`;
+    head.append(viewer);
   } else {
     head.append(el("div", { className: "prompt", textContent: "(bare prompt not found in feed)" }));
   }
@@ -628,72 +684,6 @@ function renderDetail(cid) {
     host.append(el("div", { className: "keyrev" }, `Reference key corrected (${kr.level}): ${kr.reason}  [${kr.cite}]`));
   // side-by-side compare (§8, T2.1): the three readable trails in parallel panes
   renderCompareTranscripts(host, arms);
-}
-
-// Free cell-vs-cell compare (§8, T2.3): two arbitrary harvested cells side by
-// side — e.g. grove L2 vs L3 redis to see how an arm scales with complexity, or
-// two arms on one task. Aligned metric strip (lower-on-each-cost-axis marked
-// factually, never "winner") + the two readable trails in parallel panes.
-function renderFreeCompare() {
-  const out = $("#fc-out"); if (!out) return;
-  out.replaceChildren();
-  const a = state.fcA && cellById(state.fcA);
-  const b = state.fcB && cellById(state.fcB);
-  if (!a || !b) {
-    out.append(el("p", { className: "caveat", textContent: "pick two harvested cells above to compare." }));
-    return;
-  }
-  if (a.id === b.id) {
-    out.append(el("p", { className: "caveat", textContent: "pick two different cells." }));
-    return;
-  }
-  const pair = [a, b];
-  const AXES = { context: (c) => c.metrics?.context, turns: (c) => c.metrics?.turns,
-                 wall: (c) => c.metrics?.run_wall_s, cost: (c) => c.cost?.usd };
-  const lower = {};
-  for (const [k, get] of Object.entries(AXES)) {
-    const vals = pair.map(get).filter((v) => v != null);
-    lower[k] = vals.length === 2 ? Math.min(...vals) : null;
-  }
-  const fmt = { context: (v) => v?.toLocaleString() ?? "—", turns: (v) => v ?? "—",
-    wall: (v) => v != null ? v + "s" : "—", cost: (v) => v != null ? "$" + v.toFixed(4) : "—" };
-
-  // aligned metric strip: rows = metrics, columns = the two cells
-  const tbl = el("table", { className: "fc-metrics" });
-  const hr = el("tr", {}, el("th", { textContent: "" }));
-  for (const c of pair) hr.append(el("th", {}, [el("span", { className: "bar", style: `background:${ARM_COLOR[c.arm]}` }), document.createTextNode(" " + c.id)]));
-  tbl.append(hr);
-  for (const [k, get] of Object.entries(AXES)) {
-    const tr = el("tr", {}, el("td", { className: "fc-k", textContent: k }));
-    for (const c of pair) {
-      const v = get(c);
-      const td = el("td", { className: "fc-v" });
-      td.append(document.createTextNode(fmt[k](v)));
-      if (lower[k] != null && v === lower[k]) td.append(el("span", { className: "lowtag", textContent: " lower" }));
-      tr.append(td);
-    }
-    tbl.append(tr);
-  }
-  // judge coverage row (the judge's own word per arm), when both cells are judged
-  const covRow = el("tr", {}, el("td", { className: "fc-k", textContent: "coverage" }));
-  for (const c of pair) {
-    const s = DATA.judge[`${c.rung}-${c.repo}`]?.scores?.[c.arm];
-    const cov = s ? coverageOf(s.verdict) : null;
-    covRow.append(el("td", { className: "fc-v", textContent: cov ? `${COV_GLYPH[cov] ?? ""} ${cov}` : "—" }));
-  }
-  tbl.append(covRow);
-  out.append(tbl);
-
-  // the two transcripts in parallel — reuse the compare-pane machinery, labelled
-  // by full cell id (arm alone wouldn't disambiguate L2 vs L3 of the same arm).
-  const bar = el("div", { className: "compare-bar", style: "margin-top:.8rem" });
-  const sync = el("label", { className: "toggle compare-sync" },
-    [el("input", { type: "checkbox" }), document.createTextNode(" sync scroll")]);
-  bar.append(sync); out.append(bar);
-  const panes = el("div", { className: "compare-panes" });
-  panes.style.gridTemplateColumns = "repeat(2, 1fr)";
-  out.append(panes);
-  buildPanes(pair, panes, sync.querySelector("input"), (c) => c.id);
 }
 
 // Spine-coverage strip (§8, T2.2 / §13.5 #5). The reference key's required spine

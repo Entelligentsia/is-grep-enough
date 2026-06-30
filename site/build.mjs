@@ -286,6 +286,27 @@ for (const [cell, rec] of Object.entries(state.judge ?? {})) {
   judge.push({ id: cell, rung, repo, scores: rec.scores, key_revisions: rec.key_revisions ?? [], verdict: rec.verdict ?? null, ts: rec.ts ?? null });
 }
 
+// ---- prompts, rationale, and keys --------------------------------------------
+const promptsData = {};
+for (const repo of REPOS) {
+  const ratPath = join(ROOT, `experiment/prompts/${repo}/RATIONALE.md`);
+  const ratTxt = existsSync(ratPath) ? readFileSync(ratPath, "utf8") : "";
+  for (const rung of RUNGS) {
+    const pPath = join(ROOT, `experiment/prompts/${repo}/${rung}.txt`);
+    const refPath = join(ROOT, `experiment/prompts/${repo}/${rung}.reference.md`);
+    const prompt = existsSync(pPath) ? readFileSync(pPath, "utf8").trim() : null;
+    const ref = existsSync(refPath) ? readFileSync(refPath, "utf8").trim() : null;
+    let rat = null;
+    if (ratTxt) {
+      const m = ratTxt.match(new RegExp(`## ${rung} [^]*?(?=\\n---|\\n## |$)`));
+      if (m) rat = m[0].trim();
+    }
+    if (prompt || ref || rat) {
+      promptsData[`${repo}-${rung}`] = { prompt, reference: ref, rationale: rat };
+    }
+  }
+}
+
 // ---- experiment definition ---------------------------------------------------
 const experiment = {
   name: state.experiment ?? "nav-3way",
@@ -295,6 +316,7 @@ const experiment = {
   repos: REPOS.map((r) => ({ id: r, ...(manifest[r] ?? {}) })),
   arms: ARM_IDS.map((id) => ({ id, label: ARMS[id]?.capability ?? id, color: ARM_COLOR[id], engage_key: ENGAGE_KEY[id] })),
   order: spine.order_policy ?? null,
+  prompts: promptsData,
 };
 
 const meta = {
@@ -305,7 +327,7 @@ const meta = {
   coverage: { harvested: nHarvested, blocked_dnf: nDnf, pending: nPending, total: cells.length },
   caveats: [
     "n=1 per cell — read directions, not measurements; no replication or significance.",
-    "Dollar cost is the billed total_cost_usd recorded by each run (model: sonnet); not a list-price estimate.",
+    "Dollar cost is the billed total_cost_usd recorded by each run (Main agent: Sonnet 4.6, Subagents: Haiku 4.5); not a list-price estimate.",
     "Cache-read tokens are heavily discounted vs fresh input — read the token split, not a single total.",
     "Wall-clock includes model latency, not pure tool time.",
     "Partial rungs (incomplete cells) are shown flagged; some lsp cells outside L2/L3 may predate corrected setup and need re-running.",
