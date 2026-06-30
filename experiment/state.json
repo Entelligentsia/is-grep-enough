@@ -207,13 +207,28 @@
       "ts": "2026-06-28T18:06:15.792Z"
     },
     "L4-baseline-django": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 73,
+      "context": 88828,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/django-L4.claude.baseline.jsonl",
+      "ts": "2026-06-30T01:52:58.669Z"
     },
     "L4-grove-django": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 92,
+      "context": 194987,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/django-L4.claude.grove.jsonl",
+      "ts": "2026-06-30T01:51:43.888Z"
     },
     "L4-lsp-django": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 122,
+      "context": 418141,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/django-L4.claude.lsp.jsonl",
+      "ts": "2026-06-30T01:55:02.466Z"
     },
     "L5-baseline-django": {
       "status": "harvested",
@@ -312,13 +327,28 @@
       "ts": "2026-06-28T18:04:18.313Z"
     },
     "L4-baseline-bitcoin": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 270,
+      "context": 1098820,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/bitcoin-L4.claude.baseline.jsonl",
+      "ts": "2026-06-30T01:47:34.796Z"
     },
     "L4-grove-bitcoin": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 438,
+      "context": 289154,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/bitcoin-L4.claude.grove.jsonl",
+      "ts": "2026-06-30T01:43:02.898Z"
     },
     "L4-lsp-bitcoin": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 152,
+      "context": 481066,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/bitcoin-L4.claude.lsp.jsonl",
+      "ts": "2026-06-30T01:50:09.394Z"
     },
     "L5-baseline-bitcoin": {
       "status": "harvested",
@@ -417,13 +447,28 @@
       "ts": "2026-06-28T18:13:08.892Z"
     },
     "L4-baseline-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 81,
+      "context": 140449,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/laravel-L4.claude.baseline.jsonl",
+      "ts": "2026-06-30T02:03:39.548Z"
     },
     "L4-grove-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 103,
+      "context": 233612,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/laravel-L4.claude.grove.jsonl",
+      "ts": "2026-06-30T02:39:58.363Z"
     },
     "L4-lsp-laravel": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 101,
+      "context": 195786,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/laravel-L4.claude.lsp.jsonl",
+      "ts": "2026-06-30T02:05:23.375Z"
     },
     "L5-baseline-laravel": {
       "status": "harvested",
@@ -522,13 +567,28 @@
       "ts": "2026-06-28T18:17:28.149Z"
     },
     "L4-baseline-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 132,
+      "context": 252793,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/rails-L4.claude.baseline.jsonl",
+      "ts": "2026-06-30T02:10:12.400Z"
     },
     "L4-grove-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 152,
+      "context": 378889,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/rails-L4.claude.grove.jsonl",
+      "ts": "2026-06-30T02:07:57.869Z"
     },
     "L4-lsp-rails": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 133,
+      "context": 255965,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/rails-L4.claude.lsp.jsonl",
+      "ts": "2026-06-30T02:12:28.228Z"
     },
     "L5-baseline-rails": {
       "status": "harvested",
@@ -627,13 +687,28 @@
       "ts": "2026-06-28T18:29:39.231Z"
     },
     "L4-baseline-typescript": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 144,
+      "context": 386218,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/typescript-L4.claude.baseline.jsonl",
+      "ts": "2026-06-30T02:22:28.477Z"
     },
     "L4-grove-typescript": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 125,
+      "context": 323884,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/typescript-L4.claude.grove.jsonl",
+      "ts": "2026-06-30T02:20:03.135Z"
     },
     "L4-lsp-typescript": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 137,
+      "context": 349057,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/typescript-L4.claude.lsp.jsonl",
+      "ts": "2026-06-30T02:24:47.575Z"
     },
     "L5-baseline-typescript": {
       "status": "harvested",
@@ -732,13 +807,28 @@
       "ts": "2026-06-28T18:32:57.659Z"
     },
     "L4-baseline-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 193,
+      "context": 733151,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/webpack-L4.claude.baseline.jsonl",
+      "ts": "2026-06-30T02:31:19.701Z"
     },
     "L4-grove-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 195,
+      "context": 335135,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/webpack-L4.claude.grove.jsonl",
+      "ts": "2026-06-30T02:28:04.637Z"
     },
     "L4-lsp-webpack": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 199,
+      "context": 587208,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/webpack-L4.claude.lsp.jsonl",
+      "ts": "2026-06-30T02:34:41.280Z"
     },
     "L5-baseline-webpack": {
       "status": "harvested",
@@ -853,7 +943,12 @@
       "ts": "2026-06-28T04:29:36.017Z"
     },
     "L4-lsp-spring-boot": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 177,
+      "context": 522860,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/spring-boot-L4.claude.lsp.jsonl",
+      "ts": "2026-06-30T02:37:40.489Z"
     },
     "L5-baseline-spring-boot": {
       "status": "harvested",
@@ -952,13 +1047,28 @@
       "ts": "2026-06-28T18:26:05.629Z"
     },
     "L4-baseline-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 145,
+      "context": 406490,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/tokio-L4.claude.baseline.jsonl",
+      "ts": "2026-06-30T02:14:54.582Z"
     },
     "L4-grove-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 231,
+      "context": 378952,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/tokio-L4.claude.grove.jsonl",
+      "ts": "2026-06-29T17:37:59.696Z"
     },
     "L4-lsp-tokio": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 179,
+      "context": 249799,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/tokio-L4.claude.lsp.jsonl",
+      "ts": "2026-06-30T02:17:55.827Z"
     },
     "L5-baseline-tokio": {
       "status": "harvested",
@@ -1057,13 +1167,28 @@
       "ts": "2026-06-28T18:09:51.373Z"
     },
     "L4-baseline-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 183,
+      "context": 1006805,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/hugo-L4.claude.baseline.jsonl",
+      "ts": "2026-06-30T01:58:08.399Z"
     },
     "L4-grove-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 144,
+      "context": 295388,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/hugo-L4.claude.grove.jsonl",
+      "ts": "2026-06-29T17:41:27.948Z"
     },
     "L4-lsp-hugo": {
-      "status": "pending"
+      "status": "harvested",
+      "run_wall_s": 156,
+      "context": 389389,
+      "engaged": true,
+      "evidence": "evidence/nav3/L4/raw/hugo-L4.claude.lsp.jsonl",
+      "ts": "2026-06-30T02:00:46.834Z"
     },
     "L5-baseline-hugo": {
       "status": "harvested",
@@ -2127,6 +2252,225 @@
       "key_revisions": [],
       "verdict": "All three arms reach the async wake/park spine — first-poll -> park on I/O (ScheduledIo::poll_readiness stores the waker) -> park on timer (Sleep::poll_elapsed/TimerEntry) -> the combined-driver crux (park_internal -> time::Driver::park_internal computes min(io,timer) and parks the single I/O driver, 'the I/O thread IS the timer thread') -> wake from I/O vs timer -> reschedule and re-poll. Quality nearly ties at the top: the text and structural arms are Full (grounding 0.95/0.97), and the semantic arm is Near-Full (0.9 completeness) — it traced the driver crux in the finest detail of any arm but left the task-cell completion bookend (Stage::Finished, JoinHandle waker) implicit, the one required tail the key calls out. The cost spread is the widest of the rung and damning for brute force: the structural arm reached the full answer for 555k context, while the text arm consumed 4.4M — roughly 8x — and 126 tool calls (70 reads + 52 bash) to land the same Full answer, and the semantic arm sat at 1.17M for a slightly-incomplete one. On this deep, indirection-heavy runtime subsystem structural navigation is decisively the efficiency frontier; unstructured scanning pays an order-of-magnitude context tax. Blind-judged (anonymized A/B/C, mapping withheld).",
       "ts": "2026-06-29T13:37:46.692Z"
+    },
+    "L4-django": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. All four spine pieces correctly connected and phase-separated: compile triggered in __init__ (158) via compile_nodelist, Lexer.tokenize 419 / tag_re 93 / create_token 433 with TokenType classification and Token data-holder (359), Parser.parse 530 dispatching on token_type into TextNode/VariableNode/BLOCK with NodeList result, and render chain Template.render 169 -> NodeList.render 1107 -> render_annotated 1061 -> VariableNode.render 1165 with TextNode.render 1127. Adds well-grounded extras: Parser.__init__ 503 token reversal, FilterExpression.__init__ 757 / .resolve 803, Variable.__init__ 888 / .resolve 941 / _resolve_lookup 965, render_value_in_context 1140, and BaseContext.__getitem__ (context.py:83, verified). Every sampled cite resolves exactly. Grounding tight. Cost/process (un-blinded): 89k context, 4 turns, 71s, 1 bash calls."
+        },
+        "grove": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. All four spine pieces present and correctly phased: compile kicked off at construction (compile_nodelist 179, fed by __init__'s self.nodelist), lex producing classified tokens (Lexer.tokenize 419 splitting on tag_re 93, create_token 433 classifying TEXT/VAR/BLOCK/COMMENT), parse building a NodeList of typed nodes (Parser.parse 530, TextNode/VariableNode/BLOCK paths 548/558/595-604), and the full render traversal (Template.render 169 -> _render 166 -> NodeList.render 1107 -> render_annotated 1061/Node.render 1055 -> VariableNode.render 1165 resolving the filter expression and TextNode.render 1127). Goes deeper than required into FilterExpression.__init__ 757/filter_raw_string 719, Variable.__init__ 888, FilterExpression.resolve 803, Variable._resolve_lookup 965, and render_value_in_context 1140 (acceptable extras). Every sampled cite resolves exactly; only the construction-phase line (compile_nodelist 179 vs ~177) is off by ~2, immaterial. Grounding tight. Cost/process (un-blinded): 195k context, 19 turns, 91s, 16 grove-tool calls."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. All four spine pieces present and cleanly staged: Template.__init__ (143) running compile_nodelist at construction with render (169) deferred, Lexer.tokenize 419 with the tag_re-split + in_tag loop (422-431) and create_token 433 classification, Parser.parse 530 dispatch (547-609) into TextNode/VariableNode/BLOCK and a NodeList, then NodeList.render 1107 joining render_annotated outputs with VariableNode.render 1165 -> FilterExpression.resolve 803 -> Variable.resolve 941 -> _resolve_lookup 965 -> render_value_in_context 1140. Correctly notes only DebugLexer sets Token.position. All sampled cites (compile_filter 690, FilterExpression 757, Variable 888, Token 359) resolve exactly. Grounding tight. Cost/process (un-blinded): 418k context, 21 turns, 120s, 9 LSP calls."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full completeness (1.0) — the spine was within reach of every capability on this django task. Separation is on grounding tightness (0.98–0.98, baseline tightest) and on COST: baseline was cheapest at 89k context vs lsp's 418k. The differentiator is a curve — capability fit, not a universal winner.",
+      "ts": "2026-06-30T02:48:08.396Z"
+    },
+    "L4-bitcoin": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Walks all four stages with the densest and most precise line-level grounding: ProcessNewBlock(:4405) holding cs_main, CheckBlock(:3925, called :4423) context-free, AcceptBlock(:4305) with AcceptBlockHeader(:4193)+ContextualCheckBlockHeader(:4087)+ContextualCheckBlock(:4136) and WriteBlock(:4380)+ReceivedBlockTransactions(:3772); ActivateBestChain(:3330)->ActivateBestChainStep(:3198)->ConnectTip(:3019)->ConnectBlock(:2301) UTXO engine; finalize signals BlockConnected(:3407)/UpdatedBlockTip(:3431)/ActiveTipChange(:3449). An unusually large sample of precise internal cites all resolve line-exact. One minor blemish: the end-to-end diagram labels CheckBlock at :3835 (actually CheckBlockHeader's line), though the body cites CheckBlock correctly at :3925. Context-free vs contextual distinction preserved; no structural wrong turns. Cost/process (un-blinded): 1099k context, 8 turns, 268s, 21 bash calls."
+        },
+        "grove": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. Covers all four spine stages, connected and in correct order: entry ProcessNewBlock(:4405) running context-free CheckBlock(:3925) then AcceptBlock; AcceptBlock(:4305) with contextual ContextualCheckBlock + WriteBlock + index registration (AcceptBlockHeader :4193, ReceivedBlockTransactions :3772); activation ActivateBestChain(:3330)->ActivateBestChainStep(:3198)->ConnectTip->ConnectBlock(:2301) as the UTXO-apply engine (CheckTxInputs/UpdateCoins spend-and-add); and finalize via SetTip + UpdateTip(:2896) + ActiveTipChange signal. The context-free vs contextual distinction is explicitly preserved. Sampled function-definition cites (4405,3925,4193,4305,3330,3198,2301,2896) all resolve line-exact; rich design commentary (CVE-2012-2459, two-phase locking, assumevalid scoping) is correct. No structural wrong turns. Cost/process (un-blinded): 289k context, 26 turns, 436s, 24 grove-tool calls."
+        },
+        "lsp": {
+          "grounding": 0.95,
+          "completeness": 1,
+          "verdict": "Full. All four stages present and ordered: ProcessNewBlock(:4405)/CheckBlock(:3925) context-free entry; AcceptBlock(:4305) with AcceptBlockHeader(:4193)+ContextualCheckBlockHeader(:4087)+ContextualCheckBlock(:4136) then WriteBlock + ReceivedBlockTransactions(:3772) to disk/index; ActivateBestChain(:3330)->FindMostWorkChain(:3128)->ActivateBestChainStep(:3198)->ConnectTip(:3019)->ConnectBlock(:2301) applying txs to the UTXO set; and finalize via SetTip + UpdateTip(:2896) with BlockConnected/UpdatedBlockTip/ActiveTipChange signals(:3405-3449). Context-free vs contextual distinction clearly kept. Sampled cites resolve exact; the second ContextualCheckBlock is cited at :4357 where :4358 is the precise line, a within-range looseness. No wrong turns. Cost/process (un-blinded): 481k context, 25 turns, 151s, 9 LSP calls."
+        }
+      },
+      "key_revisions": [
+        {
+          "level": "L4",
+          "reason": "Confirmed against pinned source: in ProcessNewBlock the CheckBlock call is at validation.cpp:4423 (key says :4426) and the AcceptBlock call is at :4426 (key says :4429); :4429 is the BlockChecked signal block. Function definitions and all other spine cites verified exact.",
+          "cite": "src/validation.cpp:4423 (CheckBlock call), :4426 (AcceptBlock call)",
+          "ts": "2026-06-30"
+        }
+      ],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full completeness (1.0) — the spine was within reach of every capability on this bitcoin task. Separation is on grounding tightness (0.95–0.97, baseline tightest) and on COST: grove was cheapest at 289k context vs baseline's 1099k. The differentiator is a curve — capability fit, not a universal winner.",
+      "ts": "2026-06-30T02:48:16.577Z"
+    },
+    "L4-hugo": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. All four required-spine pieces present: page-side query/descriptor construction is cited at hugolib/page.go:620 (GetInternalTemplateBasePathAndDescriptor) and chained into LookupPagesLayout; the TemplateDescriptor/category model and TemplateStore tree (templatestore.go:434, nodeKey={Category,TemplateDescriptor}, TemplInfo:220); the lookup entry + path-walk scoring (LookupPagesLayout:584-606, findBestMatchWalkPath:858-887, compareDescriptors->doCompare templatedescriptor.go:100, weight.distance:877); and the baseof pass (findBestMatchBaseof:328-351, applyBaseTemplate templates.go:143, needsBaseTemplate:225). Grounding is excellent: every sampled structural cite resolves exactly, the isBetter tiebreak chain (templatestore.go:2046) is accurately characterized (distance-then-w1-then-w2/w3, user-over-embedded), and the numeric scoring table (kind 5 / custom 6 / standard 4 / all 2 / outputFormat 4 / mediaType 1 / variant1 6 / variant2 4) matches the source constants line-for-line. Correctly captures the upfront baseof pre-computation insight. Cost/process (un-blinded): 1007k context, 10 turns, 183s, 14 bash calls."
+        },
+        "grove": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. All four pieces present and cleanly sequenced: descriptor (templatedescriptor.go:25) plus the TemplateQuery wrapper (templatestore.go:387) and init normalization (:407); the two-level tree store (:434, nodeKey, toKeyCategoryAndDescriptor:1783, category derivation); the LookupPagesLayout entry (:584) and findBestMatchWalkPath walk (:858) including the inPath guard and distance computation; full scoring detail (doCompare templatedescriptor.go:100 hard-rejections incl. the AMP media-type fallback, weight struct:2143, isBetter:2046); and the baseof pass (findBestMatchBaseof:328, TemplWithBaseApplied:377, needsBaseTemplate templates.go:225). Like B it grounds piece 1 on the tplimpl query side rather than hugolib/page.go, which is acceptable. Grounding is high; the numeric weight table matches source exactly and the isBetter ordering is accurately described. One loose claim: baseVariants is said to be 'populated during insertTemplates' when it is actually built in parseTemplates (line 1653) — minor lifecycle imprecision. Cost/process (un-blinded): 295k context, 26 turns, 142s, 22 grove-tool calls."
+        },
+        "lsp": {
+          "grounding": 0.95,
+          "completeness": 1,
+          "verdict": "Full. All four pieces present with strong depth on the insertion/initialization pipeline: TemplateDescriptor (templatedescriptor.go:25) as dual storage-key/query; TemplateStore two-tree model (templatestore.go:434, categories:64, NewStore:116, parseTemplates:1630); scoring (weight struct:2143, doCompare templatedescriptor.go:100 hard-gates plus additive w1 table, isBetter:2046); the two-phase LookupPagesLayout:584; and an unusually thorough baseof section (needsBaseTemplate templates.go:225, FindAllBaseTemplateCandidates:475, applyBaseTemplate templates.go:143, TemplWithBaseApplied). Does not cite the hugolib/page.go entry point, instead grounding the query side in the tplimpl insertion path (toKeyCategoryAndDescriptor:1783) — a valid alternate path that still satisfies piece 1. Grounding is high with one loose cite: normalizeFromFile is attributed to templatestore.go:46 but actually lives at templatedescriptor.go:46 (line correct, file wrong). Numeric weight table and all other structural cites resolve exactly. Cost/process (un-blinded): 389k context, 24 turns, 154s, 8 LSP calls."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full completeness (1.0) — the spine was within reach of every capability on this hugo task. Separation is on grounding tightness (0.95–0.98, baseline tightest) and on COST: grove was cheapest at 295k context vs baseline's 1007k. The differentiator is a curve — capability fit, not a universal winner.",
+      "ts": "2026-06-30T02:48:17.382Z"
+    },
+    "L4-laravel": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Complete spine coverage with accurate cites: daemon (:194) five-step iteration, daemonShouldRun (:344) and pauseWorker (:361), stopIfNecessary (:379) priority match with exit codes and stop (:961); a thorough signal/timeout section (listenForSignals :880, registerTimeoutHandler :282, timeoutForJob :331, resetTimeoutHandler :319); getNextJob (:425) pop-with-priority; runJob (:494)/process (:534) with JobProcessing/JobProcessed/JobAttempted; Job::fire (Jobs/Job.php:96) with JobName::parse/resolve and the CallQueuedHandler indirection; handleJobException (:578) with the three gates (:659/:680/:706), calculateBackoff (:747), release/JobReleasedAfterException, re-throw; and the Job::fail (Jobs/Job.php:182) six-step permanent-failure path ending in JobFailed. The event map is the most complete of the three. Every sampled cite resolves line-exact; grounding is near-perfect. Cost/process (un-blinded): 140k context, 5 turns, 79s, 1 bash calls."
+        },
+        "grove": {
+          "grounding": 0.97,
+          "completeness": 0.92,
+          "verdict": "Full-minus. Covers the spine: the daemon loop (Worker.php:194) with signal wiring (listenForSignals :880) and a very thorough daemonShouldRun (:344) / stopIfNecessary (:379) treatment of the keep-running and stop decisions; getNextJob (:425) with the priority-queue pop; runJob (:494)/process (:534) firing JobProcessing/JobProcessed/JobAttempted and the pre-fire markJobAsFailedIfAlreadyExceedsMaxAttempts (:631); Job::fire (Jobs/Job.php:96) with JobName::parse and container resolve; and handleJobException (:578) with the three fail gates (:659/:680/:706), calculateBackoff (:747), release + JobReleasedAfterException, then re-throw — the retry-vs-fail distinction is crystal clear. Grounding is excellent: every sampled cite (882-line signal block, :282 timeout handler, :631/:659/:680/:706 gates, :534 process, :578) resolves exactly. Minor completeness gap: its event listing omits the JobFailed, WorkerStarting and WorkerIdle event names by name and it does not cite Job::failed/fail, so the permanent-failure event is described functionally rather than named. Cost/process (un-blinded): 234k context, 19 turns, 102s, 17 grove-tool calls."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Hits every spine element with correct cites: daemon (:194) loop, daemonShouldRun (:344) three vetoes, stopIfNecessary (:379) match with queueShouldRestart (:847) and kill (:976); getNextJob (:425) pop path; runJob (:494)/process (:534) with the full happy-path event order and the pre-fire :631 check; Job::fire (Jobs/Job.php:96) plus the CallQueuedHandler::call (:67) handler chain; handleJobException (:578) with the three gates (:659/:680/:706), calculateBackoff (:747), release/JobReleasedAfterException, and the full Job::fail (Jobs/Job.php:182) → JobFailed teardown including CallQueuedHandler::failed (:387). The event timeline names the complete set (WorkerStarting/Looping/JobPopping/JobPopped/JobProcessing/JobProcessed/JobExceptionOccurred/JobReleasedAfterException/JobFailed/JobAttempted/WorkerIdle/WorkerStopping). Grounding is near-perfect — all sampled cites including :847, :976, :387 resolve exactly. Cost/process (un-blinded): 196k context, 9 turns, 100s, 1 LSP calls."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). Completeness split: baseline 1.00, grove 0.92, lsp 1.00. Separation is on grounding tightness (0.97–0.98, baseline tightest) and on COST: baseline was cheapest at 140k context vs grove's 234k. The differentiator is a curve — capability fit, not a universal winner.",
+      "ts": "2026-06-30T02:48:18.133Z"
+    },
+    "L4-rails": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Cleanly covers all four components across the three files and the whole lifecycle: lease_connection (310) → checkout (550) → acquire_connection (852, body 859-873) three-tier with no_wait_poll's @queue.size>@num_waiting fairness (queue 106/94) and the @now_connecting capacity reservation in try_to_checkout_new_connection; checkin (573-587) double-lock with @available.add (queue 37-41) and — correctly — @cond.signal waking exactly one waiter; the class-level singleton Reaper (reaper 25-27) registered at 269-270 via WeakRef (32-37); reap (623-641) dead-thread steal!/reset!/checkin with the inline-reap note; flush (646-664) idle eviction and flush! (668) aggressive variant. Identifies the shared Monitor + atomic lease in ConnectionLeasingQueue#internal_poll (queue 203-207) as the synchronization spine. Every sampled cite resolves exact; only nit is labeling the no-wait fairness as 'LIFO fairness.' Cost/process (un-blinded): 253k context, 8 turns, 131s, 3 bash calls."
+        },
+        "grove": {
+          "grounding": 0.92,
+          "completeness": 1,
+          "verdict": "Full. Names all four pieces — ConnectionPool (120) with the @227 initialize field table, the ConnectionLeasingQueue (@available), the Reaper, and Lease(@142)/LeaseRegistry(@168) — and walks checkout (550) → acquire_connection (852) three-tier with try_to_checkout_new_connection (895) opening the socket outside the lock; checkin (573) double-lock return; pool-exhaustion blocking shown precisely in wait_poll (queue 112) with permit_concurrent_loads (118) and can_remove_no_wait? (94); reap (623) dead-thread steal!/reset!/checkin; flush (646) idle eviction; and the one-thread-per-frequency Reaper with register_pool (reaper 30)/spawn_thread (41). Cites resolve line-exact. One real correctness slip: states checkin calls @cond.broadcast waking 'every thread' — the source's add (queue 40) calls @cond.signal (wakes one), which the other answers get right; the model key also says 'signals it.' Docked slightly for that. Cost/process (un-blinded): 379k context, 27 turns, 151s, 24 grove-tool calls."
+        },
+        "lsp": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Covers all four cooperating components — ConnectionPool (pool.rb:120 region), the @available ConnectionLeasingQueue, the Reaper, and the per-thread Lease/LeaseRegistry — and the full lifecycle: checkout via lease_connection (310) → checkout (550) → three-tier acquire_connection (poll / try_to_checkout_new_connection 895 / inline reap / blocking poll); checkin/return (573) with @available.add and the ExecutorHooks.complete (193) auto-release; reap (623) for dead-thread reclamation with steal! (adapter 329); and flush (646) idle eviction via seconds_idle (adapter 342). Correctly identifies the shared Monitor and the queue condition variable as the wait boundary, with wait_poll (queue 112) and the atomic lease in internal_poll (queue 203). Grounding is near-exact: expire:313/steal!:329/seconds_idle:342 and ExecutorHooks.complete:193 all resolve precisely. Two trivial off-by-one/conflations: cites the @queue.size>@num_waiting test at queue.rb:94 (that is can_remove_no_wait?, which no_wait_poll:106 calls) and add at :36 vs :37. Cost/process (un-blinded): 256k context, 12 turns, 132s, 4 LSP calls."
+        }
+      },
+      "key_revisions": [
+        {
+          "level": "L4",
+          "reason": "Reference key line numbers do not match the pinned source at d0dcb8f (Rails 7.2.2); connection_pool.rb is only 950 lines, so the key's cites (ConnectionPool:129, checkout:638, checkin:666, reap:712, flush:735, acquire_connection:1166-1183, queue.rb add:36/poll:86, reaper.rb:33/register_pool:44) are stale. Verified actual definitions by grep over the pinned files. All three answers cite the correct current lines.",
+          "cite": "connection_pool.rb: ConnectionPool:120, lease_connection:310, checkout:550, checkin:573, reap:623, flush:646, acquire_connection:852, try_to_checkout_new_connection:895; queue.rb: Queue:13, add:37/@cond.signal:40, no_wait_poll:106, wait_poll:112, internal_poll:203; reaper.rb: Reaper:17, register_pool:30, spawn_thread:41, run:72",
+          "ts": "2026-06-30"
+        }
+      ],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full completeness (1.0) — the spine was within reach of every capability on this rails task. Separation is on grounding tightness (0.92–0.98, baseline tightest) and on COST: baseline was cheapest at 253k context vs grove's 379k. The differentiator is a curve — capability fit, not a universal winner.",
+      "ts": "2026-06-30T02:48:18.871Z"
+    },
+    "L4-spring-boot": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.94,
+          "completeness": 1,
+          "verdict": "Full. All five spine pieces present and connected: candidate loading via getCandidateConfigurations (200) → ImportCandidates.load reading the META-INF/spring/...AutoConfiguration.imports file; de-dup (removeDuplicates 305) + exclusions (getExclusions 247, checkExcludedClasses 212, removeAll 151); the fast filter getConfigurationClassFilter().filter (152/399) backed by AutoConfigurationMetadataLoader.loadMetadata and the metadata properties file, nulling candidates before bytecode is read; the FilteringSpringBootCondition.match→ConditionEvaluationReport.recordConditionEvaluation recording bridge (65); and the event + DeferredImportSelector AutoConfigurationGroup (process 467, selectImports 489) surfacing tail. Explicitly states the fast/pre-bytecode rationale. Cites resolve well: 119/142/200/148/151/152/399/404/407, FilteringSpringBootCondition 52/63/65, OnClassCondition getOutcomes 49/214/224/237 all exact. Loose spots: ConfigurationClassFilter cited at 392 (decl is 388), and the AutoConfigurationSorter internal line numbers and the OnBean/OnClass/OnWebApplication registration order are asserted with more confidence than verifiable. No structural wrong turns. Cost/process (un-blinded): 391k context, 14 turns, 135s, 6 bash calls."
+        },
+        "grove": {
+          "grounding": 0.93,
+          "completeness": 1,
+          "verdict": "Full. Covers all five spine pieces with correct framing: ImportCandidates.load candidate source, removeDuplicates (305), getExclusions (247) with the spring.autoconfigure.exclude property via getExcludeAutoConfigurationsProperty (263), checkExcludedClasses (212), removeAll, the ConfigurationClassFilter.filter (399) tombstone pass over autoConfigurationMetadata, the FilteringSpringBootCondition.match (52) bridge that records rejections into ConditionEvaluationReport, OnClassCondition.getOutcomes (49) split-threading and the StandardOutcomesResolver (209) metadata.get lookup, fireAutoConfigurationImportEvents (314), and the AutoConfigurationGroup process/selectImports (467/489) two-phase merge + sort surfacing. Correctly emphasizes the metadata file as the pre-bytecode performance lever. Cites mostly exact; minor inaccuracies: the per-candidate probe is ClassNameFilter.MISSING.matches not isPresent(), AutoConfigurationReplacements.replaceAll attributed to line 295 (the getAutoConfigurationReplacements accessor; the replaceAll call is at 254), and the filter registration order is asserted. No structural wrong turns. Cost/process (un-blinded): 455k context, 34 turns, 179s, 25 grove-tool calls."
+        },
+        "lsp": {
+          "grounding": 0.96,
+          "completeness": 1,
+          "verdict": "Full. All five spine pieces, with the tightest file:line grounding of the three. Candidate loading: getCandidateConfigurations (200) → ImportCandidates.load (ImportCandidates.java:81) via getResources over the .imports path; removeDuplicates (305); getExclusions (247) three-source union then AutoConfigurationReplacements.replaceAll, checkExcludedClasses + removeAll; the fast filter as inner ConfigurationClassFilter (cited at :388, exact) loading AutoConfigurationMetadataLoader.loadMetadata (AutoConfigurationMetadataLoader.java:43, exact) and nulling candidates in filter (399); FilteringSpringBootCondition.match (FilteringSpringBootCondition.java:52) recording failures via recordConditionEvaluation; OnClassCondition.getOutcomes (OnClassCondition.java:49) threading and StandardOutcomesResolver (209) metadata.get + ClassNameFilter.MISSING.matches (exact); event firing (314); AutoConfigurationEntry (541), process (467), selectImports (489) merge/second-exclusion/sort tail. States the metadata-file fast-path rationale clearly. Sampled cites resolve exact across both files; the AutoConfigurationSorter internal phase line numbers are the only mildly speculative element. No wrong turns. Cost/process (un-blinded): 523k context, 24 turns, 175s, 9 LSP calls."
+        }
+      },
+      "key_revisions": [
+        {
+          "level": "L4",
+          "reason": "Key cites getExclusions definition at ':249' but the method declaration is at line 247 in the pinned source (call site at :149 is correct). Confirmed by reading AutoConfigurationImportSelector.java:247.",
+          "cite": "core/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/AutoConfigurationImportSelector.java:247",
+          "ts": "2026-06-30"
+        }
+      ],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full completeness (1.0) — the spine was within reach of every capability on this spring-boot task. Separation is on grounding tightness (0.93–0.96, lsp tightest) and on COST: baseline was cheapest at 391k context vs lsp's 523k. The differentiator is a curve — capability fit, not a universal winner.",
+      "ts": "2026-06-30T02:48:19.621Z"
+    },
+    "L4-tokio": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.95,
+          "completeness": 1,
+          "verdict": "Full. All five spine pieces present and correctly connected, line-lighter but accurate: schedule_task (worker.rs:1327)/schedule_local (:1353) fast vs slow path with LIFO locality; next_task (:1062) periodic inject check plus batch pop_n; steal_work (:1141) with random-peer steal_into (queue.rs:417) and the CAPACITY/2 destination guard; idle coordination via Idle (idle.rs:9), the 2*num_searching>=num_workers cap (:104), transition_to_parked (worker.rs:1204) with notify_if_work_pending safety valve, worker_to_notify (idle.rs:51) waking a worker into searching state, and transition_from_searching (:121) chain-wake; and overflow push_back_or_overflow (queue.rs:188)/push_overflow (:253) moving the second half (128 tasks) to inject with the correct rationale. The 'no central dispatcher' / lock-free common-path framing is explicit. Grounding solid: core cites resolve exact, with two minor loose details — MAX_LIFO_POLLS_PER_TICK cited at :689 (the lifo_polls counter; the const is :264) and global_queue_interval 'default 61' (61 is TARGET_TASKS_POLLED_PER_GLOBAL_QUEUE_INTERVAL, not the default interval) — both non-load-bearing. Cost/process (un-blinded): 406k context, 2 turns, 143s, 3 bash calls."
+        },
+        "grove": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. All five spine pieces present and correctly connected: placement via schedule_task (worker.rs:1327) routing to schedule_local (:1353) vs push_remote_task/notify_parked_remote, with the LIFO-slot fast lane; the run loop and next_task (:1062)/next_local_task (:1132) with periodic inject-first check and batch-drain; steal_work (:1141) with the random-peer lock-free steal_into (queue.rs:417); idle coordination including the 2*num_searching>=num_workers cap (idle.rs:104), last-searcher notify, notify_if_work_pending safety net (worker.rs:1465), notify_should_wakeup (idle.rs:153), worker_to_notify (idle.rs:51), and park/unpark (worker.rs:1204/:1231); and overflow push_back_or_overflow (queue.rs:188) -> push_overflow (:253) routing the second half to the shared inject queue with the correct second-half rationale. The 'no central dispatcher' invariant is stated explicitly. Grounding is near-perfect: every sampled cite resolves exact, with one slightly loose attribution (idle.rs:181 named as transition_worker_from_searching, which is actually the inner dec_num_searching helper; the named fn is :121), offset by the correct Handle-level :1479 cite. Cost/process (un-blinded): 379k context, 32 turns, 230s, 27 grove-tool calls."
+        },
+        "lsp": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. All five pieces covered and tightly connected: schedule_task (worker.rs:1327)/schedule_local (:1353) local-vs-inject decision with LIFO invariant (MAX_LIFO_POLLS_PER_TICK at :264/:743 — both exact); next_task (:1062) two-mode tick-modulus selection with bulk inject pop_n and dynamic tuning via Stats::tuned_global_queue_interval; steal_work (:1141)/transition_to_searching (:1171) with steal_into half-queue CAS (queue.rs:417); the full searching/parked state machine table with the 50% cap (idle.rs), last-searcher-must-notify invariant, transition_from_searching (:1179), notify_if_work_pending, and unpark via push_batch (:1525); and overflow push_overflow (queue.rs:253) with the precise second-half-to-inject mechanism and anti-ping-pong rationale. Strongest grounding of the three: every sampled cite resolves line-exact including the harder ones (1179, 1525, stats tuning, queue.rs:36-57). Cost/process (un-blinded): 250k context, 11 turns, 178s, 1 LSP calls."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full completeness (1.0) — the spine was within reach of every capability on this tokio task. Separation is on grounding tightness (0.95–0.98, lsp tightest) and on COST: lsp was cheapest at 250k context vs baseline's 406k. The differentiator is a curve — capability fit, not a universal winner.",
+      "ts": "2026-06-30T02:48:20.378Z"
+    },
+    "L4-typescript": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Covers every spine element with accurate cites: entry+closure state (bindSourceFile :502, createBinder :509, inner :571), the bind walk (:2751 — setParent then bindWorker then recurse), bindWorker kind-dispatch (:2846), declareSymbolAndAddToSymbolTable routing (:2264) and declareSymbol merge/conflict (:749, with the no-existing/replaceable/conflict/merge branches all correct), and container-scope tracking (getContainerFlags :3815, bindContainer :953, addToContainerChain :2256, eager-vs-lazy locals). Adds well-grounded extras: the getContainerFlags flag table, the Block-inside-function None special case, declareModuleMember's dual-symbol export (:887), addDeclarationToSymbol (:635), and the hoisting bindEachFunctionsFirst (:1079). All sampled cites resolve line-exact; the only looseness is calling line 499 (the const binder = createBinder() line) a reference to createBinder before correctly citing :509 for the factory. Explains the cooperation thoroughly with an end-to-end trace. Cost/process (un-blinded): 386k context, 16 turns, 142s, 4 bash calls."
+        },
+        "grove": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Covers the whole cooperating cluster: closure architecture and inner bindSourceFile (:509/:502/:571) with the file.locals idempotency guard and single bind(file) entry, the bind walk (:2751 — setParent before descending, bindWorker, getContainerFlags, push/pop parent, terminal-token skip), bindWorker dispatch (:2846), getContainerFlags + bindContainer scope tracking (:3815/:953) with addToContainerChain (:2256) and the two-pointer container/blockScopeContainer distinction, declareSymbolAndAddToSymbolTable routing (:2264) including bindBlockScopedDeclaration (:2437) and declareModuleMember dual-symbol (:887), and declareSymbol merge/conflict/replaceable branches (:749) with addDeclarationToSymbol (:635). All sampled cites resolve line-exact; explanation of the merge (interfaces accumulate) vs conflict (var-vs-class excludes) is correct. Clean end-to-end trace; states the key invariant that container/parent are set before a node's bindWorker runs. Cost/process (un-blinded): 324k context, 20 turns, 124s, 3 grove-tool calls."
+        },
+        "lsp": {
+          "grounding": 0.95,
+          "completeness": 1,
+          "verdict": "Full. Hits all spine pieces: entry (:499/:502/:509/:571, bind(file) :586), the bind walk reproduced faithfully (:2751 setParent → bindWorker → getContainerFlags → bindChildren/bindContainer with parent save/restore), getContainerFlags classification (:3815), bindContainer scope save/recurse/restore (:953) with the two-pointer container/blockScopeContainer table, bindWorker dispatch (:2846), declareSymbolAndAddToSymbolTable routing (:2264), and declareSymbol fresh/conflict/merge (:749) plus addDeclarationToSymbol (:635). Correctly explains the includes/excludes semantics and declareModuleMember's dual symbol. Grounding strong; one loose cite — bindVariableDeclarationOrBindingElement is cited at :3663 (the isBlockOrCatchScoped branch inside it) where the function actually starts at :3648. All other sampled cites resolve exact. End-to-end trace ties the pieces together correctly. Cost/process (un-blinded): 349k context, 18 turns, 135s, 6 LSP calls."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full completeness (1.0) — the spine was within reach of every capability on this typescript task. Separation is on grounding tightness (0.95–0.97, baseline tightest) and on COST: grove was cheapest at 324k context vs baseline's 386k. The differentiator is a curve — capability fit, not a universal winner.",
+      "ts": "2026-06-30T02:48:21.135Z"
+    },
+    "L4-webpack": {
+      "scores": {
+        "baseline": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Three-phase structure with a verified line-reference table that checks out: seal seeding (Compilation.js:3473/3656), visitModules:294, ordinal getModuleOrdinal:322, processBlock:791 with the four-way assignment decision (already-in-chunk / inactive / in-parent-mask skippedItems / else ADD_AND_ENTER_MODULE), iteratorBlock:564 with the three async cases (addAsyncEntrypoint, chunk-loading-disabled fallthrough, normal addChunkInGroup), the availability propagation (processConnectQueue:1033, processChunkGroupsForMerging:1068 ANDing masks, processOutdatedChunkGroupInfo:1149 re-admitting skipped, processChunkGroupsForCombining:1120 ORing for entrypoints), connectChunkGroups:1340 with the areModulesAvailable elision, cleanupUnconnectedGroups:1404, and the ChunkGraph data model (ChunkGraphModule/ChunkGraphChunk, connectBlockAndChunkGroup at ChunkGraph.js:1503 — exact). Every sampled cite, including the precise ranges, resolves line-exact. Cost/process (un-blinded): 733k context, 12 turns, 192s, 4 bash calls."
+        },
+        "grove": {
+          "grounding": 0.98,
+          "completeness": 1,
+          "verdict": "Full. Opens by explicitly separating ModuleGraph (edges=dependencies) from ChunkGraph (edges=chunk-group/modules-per-chunk) — directly answering the key's 'don't conflate' caution — and names connectChunkAndModule/connectChunkAndEntryModule/connectBlockAndChunkGroup as the three writes. Hits the seal entry loop (Compilation.js:3473), visitModules (294), ChunkGroupInfo, extractBlockModules (115), processBlock (791), iteratorBlock (564) as the async split, the available-modules propagation chain (processConnectQueue:1033, processChunkGroupsForMerging:1068 with the AND-intersection invariant, processOutdatedChunkGroupInfo:1149, processChunkGroupsForCombining:1120 with the dependOn OR distinction), connectChunkGroups:1340 with areModulesAvailable:1354 skip, and cleanup. All sampled line cites resolve exactly; the dependOn AND-vs-OR nuance is correct and well-grounded. Cost/process (un-blinded): 335k context, 15 turns, 193s, 12 grove-tool calls."
+        },
+        "lsp": {
+          "grounding": 0.97,
+          "completeness": 1,
+          "verdict": "Full. Covers every spine element: the data model bridging both graphs (DependenciesBlock, AsyncDependenciesBlock created in ImportParserPlugin.js:551-569 — exact, ChunkGroup, Entrypoint, ChunkGraph), the seal entry loop (addChunk Compilation.js:3512, connectChunkAndEntryModule:3541, buildChunkGraph(this,chunkGraphInit):3656 — all exact), visitModules with processQueue (922) and the action-code table, processBlock (791) for sync placement and iteratorBlock (564) for the async split (addChunkInGroup, cite to Compilation.js:4355 — exact), the available-modules tracking (minAvailableModules AND-intersection via processConnectQueue:1033 and processChunkGroupsForMerging:1068, ChunkGroupInfo typedef cited 37-57 — accurate superset of the key's 40-51), connectChunkGroups with the redundancy skip, cleanupUnconnectedGroups (1404 — exact), and ChunkGraph as the result. Reaches the entry-vs-async distinction through the action table rather than naming processEntryBlock/calculateResultingAvailableModules explicitly — a valid path. Every sampled cite resolves line-exact; grounding docked only marginally for routing resultingAvailableModules through processConnectQueue without naming calculateResultingAvailableModules. Cost/process (un-blinded): 587k context, 25 turns, 198s, 6 LSP calls."
+        }
+      },
+      "key_revisions": [],
+      "verdict": "Blind-judged (anonymized A/B/C, mapping withheld). All three arms reached Full completeness (1.0) — the spine was within reach of every capability on this webpack task. Separation is on grounding tightness (0.97–0.98, baseline tightest) and on COST: grove was cheapest at 335k context vs baseline's 733k. The differentiator is a curve — capability fit, not a universal winner.",
+      "ts": "2026-06-30T02:48:21.862Z"
     }
   }
 }
