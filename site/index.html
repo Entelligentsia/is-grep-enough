@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>is grep enough? — code navigation for agents, measured</title>
 <meta name="description" content="When a coding agent explores a large codebase, is text search enough — or does it need fast-light structural (tree-sitter) or authoritative semantic (LSP) navigation? Evidence, not opinion.">
+<!-- favicon: the three-segment coverage motif (baseline · grove · lsp), arm colors -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='1' y='5' width='4' height='6' fill='%230072b2'/><rect x='6' y='5' width='4' height='6' fill='%23e69f00'/><rect x='11' y='5' width='4' height='6' fill='%23009e73'/></svg>">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,10 +16,19 @@
     <p class="noscript-note">This dashboard renders its coverage grid, charts, and transcripts with JavaScript, which is disabled. The full evidence is still readable directly in the repository: <a href="https://github.com/Entelligentsia/is-grep-enough/tree/master/reports">blind judgements &amp; findings</a>, <a href="https://github.com/Entelligentsia/is-grep-enough/tree/master/evidence/nav3">raw + readable transcripts</a>, and the cell ledger <code>experiment/state.json</code>. No data is hidden behind the script — it only makes the same committed evidence interactive.</p>
   </noscript>
   <header class="masthead">
-    <div class="theme-switch" id="theme-switch" role="group" aria-label="color theme">
-      <button data-theme-set="auto" type="button">auto</button>
-      <button data-theme-set="light" type="button">light</button>
-      <button data-theme-set="dark" type="button">dark</button>
+    <div class="topbar">
+      <nav class="meta-links" aria-label="project links">
+        <a href="https://github.com/devasur">@devasur</a>
+        <span class="sep" aria-hidden="true">·</span>
+        <a href="https://github.com/Entelligentsia/is-grep-enough">experiment source</a>
+        <span class="sep" aria-hidden="true">·</span>
+        <a class="meta-grove" href="https://github.com/Entelligentsia/grove"><img src="assets/logos/grove.png" width="14" height="14" alt="">grove</a>
+      </nav>
+      <div class="theme-switch" id="theme-switch" role="group" aria-label="color theme">
+        <button data-theme-set="auto" type="button">auto</button>
+        <button data-theme-set="light" type="button">light</button>
+        <button data-theme-set="dark" type="button">dark</button>
+      </div>
     </div>
     <h1>is grep enough?</h1>
     <p class="sub">When a coding agent explores a large, unfamiliar codebase, are basic text tools (grep/read) enough — or does it need something <b>fast and light</b> (structural, tree-sitter) or something more <b>authoritative and accurate</b> (semantic, LSP)? This measures the three side by side and lets you check the answer yourself.</p>
@@ -41,6 +52,12 @@
   <section id="finding">
     <h2>What this shows</h2>
     <p class="note" id="finding-text">The same exploration task, given to an agent with three rungs of navigation power — plain text search (baseline), fast-light structural (grove), and authoritative semantic (lsp) — across a task-complexity ladder. The question is where on that ladder the extra power stops paying for itself. Everything below links to the raw run that produced it.</p>
+  </section>
+
+  <section id="codebases-section">
+    <h2>The ten codebases</h2>
+    <p class="note">One large, real-world repository per major language, each pinned to an exact commit so every run reproduces. Select one to filter the dashboard to it; the commit hash opens the pinned source on GitHub.</p>
+    <div class="codebases" id="codebases-grid"></div>
   </section>
 
   <section id="filter-section">
@@ -127,13 +144,8 @@
     </ul>
   </section>
 
-  <footer class="site-foot" style="margin-top: 4rem; border-top: 1px solid var(--rule-strong); padding-top: 1.5rem; display: flex; gap: 2rem; font-size: 0.85rem; color: var(--ink-soft); align-items: center; flex-wrap: wrap;">
-    <a href="https://github.com/devasur" style="color: var(--ink); text-decoration: none;">author (@devasur)</a>
-    <a href="https://github.com/Entelligentsia/is-grep-enough" style="color: var(--ink); text-decoration: none;">experiment source</a>
-    <a href="https://github.com/Entelligentsia/grove" style="color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
-      <img src="assets/logos/grove.png" width="16" height="16" alt="Grove" style="border-radius: 2px;">
-      grove
-    </a>
+  <footer class="site-foot">
+    <p>A controlled, reproducible benchmark of agent code navigation. Every figure recomputes from committed evidence — nothing here is asserted that you cannot check.</p>
   </footer>
 </main>
 

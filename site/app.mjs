@@ -131,6 +131,13 @@ async function init() {
   // and respond to back/forward.
   applyURL(); syncControls();
   window.addEventListener("popstate", () => { applyURL(); syncControls(); render(); });
+  // Re-render the metric charts on resize (debounced): their pixel width and the
+  // 1-vs-2-column split are computed from the measured panel width, so they must
+  // recompute when the viewport changes.
+  let _resizeT; window.addEventListener("resize", () => {
+    clearTimeout(_resizeT); _resizeT = setTimeout(renderMetrics, 150);
+  });
+  renderCodebases();
   renderMethodology();
   render();
 }
@@ -262,6 +269,41 @@ function renderMethodology() {
 
 function fillSelect(sel, vals) { for (const v of vals) sel.append(el("option", { value: v, textContent: v })); }
 
+// repo-language display names for the codebases roster
+const LANG_NAME = { c: "C", cpp: "C++", python: "Python", typescript: "TypeScript",
+  javascript: "JavaScript", php: "PHP", ruby: "Ruby", go: "Go", rust: "Rust", java: "Java" };
+// The corpus, shown once: each repo's brand logo doubles as a click-to-filter
+// control; the pinned short-SHA is a provenance link to the exact GitHub tree.
+// Built once (repos don't change with filters); active state is synced in
+// syncControls(). Logos stay OUT of the charts so brand color never competes
+// with arm-identity color in the data marks.
+function renderCodebases() {
+  const host = $("#codebases-grid"); if (!host) return;
+  host.replaceChildren();
+  for (const r of DATA.experiment.repos) {
+    const tile = el("div", { className: "codebase" }); tile.dataset.repo = r.id;
+    const pick = el("button", { className: "cb-pick", type: "button" });
+    pick.setAttribute("aria-label", `filter to ${r.id}`);
+    pick.append(
+      el("img", { className: "cb-logo", src: `assets/logos/${r.id}.svg`, width: 24, height: 24, alt: "", loading: "lazy" }),
+      el("span", { className: "cb-meta" }, [
+        el("span", { className: "cb-name", textContent: r.id }),
+        el("span", { className: "cb-lang", textContent: LANG_NAME[r.lang] ?? r.lang }),
+      ]),
+    );
+    pick.onclick = () => {
+      state.repo = state.repo === r.id ? "" : r.id; state.cell = null;
+      render(); syncControls();
+      document.getElementById("coverage-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    const sha = el("a", { className: "cb-sha", href: `https://github.com/${r.gh}/tree/${r.sha}`,
+      textContent: r.sha.slice(0, 7), title: `pinned: ${r.gh}@${r.sha.slice(0, 7)}`, target: "_blank", rel: "noopener" });
+    sha.onclick = (e) => e.stopPropagation();
+    tile.append(pick, sha);
+    host.append(tile);
+  }
+}
+
 // ---- URL <-> state (shareable filter/cell links) ----------------------------
 function applyURL() {
   const p = new URLSearchParams(location.search);
@@ -286,6 +328,11 @@ function syncControls() {
   $("#t-incomplete").checked = state.showIncomplete;
   $("#fc-a").value = state.fcA;
   $("#fc-b").value = state.fcB;
+  for (const t of document.querySelectorAll(".codebase")) {
+    const on = t.dataset.repo === state.repo;
+    t.classList.toggle("active", on);
+    t.querySelector(".cb-pick")?.setAttribute("aria-pressed", String(on));
+  }
 }
 
 // serialize state into the query string; only non-default keys are written so a
@@ -396,17 +443,19 @@ function renderMetrics() {
   if (state.metric === "economy") {
     // composite: context + cache + cost stacked tightly
     const wrap = el("div", { className: "token-economy" });
+    host.append(wrap); // attach before charting so column width can be measured
     for (const key of ["context", "cache", "cost"]) {
-      wrap.append(renderMetricChart(key, 160));
+      renderMetricChart(key, 160, wrap);
     }
-    host.append(wrap);
   } else {
-    host.append(renderMetricChart(state.metric, 280));
+    renderMetricChart(state.metric, 280, host);
   }
 }
-// render a single metric family chart as a <figure>. height is configurable
-// so the token-economy composite can use shorter panels.
-function renderMetricChart(key, chartHeight) {
+// Render one metric family chart into `mount` (which MUST already be in the DOM,
+// so the flex container's real width can be measured — the per-rung charts are
+// laid out two-up at ~50% each on wide screens). height is configurable so the
+// token-economy composite can use shorter panels.
+function renderMetricChart(key, chartHeight, mount) {
   const m = METRICS[key];
   const rungsShown = DATA.experiment.rungs.filter((r) => !state.rung || r === state.rung);
   const armsShown = visibleArms();
@@ -422,7 +471,8 @@ function renderMetricChart(key, chartHeight) {
 
   if (!rows.length) {
     fig.append(el("p", { className: "caveat", textContent: "no harvested data for this metric in the current filter." }));
-    return fig;
+    mount.append(fig);
+    return;
   }
 
   // honest n per rung
@@ -433,28 +483,36 @@ function renderMetricChart(key, chartHeight) {
   const reposShown = [...new Set(rows.map((r) => r.repo))];
 
   const nFacets = rungsShown.length;
-  // Subtract 32px for container padding (.metric-family has 1rem padding on both sides)
-  const width = Math.min(980 - 32, Math.max(360, nFacets * 180));
-  const facetWidth = Math.floor((width - (nFacets - 1) * 12) / nFacets);
 
   const container = el("div", { className: "metric-charts-container" });
   container.style.display = "flex";
   container.style.gap = "12px";
   container.style.flexWrap = "wrap";
+  fig.append(container);
+  mount.append(fig); // attach now so container.clientWidth is the real laid-out width
 
-  for (const rg of rungsShown) {
+  // Two columns (~50% each) on wide screens, one full-width chart per row when
+  // narrow. Measure the container's ACTUAL width (panel minus figure padding,
+  // caption gutters, scrollbar — all of which vary) rather than guessing from
+  // the panel, so two halves always fit instead of wrapping back to one column.
+  const GAP = 12;
+  const availW = Math.max(160, Math.round(container.getBoundingClientRect().width) || 940);
+  const twoCol = nFacets > 1 && availW >= 620;
+  const facetWidth = twoCol ? Math.floor((availW - GAP) / 2) : availW;
+
+  for (let i = 0; i < rungsShown.length; i++) {
+    const rg = rungsShown[i];
     const rungRows = rows.filter((r) => r.rung === rg);
     if (!rungRows.length) continue;
 
     const wrapper = el("div", { className: "rung-chart-wrapper" });
-    wrapper.style.flex = `1 1 ${facetWidth}px`;
-    wrapper.style.minWidth = "160px";
+    wrapper.style.flex = `0 0 ${facetWidth}px`;
     wrapper.style.maxWidth = `${facetWidth}px`;
 
     const header = el("div", { className: "rung-chart-header" });
     header.style.textAlign = "center";
     header.style.fontWeight = "600";
-    header.style.fontSize = "11px";
+    header.style.fontSize = "13px";
     header.style.marginBottom = "4px";
     header.textContent = `${rg} · n=${nByRung[rg]?.size ?? 0}`;
     wrapper.append(header);
@@ -462,11 +520,11 @@ function renderMetricChart(key, chartHeight) {
     const plot = Plot.plot({
       width: facetWidth,
       height: chartHeight,
-      marginLeft: 45,
-      marginBottom: nFacets === 1 ? 44 : 30,
+      marginLeft: 52,
+      marginBottom: 52, // space for rotated 45deg labels
       marginTop: 10,
-      style: { fontFamily: "system-ui, sans-serif", fontSize: "10px", background: "transparent" },
-      x: { label: null, domain: reposShown, tickRotate: nFacets > 1 ? 45 : 0, axis: nFacets === 1 ? "bottom" : null },
+      style: { fontFamily: "system-ui, sans-serif", fontSize: "12px", background: "transparent" },
+      x: { label: null, domain: reposShown, tickRotate: 45, axis: "bottom" },
       y: { label: null, grid: true, zero: true, nice: true, tickFormat: key === "cost" ? (v) => `$${v.toFixed(2)}` : "~s" },
       color: { domain: armsShown, range: armsShown.map((a) => ARM_COLOR[a]) },
       marks: [
@@ -497,7 +555,7 @@ function renderMetricChart(key, chartHeight) {
     container.append(wrapper);
   }
 
-  fig.append(container);
+  // container + fig are already attached to `mount` (done before measuring width)
 
   const nFlagged = rows.filter((r) => r.flagged).length;
   const n = new Set(rows.map((r) => r.id)).size;
@@ -506,7 +564,6 @@ function renderMetricChart(key, chartHeight) {
     `Per-rung n is on the axis (partial rungs self-report a smaller n); ${n} task${n === 1 ? "" : "s"} shown total` +
     `${nFlagged ? `, incl. ${nFlagged} DNF points (✕)` : ""}. ` +
     `Axis from zero. n=1 per cell — a direction, not a measurement.`));
-  return fig;
 }
 
 function renderDetail(cid) {
@@ -803,8 +860,8 @@ function renderSparkline(host, c) {
   const draw = (series) => {
     if (!series?.length) { slot.replaceChildren(el("span", { className: "caveat", textContent: "no per-turn series" })); return; }
     const fig = Plot.plot({
-      width: 240, height: 62, marginLeft: 36, marginBottom: 14, marginTop: 6, marginRight: 6,
-      style: { fontFamily: "system-ui, sans-serif", fontSize: "9px", background: "transparent" },
+      width: 240, height: 62, marginLeft: 40, marginBottom: 14, marginTop: 6, marginRight: 6,
+      style: { fontFamily: "system-ui, sans-serif", fontSize: "10px", background: "transparent" },
       x: { label: null, ticks: [] },
       y: { label: null, zero: true, nice: true, ticks: 2, tickFormat: "~s" },
       marks: [
