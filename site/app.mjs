@@ -433,40 +433,71 @@ function renderMetricChart(key, chartHeight) {
   const reposShown = [...new Set(rows.map((r) => r.repo))];
 
   const nFacets = rungsShown.length;
-  const width = Math.min(980, Math.max(360, nFacets * 200));
-  const plot = Plot.plot({
-    width, height: chartHeight, marginLeft: 58, marginBottom: 44, marginTop: 26,
-    style: { fontFamily: "system-ui, sans-serif", fontSize: "11px", background: "transparent" },
-    fx: { label: null, domain: rungsShown },
-    x: { label: null, domain: reposShown, tickRotate: nFacets > 1 ? 45 : 0, axis: nFacets === 1 ? "bottom" : null },
-    y: { label: null, grid: true, zero: true, nice: true, tickFormat: "~s" },
-    color: { domain: armsShown, range: armsShown.map((a) => ARM_COLOR[a]) },
-    marks: [
-      Plot.axisFx({ anchor: "top", label: null, tickSize: 0, fontWeight: 600,
-        tickFormat: (rg) => `${rg} · n=${nByRung[rg]?.size ?? 0}` }),
-      Plot.frame({ stroke: cssVar("--rule") }),
-      // Cleveland dot plot:
-      // 1. Vertical range line for each repo
-      Plot.ruleX(rows, Plot.groupX({ y1: "min", y2: "max" }, {
-        fx: "rung", x: "repo", y1: "value", y2: "value", stroke: cssVar("--rule-strong"), strokeWidth: 1.5
-      })),
-      // 2. Normal dots (one per arm)
-      Plot.dot(rows.filter((r) => !r.flagged), {
-        fx: "rung", x: "repo", y: "value", fill: "arm", r: 4.5, fillOpacity: 0.85, stroke: cssVar("--paper"), strokeWidth: 0.8,
-        tip: true, channels: { repo: "repo", arm: "arm", value: { value: "value", label: m.label } },
-      }),
-      // 3. DNF dots (cross instead of solid fill)
-      Plot.dot(rows.filter((r) => r.flagged), {
-        fx: "rung", x: "repo", y: "value", r: 4.5, fill: "none", stroke: "arm", strokeWidth: 1.4, symbol: "times",
-        tip: true, channels: { repo: "repo", arm: "arm", value: { value: "value", label: m.label }, flag: { value: () => "DNF", label: "flag" } },
-      }),
-      // 4. Horizontal median reference line for each arm across all repos in the rung
-      Plot.ruleY(rows, Plot.groupZ({ y: "median" }, {
-        fx: "rung", y: "value", stroke: "arm", strokeWidth: 1.2, strokeDasharray: "3,3"
-      })),
-    ],
-  });
-  fig.append(plot);
+  // Subtract 32px for container padding (.metric-family has 1rem padding on both sides)
+  const width = Math.min(980 - 32, Math.max(360, nFacets * 180));
+  const facetWidth = Math.floor((width - (nFacets - 1) * 12) / nFacets);
+
+  const container = el("div", { className: "metric-charts-container" });
+  container.style.display = "flex";
+  container.style.gap = "12px";
+  container.style.flexWrap = "wrap";
+
+  for (const rg of rungsShown) {
+    const rungRows = rows.filter((r) => r.rung === rg);
+    if (!rungRows.length) continue;
+
+    const wrapper = el("div", { className: "rung-chart-wrapper" });
+    wrapper.style.flex = `1 1 ${facetWidth}px`;
+    wrapper.style.minWidth = "160px";
+    wrapper.style.maxWidth = `${facetWidth}px`;
+
+    const header = el("div", { className: "rung-chart-header" });
+    header.style.textAlign = "center";
+    header.style.fontWeight = "600";
+    header.style.fontSize = "11px";
+    header.style.marginBottom = "4px";
+    header.textContent = `${rg} · n=${nByRung[rg]?.size ?? 0}`;
+    wrapper.append(header);
+
+    const plot = Plot.plot({
+      width: facetWidth,
+      height: chartHeight,
+      marginLeft: 45,
+      marginBottom: nFacets === 1 ? 44 : 30,
+      marginTop: 10,
+      style: { fontFamily: "system-ui, sans-serif", fontSize: "10px", background: "transparent" },
+      x: { label: null, domain: reposShown, tickRotate: nFacets > 1 ? 45 : 0, axis: nFacets === 1 ? "bottom" : null },
+      y: { label: null, grid: true, zero: true, nice: true, tickFormat: "~s" },
+      color: { domain: armsShown, range: armsShown.map((a) => ARM_COLOR[a]) },
+      marks: [
+        Plot.frame({ stroke: cssVar("--rule") }),
+        // Cleveland dot plot for this rung:
+        // 1. Vertical range line for each repo
+        Plot.ruleX(rungRows, Plot.groupX({ y1: "min", y2: "max" }, {
+          x: "repo", y1: "value", y2: "value", stroke: cssVar("--rule-strong"), strokeWidth: 1.5
+        })),
+        // 2. Normal dots (one per arm)
+        Plot.dot(rungRows.filter((r) => !r.flagged), {
+          x: "repo", y: "value", fill: "arm", r: 4.5, fillOpacity: 0.85, stroke: cssVar("--paper"), strokeWidth: 0.8,
+          tip: true, channels: { repo: "repo", arm: "arm", value: { value: "value", label: m.label } },
+        }),
+        // 3. DNF dots (cross instead of solid fill)
+        Plot.dot(rungRows.filter((r) => r.flagged), {
+          x: "repo", y: "value", r: 4.5, fill: "none", stroke: "arm", strokeWidth: 1.4, symbol: "times",
+          tip: true, channels: { repo: "repo", arm: "arm", value: { value: "value", label: m.label }, flag: { value: () => "DNF", label: "flag" } },
+        }),
+        // 4. Horizontal median reference line for each arm across all repos in the rung
+        Plot.ruleY(rungRows, Plot.groupZ({ y: "median" }, {
+          y: "value", stroke: "arm", strokeWidth: 1.2, strokeDasharray: "3,3"
+        })),
+      ],
+    });
+
+    wrapper.append(plot);
+    container.append(wrapper);
+  }
+
+  fig.append(container);
 
   const nFlagged = rows.filter((r) => r.flagged).length;
   const n = new Set(rows.map((r) => r.id)).size;
