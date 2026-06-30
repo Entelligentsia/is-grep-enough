@@ -64,6 +64,12 @@ h2 { font-size: .82rem; font-weight: 600; text-transform: uppercase; letter-spac
      color: var(--ink-soft); border-bottom: 1px solid var(--rule); padding-bottom: .35rem; margin: 0 0 1rem; }
 .note { color: var(--ink-soft); font-size: .85rem; max-width: 74ch; }
 .caveat { color: var(--ink-faint); font-size: .8rem; font-style: italic; }
+.tldr { border: 1px solid var(--rule-strong); background: var(--paper-2);
+        padding: 1rem 1.2rem; border-radius: 4px; }
+.tldr h2 { border-bottom-color: var(--rule-strong); }
+.tldr .note { margin: 0 0 .7rem; }
+.tldr .tldr-lead { font-size: .92rem; color: var(--ink); }
+.tldr b[id^="tl-"] { font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 /* arm legend */
 .legend { display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: .85rem; margin: .4rem 0 0; }

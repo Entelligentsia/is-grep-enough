@@ -31,6 +31,13 @@
     <p class="provenance" id="provenance"></p>
   </header>
 
+  <section id="tldr" class="tldr">
+    <h2>TL;DR — is grep enough?</h2>
+    <p class="note tldr-lead"><b>For correctness, usually. For tokens through the model, increasingly not.</b> The same 50 navigation tasks (10 repos &times; 5 complexity rungs), run three ways and blind-judged, land the right answer almost everywhere — mean grounding <b id="tl-grnd">—</b> and completeness <b id="tl-cmpl">—</b> are a near-tie across all three arms. Grep <i>is</i> enough to be <i>correct</i>.</p>
+    <p class="note">Where they separate is <b>how much context they push through the model to get there</b>, and that gap compounds with complexity. Structural navigation (grove) reaches the same answer on far fewer tokens — about <b id="tl-ctx-grove">—</b> on average, against <b id="tl-ctx-lsp">—</b> for lsp and <b id="tl-ctx-base">—</b> for baseline text search (grep + read, which fans out and re-reads). At trivial tasks everything is light and grep wins on simplicity; by the hardest rung (L5) baseline pushes <b id="tl-l5-base">—</b> of context against grove's <b id="tl-l5-grove">—</b> — <b id="tl-l5-x">—</b> as many tokens — while staying tightest on quality.</p>
+    <p class="caveat">Token throughput is not the billed bill: most of baseline's volume is cheap cache reads, so in <i>dollars</i> the arms are much closer (see the cost panel). The lean-context win matters most for context-window pressure, latency, and any setting without aggressive prompt caching. The thesis is a curve, not a winner — grep suffices for shallow lookups; structural tools pay off as the code gets harder to navigate. <span class="caveat">n=1 per cell; descriptive, not significance-tested.</span></p>
+  </section>
+
   <section id="finding">
     <h2>What this shows</h2>
     <p class="note" id="finding-text">The same exploration task, given to an agent with three rungs of navigation power — plain text search (baseline), fast-light structural (grove), and authoritative semantic (lsp) — across a task-complexity ladder. The question is where on that ladder the extra power stops paying for itself. Everything below links to the raw run that produced it.</p>
