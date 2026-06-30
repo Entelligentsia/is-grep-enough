@@ -75,16 +75,24 @@ function readRun(rawPath) {
   }
   lsp += tools["LSP"] || 0;
   const r = events.find((e) => e.type === "result");
-  const u = r?.usage ?? {};
+  // Aggregate the result event's per-model `modelUsage` — the CUMULATIVE token
+  // counts across every model and turn (parent + any subagents), matching
+  // experiment/side-metrics.sh's `context_tokens`. The result event's top-level
+  // `usage` is only the FINAL turn's window, so it massively undercounts arms
+  // that fan out to subagents (e.g. baseline's Explore spawns run on haiku) —
+  // using it made grep look artificially context-light. Use modelUsage.
+  const mu = Object.values(r?.modelUsage ?? {});
+  const muSum = (k) => mu.reduce((a, m) => a + (m[k] ?? 0), 0);
+  const muIn = muSum("inputTokens"), muOut = muSum("outputTokens");
+  const muCacheCreate = muSum("cacheCreationInputTokens"), muCacheRead = muSum("cacheReadInputTokens");
   return {
     has_result: !!r && r.is_error !== true,
     is_error: r?.is_error === true,
     turns: r?.num_turns ?? null,
     wall_s: r ? Math.round((r.duration_ms ?? 0) / 1000) : null,
     cost: r?.total_cost_usd ?? null,
-    context: (u.input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0) + (u.cache_creation_input_tokens ?? 0),
-    cost_split: { input: u.input_tokens ?? 0, output: u.output_tokens ?? 0,
-                  cache_create: u.cache_creation_input_tokens ?? 0, cache_read: u.cache_read_input_tokens ?? 0 },
+    context: muIn + muCacheRead + muCacheCreate,
+    cost_split: { input: muIn, output: muOut, cache_create: muCacheCreate, cache_read: muCacheRead },
     tools: { tool_calls: toolCalls, bash_calls: bash, reads, grove_tools: grove, lsp_tools: lsp, mcp_nongrove_tools: mcpNonGrove, by_name: tools },
     series,
   };

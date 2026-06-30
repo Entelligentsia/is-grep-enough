@@ -31,12 +31,19 @@
     <p class="provenance" id="provenance"></p>
   </header>
 
+  <section id="tldr" class="tldr">
+    <h2>TL;DR — is grep enough?</h2>
+    <p class="note tldr-lead"><b>For correctness, usually. For tokens through the model, increasingly not.</b> The same 50 navigation tasks (10 repos &times; 5 complexity rungs), run three ways and blind-judged, land the right answer almost everywhere — mean grounding <b id="tl-grnd">—</b> and completeness <b id="tl-cmpl">—</b> are a near-tie across all three arms. Grep <i>is</i> enough to be <i>correct</i>.</p>
+    <p class="note">Where they separate is <b>how much context they push through the model to get there</b>, and that gap compounds with complexity. Structural navigation (grove) reaches the same answer on far fewer tokens — about <b id="tl-ctx-grove">—</b> on average, against <b id="tl-ctx-lsp">—</b> for lsp and <b id="tl-ctx-base">—</b> for baseline text search (grep + read, which fans out and re-reads). At trivial tasks everything is light and grep wins on simplicity; by the hardest rung (L5) baseline pushes <b id="tl-l5-base">—</b> of context against grove's <b id="tl-l5-grove">—</b> — <b id="tl-l5-x">—</b> as many tokens — while staying tightest on quality.</p>
+    <p class="caveat">Token throughput is not the billed bill: most of baseline's volume is cheap cache reads, so in <i>dollars</i> the arms are much closer (see the cost panel). The lean-context win matters most for context-window pressure, latency, and any setting without aggressive prompt caching. The thesis is a curve, not a winner — grep suffices for shallow lookups; structural tools pay off as the code gets harder to navigate. <span class="caveat">n=1 per cell; descriptive, not significance-tested.</span></p>
+  </section>
+
   <section id="finding">
     <h2>What this shows</h2>
     <p class="note" id="finding-text">The same exploration task, given to an agent with three rungs of navigation power — plain text search (baseline), fast-light structural (grove), and authoritative semantic (lsp) — across a task-complexity ladder. The question is where on that ladder the extra power stops paying for itself. Everything below links to the raw run that produced it.</p>
   </section>
 
-  <section>
+  <section id="filter-section">
     <h2>Filter</h2>
     <div class="filters">
       <span><label>rung</label><select id="f-rung"><option value="">all</option></select></span>
@@ -46,7 +53,7 @@
     </div>
   </section>
 
-  <section>
+  <section id="coverage-section">
     <h2>Coverage &amp; integrity</h2>
     <p class="note">Run status per cell — three segments are baseline · grove · lsp. Filled = harvested, empty = pending, hatched = blocked/DNF. Click a cell to inspect; click a repo or rung to filter. This is the honest state of completeness, shown before any chart.</p>
     <label class="toggle"><input type="checkbox" id="t-judged"> overlay judged <span class="caveat">(ink tick = this arm has a blind judge score)</span></label>
@@ -54,7 +61,7 @@
     <div id="coverage"></div>
   </section>
 
-  <section>
+  <section id="metrics-section">
     <h2>Metrics</h2>
     <p class="note">Five metric families, each a row of small charts — one per rung, the three arms side by side within each. Small-multiples, not one busy chart: every panel keeps the same honest y-axis from zero, with one dot per repo and a tick at the per-rung median. Filter above to focus a rung or repo.</p>
     <div class="legend metrics-legend">
@@ -109,7 +116,7 @@
     <p class="caveat" id="meth-repro-note"></p>
   </section>
 
-  <section>
+  <section id="trust-section">
     <h2>How to trust this</h2>
     <ul class="note">
       <li>Every number is recomputed from a run's own stream-json; click any transcript to read the full reasoning trail and the raw evidence path.</li>
