@@ -467,7 +467,7 @@ function renderMetricChart(key, chartHeight) {
       marginTop: 10,
       style: { fontFamily: "system-ui, sans-serif", fontSize: "10px", background: "transparent" },
       x: { label: null, domain: reposShown, tickRotate: nFacets > 1 ? 45 : 0, axis: nFacets === 1 ? "bottom" : null },
-      y: { label: null, grid: true, zero: true, nice: true, tickFormat: "~s" },
+      y: { label: null, grid: true, zero: true, nice: true, tickFormat: key === "cost" ? (v) => `$${v.toFixed(2)}` : "~s" },
       color: { domain: armsShown, range: armsShown.map((a) => ARM_COLOR[a]) },
       marks: [
         Plot.frame({ stroke: cssVar("--rule") }),
