@@ -15,11 +15,18 @@ merit (grep-natural) vs coercive (grove-forced) inner prompts. `ctx` = Claude
 context tokens (the metered cost); the fc arms additionally spend *free local*
 qwen compute that never touches Claude's context.
 
-| arm | Claude ctx | vs baseline | wall | grounding | completeness |
+`ctx` below is **total metered = sonnet + cloud-Haiku**. The baseline's total is
+Haiku-dominated: in 3/6 cells sonnet spawned Task/Agent subagents that ran on cloud
+Haiku (still billed). Baseline sonnet-only is 749,406 (6 cells); the rest — 6.2M —
+is Haiku. The fc arms carry only a fixed ~625/cell Haiku (background title call) and
+delegate all exploration to a **local free 4B**. See the four-arm section below for
+the full sonnet/haiku split and both reduction framings.
+
+| arm | Claude ctx (total) | vs baseline (total · sonnet-only) | wall | grounding | completeness |
 |---|---|---|---|---|---|
 | **Baseline** (text) | 6,966,989 | 1× | 875s | **0.97** | **1.00** |
-| **Merit-fc** (grep) | 387,526 | **18.0× cheaper** | 1,357s | 0.93 | 0.86 |
-| **Coerce-fc** (grove) | 356,748 | **19.5× cheaper** | 974s | 0.94 | 0.93 |
+| **Merit-fc** (grep) | 387,526 | **18.0× · ~2.0×** cheaper | 1,357s | 0.93 | 0.86 |
+| **Coerce-fc** (grove) | 356,748 | **19.5× · ~2.0×** cheaper | 974s | 0.94 | 0.93 |
 
 Per-cell (each arm: **ctx / wall / grounding / completeness**):
 
@@ -38,9 +45,11 @@ grounding = citation resolution against pinned source (redis exact; django/tokio
 against canonical paths). Merit used **0 grove calls on all 6 cells** (pure
 grep+read); coerce used grove 68 times total.*
 
-**Takeaways.** (1) Local delegation cuts Claude's metered context **~18–20×** vs the
-text baseline for ≤7% quality and a modest wall premium — the baseline bleeds
-1.6M–4.4M tokens on the hard L5 cells brute-reading source. (2) Among the fc arms,
+**Takeaways.** (1) Local delegation cuts Claude's **total metered context ~18–20×**
+vs the text baseline for ≤7% quality and a modest wall premium — but that headline
+is inflated by the baseline offloading to *cloud Haiku* subagents (1.5M/4.3M tokens
+on redis-L5/tokio-L5). On **sonnet-tier tokens alone the win is ~2× (mean)**; the fc
+arms' real edge is moving the whole exploration tier to *free local* compute. (2) Among the fc arms,
 **forcing the structural tool (coerce) dominates letting the 4B choose (merit)** on
 context (−8.6%), wall (−28%), and completeness (0.93 vs 0.86) at equal grounding —
 merit's grep-only exploration skips spine pieces and iterates more. (3) Merit's
@@ -69,37 +78,56 @@ study. Enforced by the harness, not prompt pleading.
 ### Four-arm comparison — L4 + L5 × {redis, django, tokio}
 
 All three delegation arms (merit / coerce / plan-first, recon-once) vs the metered
-text baseline, over the 6 hardest cells. `ctx` = Claude (sonnet) context tokens
-(input+cache-read+cache-create over all models); `wall` = end-to-end seconds;
-`comp` = reference-spine pieces hit; `ground` = fraction of cited file:line that a
-blind grader verified against pinned source.
+text baseline, over the 6 hardest cells. `ctx` = Claude context tokens
+(input+cache-read+cache-create); `wall` = end-to-end seconds; `comp` = reference-spine
+pieces hit; `ground` = fraction of cited file:line that a blind grader verified against
+pinned source.
 
-Per-cell (**ctx / wall / comp / ground**):
+**Sonnet vs Haiku matters here.** The main-study baseline runs sonnet, but sonnet
+sometimes spawns `Task`/`Agent` subagents that execute on **cloud Haiku** — still
+metered, just cheaper per token. On this slice it did so in **3/6 cells** (L4-tokio,
+L5-redis, L5-tokio), and that Haiku dominates the baseline totals. The delegation arms
+run `--tools ""` (no Task/Agent), so their only Haiku is a fixed ~625-token background
+title call — all real exploration is offloaded to a **local, free 4B**. So the `ctx`
+columns below split sonnet / haiku, and the reduction is reported two ways.
+
+Per-cell (**sonnet ctx / haiku ctx / wall / comp / ground**):
 
 | cell | baseline (text) | merit-fc (4B, grep-natural) | coerce-fc (4B, grove-forced) | plan-first (4B, recon-once) |
 |---|---|---|---|---|
-| L4-redis  | 309,894 / 111s / 4·4 / 1.00 | 45,214 / 153s / 4·4 / 0.93 | 78,657 / 169s / 4·4 / 0.83 | 63,090 / 202s / 4·4 / 1.00 |
-| L4-django |  88,828 /  71s / 4·4 / 1.00 | 58,821 / 123s / 4·4 / 0.90 | 30,751 /  94s / 3·4 / 1.00 | 43,935 / 106s / 3·4 / 0.92 |
-| L4-tokio  | 406,490 / 143s / 5·5 / 0.86 | 62,094 / 256s / 5·5 / 1.00 | 80,047 / 219s / 5·5 / 0.92 | 60,881 / 183s / 5·5 / 0.96 |
-| L5-redis  | 1,578,920 / 190s / 6·6 / 0.97 | 64,444 / 219s / 6·6 / 1.00 | 46,036 / 140s / 6·6 / 1.00 | 97,106 / 251s / 6·6 / 1.00 |
-| L5-django | 182,567 / 109s / 6·6 / 1.00 | 59,252 /  93s / 6·6 / 0.90 | 45,188 /  99s / 6·6 / 0.86 | 58,323 / 132s / 5·6 / 0.90 |
-| L5-tokio  | 4,400,290 / 243s / 6·6 / 0.82 | 97,701 / 505s / 6·6 / 0.93 | 96,962 / 315s / 6·6 / 0.96 | 113,143 / 539s / 6·6 / 0.92 |
+| L4-redis  | 309,301 / 593 / 111s / 4·4 / 1.00 | 44,605 / 609 / 153s / 4·4 / 0.93 | 78,048 / 609 / 169s / 4·4 / 0.83 | 62,481 / 609 / 202s / 4·4 / 1.00 |
+| L4-django |  88,225 / 603 /  71s / 4·4 / 1.00 | 58,202 / 619 / 123s / 4·4 / 0.90 | 30,132 / 619 /  94s / 3·4 / 1.00 | 43,316 / 619 / 106s / 3·4 / 0.92 |
+| L4-tokio  |  52,798 / **353,692** / 143s / 5·5 / 0.86 | 61,466 / 628 / 256s / 5·5 / 1.00 | 79,419 / 628 / 219s / 5·5 / 0.92 | 60,253 / 628 / 183s / 5·5 / 0.96 |
+| L5-redis  |  54,895 / **1,524,025** / 190s / 6·6 / 0.97 | 63,820 / 624 / 219s / 6·6 / 1.00 | 45,412 / 624 / 140s / 6·6 / 1.00 | 96,482 / 624 / 251s / 6·6 / 1.00 |
+| L5-django | 181,964 / 603 / 109s / 6·6 / 1.00 | 58,633 / 619 /  93s / 6·6 / 0.90 | 44,569 / 619 /  99s / 6·6 / 0.86 | 57,704 / 619 / 132s / 5·6 / 0.90 |
+| L5-tokio  |  62,223 / **4,338,067** / 243s / 6·6 / 0.82 | 97,076 / 625 / 505s / 6·6 / 0.93 | 96,337 / 625 / 315s / 6·6 / 0.96 | 112,518 / 625 / 539s / 6·6 / 0.92 |
 
 Aggregates (mean over the 6 cells; ctx also as median because baseline is
-heavy-tailed — L5-tokio alone is 4.4M):
+heavy-tailed):
 
-| arm | mean ctx | median ctx | vs baseline (mean · median) | mean wall | completeness | grounding |
+| arm | sonnet mean / median | haiku mean / median | **total** mean / median | mean wall | comp | ground |
 |---|---|---|---|---|---|---|
-| baseline (text) | 1,161,165 | 358,192 | — | 144s | 100.0% | 0.94 |
-| merit-fc (grep) |    64,588 |  60,673 | **−94.4% · −83.1%** (18.0× · 5.9×) | 225s | 100.0% | 0.94 |
-| coerce-fc (grove) |  62,940 |  62,346 | **−94.6% · −82.6%** (18.4× · 5.7×) | 173s |  95.8% | 0.93 |
-| plan-first (recon-once) | 72,746 | 61,986 | **−93.7% · −82.7%** (16.0× · 5.8×) | 236s |  93.1% | 0.95 |
+| baseline (text) | 124,901 / 75,224 | 1,036,264 / 177,148 | 1,161,165 / 358,192 | 144s | 100.0% | 0.94 |
+| merit-fc (grep) |  63,967 / 60,050 |        621 /     622 |     64,588 /  60,673 | 225s | 100.0% | 0.94 |
+| coerce-fc (grove) | 62,320 / 61,730 |        621 /     622 |     62,940 /  62,346 | 173s |  95.8% | 0.93 |
+| plan-first (recon-once) | 72,126 / 61,367 |    621 /     622 |     72,746 /  61,986 | 236s |  93.1% | 0.95 |
+
+Reduction vs baseline, **two framings**:
+
+| arm | total metered (sonnet+haiku) | sonnet-tier only |
+|---|---|---|
+| merit-fc  | **−94.4% mean / −83.1% median** (18.0× / 5.9×) | −48.8% mean / −20.2% median (2.0× / 1.3×) |
+| coerce-fc | **−94.6% mean / −82.6% median** (18.4× / 5.7×) | −50.1% mean / −17.9% median (2.0× / 1.2×) |
+| plan-first| **−93.7% mean / −82.7% median** (16.0× / 5.8×) | −42.3% mean / −18.4% median (1.7× / 1.2×) |
 
 Reading it:
-- **All three delegation arms cut metered Claude context by ~83% (median) to ~94%
-  (mean) at grounding parity (0.93–0.95 vs baseline 0.94).** The mean gap is inflated
-  by two baseline blowups (redis-L5 1.6M, tokio-L5 4.4M) where sonnet's own text
-  search churned; the median (~5.8×) is the honest typical saving.
+- **Total metered cloud context: delegation wins ~16–18× (mean) / ~5.8× (median).**
+  This is the real billed-token comparison — baseline offloaded exploration onto cloud
+  Haiku (billed) in 3/6 cells; the delegation arms offload to a local free 4B.
+- **Sonnet-tier only: the win shrinks to ~1.2–1.3× (median).** Baseline's *Sonnet* is
+  cheap precisely because it secretly delegated to Haiku. So the delegation arms don't
+  slash the premium-model bill — they eliminate the *cloud exploration tier entirely*
+  (moving it to free local compute) at grounding parity (0.93–0.95 vs 0.94).
 - **coerce (grove-forced) is the cost/quality sweet spot** on this slice: lowest mean
   wall (173s), full grounding on 3/6 cells, and it never lost a spine piece except the
   one it shared with plan-first (django-L4, 3/4).
