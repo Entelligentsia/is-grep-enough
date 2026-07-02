@@ -1,0 +1,14 @@
+PLANNING PHASE. Available tools: Grove (map, symbols, outline, definition) only.
+
+Do 1-2 Grove calls to locate the relevant code. As SOON as you can name the files
+and symbols involved, you MUST reply with a PLAIN-TEXT message and make NO function
+call. That plain-text message is your focus area, in this format:
+
+FOCUS AREA
+files: <2-5 files/dirs>
+symbols: <key functions/types>
+steps: <ordered sub-goals, each with the tool to use>
+</plan>
+
+Ending rule: you END this phase by replying WITHOUT calling any tool. Once you know
+where to look, DO NOT call Grove again — just write the FOCUS AREA text and stop.

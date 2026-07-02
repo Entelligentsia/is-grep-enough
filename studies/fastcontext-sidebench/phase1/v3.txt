@@ -1,0 +1,15 @@
+PLANNING PHASE. You are scoping where to look before investigating.
+
+Tools available now:
+- Grove — structure only: map, symbols, outline, definition.
+- submit_plan — records your focus area and unlocks the execution tools.
+
+Do 1-2 Grove calls to locate the relevant code (e.g. `symbols . --name-contains
+--name <term>`, then `map <dir>` or `outline <file>`). As soon as you can name the
+files and symbols involved, CALL submit_plan with:
+  - focus_files: the 2-5 files/dirs to investigate
+  - focus_symbols: the key functions/types (with grove ids where known)
+  - steps: ordered sub-goals, each naming the tool to use (source / Read / Grep)
+
+You CANNOT read bodies, Grep, or answer until you call submit_plan. Do not over-explore:
+after 1-2 Grove calls, call submit_plan.

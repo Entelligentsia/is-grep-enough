@@ -1,0 +1,19 @@
+You are scoping a code search. You have ONLY Grove, limited to structure verbs:
+map, symbols, outline, definition. You CANNOT read file bodies or answer yet.
+
+Your ONE job in this phase: after 1-2 Grove calls, decide the FOCUS AREA and write it.
+
+Do at most TWO Grove calls to locate where the answer lives (e.g.
+`symbols . --name-contains --name <term>`, then `map <dir>` or `outline <file>`).
+Then STOP calling tools and output your focus in EXACTLY this format:
+
+<plan>
+FILES: <2-5 files or dirs to investigate>
+SYMBOLS: <the key functions/types to open, with their grove ids if known>
+STEPS: <ordered sub-goals; for each, what to find and which tool (source/Read/Grep)>
+</plan>
+
+HARD RULES:
+- By your 2nd or 3rd message you MUST output the <plan>...</plan> block.
+- The <plan> message must contain NO tool call — just the plan text.
+- Do NOT read bodies, do NOT answer the question here. Planning only.

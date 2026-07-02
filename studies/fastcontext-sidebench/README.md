@@ -48,6 +48,43 @@ deficit is completeness, not grounding. (4) Both fc arms bottom out at L5-tokio
 (0.75) — the local 4B misses the I/O-readiness/timer-poll spine pieces the baseline
 reaches only by brute force.
 
+## Plan-first explorer (`FC_PLAN_FIRST=1`)
+
+A two-phase local agent that reconnoiters structure with grove *first*, commits to a
+focus, then executes freely — the pattern that produced the best answers in the
+study. Enforced by the harness, not prompt pleading.
+
+- **Phase 1 (recon):** the model gets Grove (structure verbs: map/symbols/outline/
+  definition) **+** a `submit_plan` tool. After `FC_RECON_TURNS` (default 2) grove
+  turns, Grove **closes** (enforced at schema *and* execution, since the 4B
+  hallucinates closed tools), leaving `submit_plan` the only option → it commits a
+  focus (files/symbols/steps). *Prompt-only cannot do this: with tools in scope a 4B
+  never emits a free-text plan — v1/v2 prompts scored 0/4, the submit_plan tool 4/4.*
+- **Phase 2 (execute):** all real tools (Grove source/callers, Read, Grep, Glob); the
+  model executes the plan to answer the original question.
+- **Recon once per session:** the first explore call's plan is cached (module global,
+  keyed by repo dir); every later call in the same server process skips recon and gets
+  the plan injected as a standing hint, running straight in execute.
+
+Tuning artifacts: `test-phase1.py` (fast recon-only tester), `phase1/{v1,v2,v3}.txt`,
+`fc-planfirst-mcp.json`.
+
+**tokio-L4, plan-first vs the arms** (spine completeness /7):
+
+| arm | ctx | wall | spine |
+|---|---|---|---|
+| baseline (text) | 406,490 | 145s | 7/7 |
+| merit-fc (grep) | 62,094 | 257s | 6/7 |
+| coerce-fc (grove) | 46,461 | 121s | 6/7 |
+| plan-first (recon every call) | 172,296 | 390s | 7/7 |
+| plan-first (recon **once**, cached) | 125,824 | 254s | 6/7 |
+
+Recon-once cut plan-first cost **−27% ctx / −35% wall** vs recon-every-call by
+dropping 9 redundant recon passes (recon ran 1×, 6 later calls execute-only). The
+residual premium over merit/coerce is now execute-phase depth × number of outer
+explore calls, not recon. Plan-first restores grove usage (recon) that merit/coerce
+had dropped to 0 on this cell.
+
 ## Method
 
 - **Arm:** `claude -p <prompt> --model sonnet --tools "" --allowedTools mcp__fastcontext__explore
