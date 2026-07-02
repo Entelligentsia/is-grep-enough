@@ -66,24 +66,58 @@ study. Enforced by the harness, not prompt pleading.
   keyed by repo dir); every later call in the same server process skips recon and gets
   the plan injected as a standing hint, running straight in execute.
 
+### Four-arm comparison — L4 + L5 × {redis, django, tokio}
+
+All three delegation arms (merit / coerce / plan-first, recon-once) vs the metered
+text baseline, over the 6 hardest cells. `ctx` = Claude (sonnet) context tokens
+(input+cache-read+cache-create over all models); `wall` = end-to-end seconds;
+`comp` = reference-spine pieces hit; `ground` = fraction of cited file:line that a
+blind grader verified against pinned source.
+
+Per-cell (**ctx / wall / comp / ground**):
+
+| cell | baseline (text) | merit-fc (4B, grep-natural) | coerce-fc (4B, grove-forced) | plan-first (4B, recon-once) |
+|---|---|---|---|---|
+| L4-redis  | 309,894 / 111s / 4·4 / 1.00 | 45,214 / 153s / 4·4 / 0.93 | 78,657 / 169s / 4·4 / 0.83 | 63,090 / 202s / 4·4 / 1.00 |
+| L4-django |  88,828 /  71s / 4·4 / 1.00 | 58,821 / 123s / 4·4 / 0.90 | 30,751 /  94s / 3·4 / 1.00 | 43,935 / 106s / 3·4 / 0.92 |
+| L4-tokio  | 406,490 / 143s / 5·5 / 0.86 | 62,094 / 256s / 5·5 / 1.00 | 80,047 / 219s / 5·5 / 0.92 | 60,881 / 183s / 5·5 / 0.96 |
+| L5-redis  | 1,578,920 / 190s / 6·6 / 0.97 | 64,444 / 219s / 6·6 / 1.00 | 46,036 / 140s / 6·6 / 1.00 | 97,106 / 251s / 6·6 / 1.00 |
+| L5-django | 182,567 / 109s / 6·6 / 1.00 | 59,252 /  93s / 6·6 / 0.90 | 45,188 /  99s / 6·6 / 0.86 | 58,323 / 132s / 5·6 / 0.90 |
+| L5-tokio  | 4,400,290 / 243s / 6·6 / 0.82 | 97,701 / 505s / 6·6 / 0.93 | 96,962 / 315s / 6·6 / 0.96 | 113,143 / 539s / 6·6 / 0.92 |
+
+Aggregates (mean over the 6 cells; ctx also as median because baseline is
+heavy-tailed — L5-tokio alone is 4.4M):
+
+| arm | mean ctx | median ctx | vs baseline (mean · median) | mean wall | completeness | grounding |
+|---|---|---|---|---|---|---|
+| baseline (text) | 1,161,165 | 358,192 | — | 144s | 100.0% | 0.94 |
+| merit-fc (grep) |    64,588 |  60,673 | **−94.4% · −83.1%** (18.0× · 5.9×) | 225s | 100.0% | 0.94 |
+| coerce-fc (grove) |  62,940 |  62,346 | **−94.6% · −82.6%** (18.4× · 5.7×) | 173s |  95.8% | 0.93 |
+| plan-first (recon-once) | 72,746 | 61,986 | **−93.7% · −82.7%** (16.0× · 5.8×) | 236s |  93.1% | 0.95 |
+
+Reading it:
+- **All three delegation arms cut metered Claude context by ~83% (median) to ~94%
+  (mean) at grounding parity (0.93–0.95 vs baseline 0.94).** The mean gap is inflated
+  by two baseline blowups (redis-L5 1.6M, tokio-L5 4.4M) where sonnet's own text
+  search churned; the median (~5.8×) is the honest typical saving.
+- **coerce (grove-forced) is the cost/quality sweet spot** on this slice: lowest mean
+  wall (173s), full grounding on 3/6 cells, and it never lost a spine piece except the
+  one it shared with plan-first (django-L4, 3/4).
+- **plan-first buys the best grounding (0.95)** — the recon pass anchors cites — but
+  pays for it: highest mean wall (236s) and it dropped a spine piece on L5-django
+  (5/6), where the cached plan under-scoped the execute phase. Its cost premium over
+  coerce is execute-phase depth × outer explore-call count, not recon (recon runs 1×).
+- **merit matches baseline completeness (100%) and grounding (0.94)** but is the
+  slowest-scaling on hard cells (tokio-L5 505s) because grep-only exploration iterates.
+
+Recon-once (vs the earlier recon-every-call prototype) cut plan-first cost **−27%
+ctx / −35% wall** on tokio-L4 by dropping redundant recon passes — verified here:
+across all 6 cells recon ran in exactly the first inner call and 0× after (e.g.
+L5-tokio: 1 recon of 14 explore calls).
+
 Tuning artifacts: `test-phase1.py` (fast recon-only tester), `phase1/{v1,v2,v3}.txt`,
-`fc-planfirst-mcp.json`.
-
-**tokio-L4, plan-first vs the arms** (spine completeness /7):
-
-| arm | ctx | wall | spine |
-|---|---|---|---|
-| baseline (text) | 406,490 | 145s | 7/7 |
-| merit-fc (grep) | 62,094 | 257s | 6/7 |
-| coerce-fc (grove) | 46,461 | 121s | 6/7 |
-| plan-first (recon every call) | 172,296 | 390s | 7/7 |
-| plan-first (recon **once**, cached) | 125,824 | 254s | 6/7 |
-
-Recon-once cut plan-first cost **−27% ctx / −35% wall** vs recon-every-call by
-dropping 9 redundant recon passes (recon ran 1×, 6 later calls execute-only). The
-residual premium over merit/coerce is now execute-phase depth × number of outer
-explore calls, not recon. Plan-first restores grove usage (recon) that merit/coerce
-had dropped to 0 on this cell.
+`fc-planfirst-mcp.json`. Run the arm with `FC_MCP_CFG=fc-planfirst-mcp.json`
+(`run-planfirst-L45.sh`).
 
 ## Method
 
