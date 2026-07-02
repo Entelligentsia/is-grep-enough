@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "fastcontext": {
+      "command": "uv",
+      "args": ["run", "--with", "mcp", "--project", "/home/boni/src/grove-engineering/code-analyzer-testbench/studies/fastcontext-sidebench/vendor/fastcontext", "python", "/home/boni/src/grove-engineering/code-analyzer-testbench/studies/fastcontext-sidebench/vendor/fastcontext/mcp_server.py"],
+      "env": {
+        "FC_BASE_URL": "http://127.0.0.1:11434/v1/",
+        "FC_MODEL": "qwen3.5:4b",
+        "FC_REASONING_EFFORT": "none",
+        "FC_MAX_TOKENS": "1024",
+        "FC_TEMPERATURE": "0",
+        "FC_ENABLE_GROVE": "1",
+        "GROVE_BIN": "/home/boni/.nvm/versions/node/v24.3.0/bin/grove"
+      }
+    }
+  }
+}

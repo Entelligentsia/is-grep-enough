@@ -1,0 +1,8 @@
+# run outputs + transient artifacts
+out/
+transcripts/
+# vendored MCP build/run artifacts (source is committed, these are not)
+vendor/fastcontext/.venv/
+vendor/fastcontext/.fastcontext-mcp/
+vendor/**/__pycache__/
+vendor/**/*.pyc
